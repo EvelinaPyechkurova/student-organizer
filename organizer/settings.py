@@ -38,6 +38,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'subject.apps.SubjectConfig',
     'lesson.apps.LessonConfig',
+    'assessment.apps.AssessmentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
