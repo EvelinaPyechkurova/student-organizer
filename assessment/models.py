@@ -31,6 +31,8 @@ class Assessment(models.Model):
 
 
     def clean(self):
+        super().clean()
+
         if not (self.lesson or self.subject):
             raise ValidationError(
                 message='Assessment must have either a subject or a lesson.',
@@ -41,9 +43,9 @@ class Assessment(models.Model):
                 message='Start time is required if the assessment is not linked to a lesson.',
                 code='required'
             )
-        if self.duration_minutes and self.duration_minutes <= 0:
+        if self.duration_minutes and self.duration_minutes.total_seconds() <= 0:
             raise ValidationError(
-                message='Lesson duration must be a positive value.',
+                message='Assessment duration must be a positive value.',
                 code='non_positive'
             )
             
@@ -54,10 +56,10 @@ class Assessment(models.Model):
             self.subject = None
             self.start_time = None
             if not self.duration_minutes:
-                self.duration_minutes = self.lesson.duration_minutes
+                self.duration_minutes = None
         else:
             if not self.duration_minutes:
-                self.duration_minutes = 90 # replace with standard for user
+                self.duration_minutes = timedelta(minutes=90) # replace with standard for user
 
         super().save(*args, **kwargs)
 
