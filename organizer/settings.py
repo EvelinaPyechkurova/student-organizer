@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'subject.apps.SubjectConfig',
     'lesson.apps.LessonConfig',
     'assessment.apps.AssessmentConfig',
+    'homework.apps.HomeworkConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
