@@ -1,4 +1,5 @@
 from datetime import timedelta
+import textwrap
 
 from django.db import models
 from django.utils.timezone import localtime
@@ -33,14 +34,27 @@ class Assessment(models.Model):
     def clean(self):
         super().clean()
 
+        if self.lesson and self.subject and self.subject != self.lesson.subject:
+            raise ValidationError(
+                message=(
+                    f'The selected lesson belongs to "{self.lesson.subject} '
+                    f'but this assessment is for "{self.subject}". '
+                    'To fix this, either '
+                    'select a lesson from the same subject as the assessment, or '
+                    'remove either the lesson or the subject so the remaining one is used.'
+                ),              
+                code='subject_mismatch'
+            )
+
         if not (self.lesson or self.subject):
             raise ValidationError(
                 message='Assessment must have either a subject or a lesson.',
                 code='required'
             )
+        
         if not (self.lesson or self.start_time):
             raise ValidationError(
-                message='Start time is required if the assessment is not linked to a lesson.',
+                message="Start time is required if the assessment isn't linked to any lesson.",
                 code='required'
             )
         if self.duration_minutes and self.duration_minutes.total_seconds() <= 0:
@@ -66,9 +80,9 @@ class Assessment(models.Model):
 
     def __str__(self):
         if self.lesson:
-            return f'{self.lesson.subject.name} {self.type} on {localtime(self.lesson.start_time).strftime("%a, %b %d %Y at %H:%M")}'
+            return f'{self.lesson.subject} {self.get_type_display().lower()} on {localtime(self.lesson.start_time).strftime("%a, %b %d %Y at %H:%M")}'
         elif self.subject:
-            return f'{self.subject.name} {self.type} on {localtime(self.start_time).strftime("%a, %b %d %Y at %H:%M")}'
+            return f'{self.subject} {self.get_type_display().lower()} on {localtime(self.start_time).strftime("%a, %b %d %Y at %H:%M")}'
         else:
             return 'Invalid assessment (missing subject and lesson)'
         
