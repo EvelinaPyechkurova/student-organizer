@@ -8,21 +8,23 @@ from subject.models import Subject
 
 class Lesson(models.Model):
 
+    class Meta():
+        db_table = 'lesson'
+
     MIN_DURATION = timedelta(minutes=15)
     MAX_DURATION = timedelta(hours=8)
-
 
     class Type(models.TextChoices):
         LECTURE = 'L', 'Lecture'
         PRACTICE = 'P', 'Practice'
         SEMINAR = 'S', 'Seminar'
         SELF_STUDY = 'Y', 'Self-Study'
-
+        
 
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=Type, default=Type.LECTURE)
     start_time = models.DateTimeField()
-    duration_minutes = models.DurationField(default=timedelta(minutes=90))
+    duration = models.DurationField(default=timedelta(minutes=90))
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -30,19 +32,19 @@ class Lesson(models.Model):
     def clean(self):
         super().clean()
 
-        if self.duration_minutes < self.MIN_DURATION:
+        if self.duration < self.MIN_DURATION:
             raise ValidationError(
                 message=f'Lesson duration must be at least {Lesson.MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
-        if self.duration_minutes > self.MAX_DURATION:
+        if self.duration > self.MAX_DURATION:
             raise ValidationError(
                 message=f'Lesson duration can\'t exceed {Lesson.MAX_DURATION.seconds // 3600} hourse.',
                 code='max_duration_exceeded'
             )
         
-        if self.start_time + self.duration_minutes < now():
+        if self.start_time + self.duration < now():
             raise ValidationError(
                 message='Lesson must end in the future.',
                 code='lesson_ends_in_past'

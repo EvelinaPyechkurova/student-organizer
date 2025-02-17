@@ -10,9 +10,11 @@ from lesson.models import Lesson
 
 class Assessment(models.Model):
 
+    class Meta:
+        db_table = 'assessment'
+
     MIN_DURATION = timedelta(minutes=5)
     MAX_DURATION = timedelta(days=7)
-
 
     class Type(models.TextChoices):
         TEST = 'T', 'Test'
@@ -24,12 +26,12 @@ class Assessment(models.Model):
         ESSAY = 'S', 'Essay'
         PROJECT = 'P', 'Project'
         
-
+        
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True)
     type = models.CharField(max_length=1, choices=Type, default=Type.TEST)
     start_time = models.DateTimeField(blank=True, null=True)
-    duration_minutes = models.DurationField(default=timedelta(minutes=90))
+    duration = models.DurationField(default=timedelta(minutes=90))
     description = models.CharField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -41,7 +43,7 @@ class Assessment(models.Model):
         if self.lesson and self.subject and self.subject != self.lesson.subject:
             raise ValidationError(
                 message=(
-                    f'The selected lesson belongs to "{self.lesson.subject} '
+                    f'The selected lesson belongs to "{self.lesson.subject}" '
                     f'but this assessment is for "{self.subject}". '
                     'To fix this, either '
                     'select a lesson from the same subject as the assessment, or '
@@ -62,13 +64,13 @@ class Assessment(models.Model):
                 code='required'
             )
         
-        if self.duration_minutes and self.duration_minutes < Assessment.MIN_DURATION:
+        if self.duration and self.duration < Assessment.MIN_DURATION:
             raise ValidationError(
                 message=f'Assessment duration must be at least {Assessment.MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
-        if self.duration_minutes and self.duration_minutes > Assessment.MAX_DURATION:
+        if self.duration and self.duration > Assessment.MAX_DURATION:
             raise ValidationError(
                 message=f'Assessment duration can\'t exceed {Assessment.MAX_DURATION.days} days.',
                 code='max_duration_exceeded'
@@ -80,11 +82,11 @@ class Assessment(models.Model):
         if self.lesson:
             self.subject = None
             self.start_time = None
-            if not self.duration_minutes:
-                self.duration_minutes = None
+            if not self.duration:
+                self.duration = None
         else:
-            if not self.duration_minutes:
-                self.duration_minutes = timedelta(minutes=90) # replace with standard for user
+            if not self.duration:
+                self.duration = timedelta(minutes=90) # replace with standard for user
 
         super().save(*args, **kwargs)
 

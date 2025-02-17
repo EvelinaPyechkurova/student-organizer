@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 class Subject(models.Model):
-    
+
+    class Meta:
+        db_table = 'subject'
+
     MAX_SUBJECTS_PER_USER = 200
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False) # must not be changed since creation

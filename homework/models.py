@@ -4,6 +4,11 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 class Homework(models.Model):
+
+    class Meta:
+        db_table = 'homework'
+
+        
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
     lesson_given = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name="given_homeworks")
     lesson_due = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name="due_homeworks")
