@@ -10,6 +10,10 @@ from lesson.models import Lesson
 
 class Assessment(models.Model):
 
+    MIN_DURATION = timedelta(minutes=5)
+    MAX_DURATION = timedelta(days=7)
+
+
     class Type(models.TextChoices):
         TEST = 'T', 'Test'
         QUIZ = 'Q', 'Quiz'
@@ -57,10 +61,17 @@ class Assessment(models.Model):
                 message="Start time is required if the assessment isn't linked to any lesson.",
                 code='required'
             )
-        if self.duration_minutes and self.duration_minutes.total_seconds() <= 0:
+        
+        if self.duration_minutes and self.duration_minutes < Assessment.MIN_DURATION:
             raise ValidationError(
-                message='Assessment duration must be a positive value.',
-                code='non_positive'
+                message=f'Assessment duration must be at least {Assessment.MIN_DURATION.seconds // 60} minutes.',
+                code='min_duration_not_met'
+            )
+        
+        if self.duration_minutes and self.duration_minutes > Assessment.MAX_DURATION:
+            raise ValidationError(
+                message=f'Assessment duration can\'t exceed {Assessment.MAX_DURATION.days} days.',
+                code='max_duration_exceeded'
             )
             
 
