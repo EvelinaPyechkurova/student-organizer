@@ -1,12 +1,16 @@
 from datetime import timedelta
 
 from django.db import models
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 
 class Lesson(models.Model):
+
+    MIN_LESSON_DURATION = timedelta(minutes=15)
+    MAX_LESSON_DURATION = timedelta(hours=8)
+
 
     class Type(models.TextChoices):
         LECTURE = 'L', 'Lecture'
@@ -21,16 +25,33 @@ class Lesson(models.Model):
     duration_minutes = models.DurationField(default=timedelta(minutes=90))
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-
+    
     
     def clean(self):
         super().clean()
 
-        if self.duration_minutes.total_seconds() <= 0:
+        if self.start_time + self.duration_minutes < now():
             raise ValidationError(
-                message='Lesson duration must be a positive value.',
-                code='non_positive'
+                message='The lesson must end in the future.',
+                code='lesson_ends_in_past'
             )
+
+        if self.duration_minutes < self.MIN_LESSON_DURATION:
+            raise ValidationError(
+                message=f'Lesson duration must be at least {Lesson.MIN_LESSON_DURATION // 60} minutes.',
+                code='min_duration_not_met'
+            )
+        
+        if self.duration_minutes > self.MAX_LESSON_DURATION:
+            raise ValidationError(
+                message=f'Lessons can\'t exceed {Lesson.MAX_LESSON_DURATION // 3600} hourse.',
+                code='max_duration_exceeded'
+            )
+
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
     def __str__(self):
