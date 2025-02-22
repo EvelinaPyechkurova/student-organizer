@@ -1,8 +1,7 @@
 from datetime import timedelta
-import textwrap
 
 from django.db import models
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
 
 from subject.models import Subject
@@ -74,6 +73,12 @@ class Assessment(models.Model):
             raise ValidationError(
                 message=f'Assessment duration can\'t exceed {Assessment.MAX_DURATION.days} days.',
                 code='max_duration_exceeded'
+            )
+        
+        if self.start_time or self.lesson.start_time > now():
+            raise ValidationError(
+                message='Lesson must start in the future.',
+                code='lesson_starts_in_past'
             )
             
 

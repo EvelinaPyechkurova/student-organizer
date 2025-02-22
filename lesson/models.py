@@ -8,7 +8,7 @@ from subject.models import Subject
 
 class Lesson(models.Model):
 
-    class Meta():
+    class Meta:
         db_table = 'lesson'
 
     MIN_DURATION = timedelta(minutes=15)
@@ -44,10 +44,10 @@ class Lesson(models.Model):
                 code='max_duration_exceeded'
             )
         
-        if self.start_time + self.duration < now():
+        if self.start_time < now():
             raise ValidationError(
-                message='Lesson must end in the future.',
-                code='lesson_ends_in_past'
+                message='Lesson must start in the future.',
+                code='lesson_starts_in_past'
             )
 
         
