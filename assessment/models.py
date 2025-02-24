@@ -27,7 +27,7 @@ class Assessment(models.Model):
         
         
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=1, choices=Type, default=Type.TEST)
     start_time = models.DateTimeField(blank=True, null=True)
     duration = models.DurationField(default=timedelta(minutes=90))
