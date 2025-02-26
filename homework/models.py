@@ -42,11 +42,34 @@ class Homework(models.Model):
                 code='invalid_completion_percent'
             )
         
+    def validate_existence(self):
+
+        ERROR_MESSAGE = ('Homework must either have a {first_option} '
+                        'or {second_option}.')
+        
+        if not self.subject and not self.lesson_given and not self.lesson_due:
+            raise ValidationError(
+                message=ERROR_MESSAGE.format(
+                    first_option='subject',
+                    second_option='be linked to a lesson'
+                ),
+                code='required'
+            )
+        
+        if not self.due_at and not self.lesson_due:
+            raise ValidationError(
+                message=ERROR_MESSAGE.format(
+                    first_option='due at date',
+                    second_option='be due at a specific lesson'
+                ),
+                code='required'
+            )
     
+
     def validate_subject_consistency(self):
 
         ERROR_MESSAGE = ('The selected {first_entity} belongs to "{first_subject}" '
-                         'but {second_entity} is for "{second subject}". '
+                         'but {second_entity} is for "{second_subject}". '
                          'To fix this, {solution}.')
 
         if self.subject:
@@ -93,31 +116,6 @@ class Homework(models.Model):
                     ),  
                     code='subject_mismatch'
                 )    
-
-
-    def validate_existence(self):
-
-        ERROR_MESSAGE = ('Homework must either have a {first_option} '
-                         'or {second_option}.'
-                        )
-        
-        if not self.subject and not self.lesson_given and not self.lesson_due:
-            raise ValidationError(
-                message=ERROR_MESSAGE.format(
-                    first_option='subject',
-                    second_option='be linked to a lesson'
-                ),
-                code='required'
-            )
-        
-        if not self.due_at and not self.lesson_due:
-            raise ValidationError(
-                message=ERROR_MESSAGE.format(
-                    first_option='due at date',
-                    second_option='be due at a specific lesson'
-                ),
-                code='required'
-            )
    
 
     def validate_time_constraints(self):
@@ -157,6 +155,22 @@ class Homework(models.Model):
                     ),
                     code='future_limit_exceeded'
                 )
+            
+        past_due_limit = now() - timedelta(days=30)
+
+        for field, label in [
+            (self.due_at, 'Homework due date'),
+            (self.lesson_due.start_time if self.lesson_due else None, 'Lesson homework is due at')
+        ]:
+            if field and field < past_due_limit:
+                raise ValidationError(
+                message=ERROR_MESSAGE.format(
+                    entity=label,
+                    days=30,
+                    direction='past',
+                ),
+                code="past_due_date"
+            )
                 
         if self.lesson_given and self.lesson_given.start_time > now():
             raise ValidationError(
@@ -164,13 +178,6 @@ class Homework(models.Model):
                 code='invalid_given_time'
             )
         
-        past_due_limit = now() - timedelta(days=30)
-
-        if self.due_at and self.due_at < past_due_limit:
-            raise ValidationError(
-                message="Homework due date can't be more than 30 days in the past.",
-                code="past_due_date"
-            )
 
         fields = [
             (self.due_at, 'homework due date'),

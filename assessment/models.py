@@ -30,7 +30,7 @@ class Assessment(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=1, choices=Type, default=Type.TEST)
     start_time = models.DateTimeField(blank=True, null=True)
-    duration = models.DurationField(default=timedelta(minutes=90))
+    duration = models.DurationField(blank=True, null=True)
     description = models.CharField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -75,10 +75,16 @@ class Assessment(models.Model):
                 code='max_duration_exceeded'
             )
         
-        if self.start_time or self.lesson.start_time > now():
+        if self.start_time and self.start_time < now():
             raise ValidationError(
-                message='Lesson must start in the future.',
-                code='lesson_starts_in_past'
+                message='Assessment must start in the future.',
+                code='assessment_starts_in_past'
+            )
+        
+        if self.lesson and self.lesson.start_time < now():
+            raise ValidationError(
+                message='Assessment can\'t be attached to lesson starting in the past.',
+                code='assessment_starts_in_past'
             )
             
 
