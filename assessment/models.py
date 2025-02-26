@@ -93,8 +93,7 @@ class Assessment(models.Model):
         if self.lesson:
             self.subject = None
             self.start_time = None
-            if not self.duration:
-                self.duration = None
+
         else:
             if not self.duration:
                 self.duration = timedelta(minutes=90) # replace with standard for user
