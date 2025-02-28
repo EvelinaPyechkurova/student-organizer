@@ -23,9 +23,10 @@ class Subject(models.Model):
         db_table = 'subject'
 
     MAX_SUBJECTS_PER_USER = 200
+    MAX_SUBJECT_NAME_LENGTH = 150
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False) # must not be changed since creation
-    name = models.CharField(max_length=150)
+    name = models.CharField(max_length=MAX_SUBJECT_NAME_LENGTH)
     image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
