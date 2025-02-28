@@ -17,7 +17,11 @@ class SubjectModelTests(TestCase):
 
     def test_valid_subject_creation(self):
         '''Test creating a valid Subject instance.'''
-        subject = Subject.objects.create(user=self.user, name=self.SUBJECT_NAME, image_url=self.VALID_IMAGE_URL)
+        subject = Subject.objects.create(
+            user=self.user,
+            name=self.SUBJECT_NAME,
+            image_url=self.VALID_IMAGE_URL
+        )
         self.assertEqual(subject.user, self.user)
         self.assertEqual(subject.name, self.SUBJECT_NAME)
         self.assertEqual(subject.image_url, self.VALID_IMAGE_URL)
@@ -30,37 +34,58 @@ class SubjectModelTests(TestCase):
         Subject.objects.bulk_create(subjects)
 
         try:
-            subject = Subject(user=self.user, name='Extra subject')
-            subject.full_clean()
+            subject = Subject.objects.create(
+                user=self.user,
+                name='Extra subject'
+            )
             self.fail('ValidationError was not raised when creating more subjects per user than allowed')
         except ValidationError as e:
-            error_codes = [err.code for err in e.error_dict.get('__all__', [])]
+            error_codes = [err.code for err in e.error_dict.get('user', [])]
             self.assertIn('max_subjects_reached', error_codes)
 
 
     def test_name_cannot_be_blank(self):
         '''Test creating subject with blank name field fails'''
         try:
-            subject = Subject.objects.create(user=self.user, name='')
+            subject = Subject.objects.create(
+                user=self.user,
+                name=''
+            )
             self.fail('ValidationError was not raised when creating subject with blank name field')
-        except ValidationError:
-            pass
+        except ValidationError as e:
+            self.assertIn('name', e.error_dict)
 
 
     def test_name_max_length(self):
         '''Test creating subject with name exciding max allowed length fails'''
         long_name = 'A' * (Subject.MAX_SUBJECT_NAME_LENGTH + 1)
         try:
-            subject = Subject.objects.create(user=self.user, name=long_name)
+            subject = Subject.objects.create(
+                user=self.user,
+                name=long_name
+            )
             self.fail('ValidationError was not raised when creating subject with name exciding max allowed length')
-        except ValidationError:
-            pass
+        except ValidationError as e:
+            self.assertIn('name', e.error_dict)
 
 
     def test_invalid_image_url(self):
         '''Test creating a Subject instance with invalid image URL fails.'''
         try:
-            subject = Subject.objects.create(user=self.user, name=self.SUBJECT_NAME, image_url=self.INVALID_IMAGE_URL)
+            subject = Subject.objects.create(
+                user=self.user,
+                name=self.SUBJECT_NAME,
+                image_url=self.INVALID_IMAGE_URL
+            )
             self.fail('ValidationError was not raised when creating subject with invalid image url')
-        except ValidationError:
-            pass
+        except ValidationError as e:
+            self.assertIn('image_url', e.error_dict)
+
+
+    def test_subject_str_method(self):
+        '''Test the __str__ method of Subject.'''
+        subject = Subject.objects.create(
+            user=self.user,
+            name=self.SUBJECT_NAME,
+        )
+        self.assertEqual(self.SUBJECT_NAME, str(subject))

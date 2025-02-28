@@ -36,11 +36,16 @@ class Subject(models.Model):
     def clean(self):
         super().clean()
 
+        errors = {}
+
         if self.user.subject_set.count() >= Subject.MAX_SUBJECTS_PER_USER:
-            raise ValidationError(
+            errors['user'] = ValidationError(
                 message=f'You can\'t have more that {Subject.MAX_SUBJECTS_PER_USER} subjects per user.', 
                 code='max_subjects_reached'
             )
+        
+        if errors:
+            raise ValidationError(errors)
         
     def save(self, *args, **kwargs):
         self.full_clean()

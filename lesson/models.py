@@ -6,6 +6,19 @@ from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 
+class LessonManager(models.Manager):
+
+    def create(self, **kwargs):
+        obj = self.model(**kwargs)
+        obj.save()
+        return obj
+    
+    def bulk_create(self, objs, **kwargs):
+        for obj in objs:
+            obj.full_clean()
+        return super().bulk_create(objs, **kwargs)
+    
+
 class Lesson(models.Model):
 
     class Meta:
@@ -24,7 +37,7 @@ class Lesson(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=Type, default=Type.LECTURE)
     start_time = models.DateTimeField()
-    duration = models.DurationField(default=timedelta(minutes=90))
+    duration = models.DurationField(default=timedelta(minutes=90)) # replace with standard for user
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -32,23 +45,28 @@ class Lesson(models.Model):
     def clean(self):
         super().clean()
 
+        errors = {}
+
         if self.duration < self.MIN_DURATION:
-            raise ValidationError(
+            errors['duration'] =  ValidationError(
                 message=f'Lesson duration must be at least {Lesson.MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
         if self.duration > self.MAX_DURATION:
-            raise ValidationError(
+            errors['duration'] =  ValidationError(
                 message=f'Lesson duration can\'t exceed {Lesson.MAX_DURATION.seconds // 3600} hourse.',
                 code='max_duration_exceeded'
             )
         
         if self.start_time < now():
-            raise ValidationError(
+            errors['start_time'] =  ValidationError(
                 message='Lesson must start in the future.',
                 code='lesson_starts_in_past'
             )
+        
+        if errors:
+            raise ValidationError(errors)
 
         
     def save(self, *args, **kwargs):
