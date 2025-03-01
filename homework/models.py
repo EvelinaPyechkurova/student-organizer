@@ -7,6 +7,19 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
+class HomeworkManager(models.Manager):
+
+    def create(self, **kwargs):
+        obj = self.model(**kwargs)
+        obj.save()
+        return obj
+
+    def bulk_create(self, objs, **kwargs):
+        for obj in objs:
+            obj.full_clean()
+        return super().bulk_create(objs, **kwargs)
+
+
 class Homework(models.Model):
 
     class Meta:
@@ -29,26 +42,39 @@ class Homework(models.Model):
     def clean(self):
         super().clean()
 
-        self.validate_percentage()
-        self.validate_existence()
-        self.validate_subject_consistency()
-        self.validate_time_constraints()
+        errors = {}
+
+        errors.update(self.validate_percentage())
+        errors.update(self.validate_existence())
+        errors.update(self.validate_subject_consistency())
+        errors.update(self.validate_time_constraints())
+
+        if errors:
+            raise ValidationError(errors)
 
     
     def validate_percentage(self):
+
+        errors = {}
+
         if not (0 <= self.completion_percent <= 100):
-            raise ValidationError(
+            errors['completion_percent'] = ValidationError(
                 message='Completion percent must be between 0 and 100.',
                 code='invalid_completion_percent'
             )
+
+        return errors
         
+
     def validate_existence(self):
+
+        errors = {}
 
         ERROR_MESSAGE = ('Homework must either have a {first_option} '
                         'or {second_option}.')
         
         if not self.subject and not self.lesson_given and not self.lesson_due:
-            raise ValidationError(
+            errors['__all__'] = ValidationError(
                 message=ERROR_MESSAGE.format(
                     first_option='subject',
                     second_option='be linked to a lesson'
@@ -57,16 +83,20 @@ class Homework(models.Model):
             )
         
         if not self.due_at and not self.lesson_due:
-            raise ValidationError(
+            errors['due_at'] = ValidationError(
                 message=ERROR_MESSAGE.format(
                     first_option='due at date',
                     second_option='be due at a specific lesson'
                 ),
                 code='required'
             )
+        
+        return errors
     
 
     def validate_subject_consistency(self):
+
+        errors = {}
 
         ERROR_MESSAGE = ('The selected {first_entity} belongs to "{first_subject}" '
                          'but {second_entity} is for "{second_subject}". '
@@ -74,7 +104,7 @@ class Homework(models.Model):
 
         if self.subject:
             if self.lesson_given and self.subject != self.lesson_given.subject:
-                raise ValidationError(
+                errors['lesson_given'] = ValidationError(
                     message=ERROR_MESSAGE.format(
                         first_entity='lesson the homework was given at',
                         first_subject=self.lesson_given.subject,
@@ -90,7 +120,7 @@ class Homework(models.Model):
                 )
             
             if self.lesson_due and self.subject != self.lesson_due.subject:
-                raise ValidationError(
+                errors['lesson_due'] = ValidationError(
                     message=ERROR_MESSAGE.format(
                         first_entity='lesson the homework is due at',
                         first_subject=self.lesson_due.subject,
@@ -106,7 +136,7 @@ class Homework(models.Model):
                 )
             
         if self.lesson_given and self.lesson_due and self.lesson_given.subject != self.lesson_due.subject:
-            raise ValidationError(
+            errors['__all__'] = ValidationError(
                     message=ERROR_MESSAGE.format(
                         first_entity='lesson the homework was given at',
                         first_subject=self.lesson_given.subject,
@@ -116,9 +146,13 @@ class Homework(models.Model):
                     ),  
                     code='subject_mismatch'
                 )    
+        
+        return errors
    
 
     def validate_time_constraints(self):
+
+        errors = {}
 
         ERROR_MESSAGE = '{entity} can\'t be set more than {days} days in the {direction}.'
 
@@ -127,12 +161,13 @@ class Homework(models.Model):
         past_limit = now() - Homework.MAX_TIMEFRAME
         future_limit = now() + Homework.MAX_TIMEFRAME
         
-        for field, label in [
-            (self.start_time, 'Homework start time'),
-            (self.lesson_given.start_time if self.lesson_given else None, 'Lesson homework was given at'),
+
+        for field_value, field_name, label in [
+            (self.start_time, 'start_time', 'Homework start time'),
+            (self.lesson_given.start_time if self.lesson_given else None, 'lesson_given', 'Lesson homework was given at'),
         ]:
-            if field and field < past_limit:
-                raise ValidationError(
+            if field_value and field_value < past_limit:
+                errors[field_name] = ValidationError(
                     message=ERROR_MESSAGE.format(
                         entity=label,
                         days=max_days,
@@ -141,13 +176,13 @@ class Homework(models.Model):
                     code='past_limit_exceeded'
                 )
 
-        for field, label in [
-            (self.start_time, 'Homework start time'),
-            (self.due_at, 'Homework due time'),
-            (self.lesson_due.start_time if self.lesson_due else None, 'Lesson homework is due to'),
+        for field_value, field_name, label in [
+            (self.start_time, 'start_time', 'Homework start time'),
+            (self.due_at, 'due_at', 'Homework due time'),
+            (self.lesson_due.start_time if self.lesson_due else None, 'lesson_due', 'Lesson homework is due to'),
         ]:
-            if field and field > future_limit:
-                raise ValidationError(
+            if field_value and field_value > future_limit:
+                errors[field_name] = ValidationError(
                     message=ERROR_MESSAGE.format(
                         entity=label,
                         days=max_days,
@@ -158,12 +193,12 @@ class Homework(models.Model):
             
         past_due_limit = now() - timedelta(days=30)
 
-        for field, label in [
-            (self.due_at, 'Homework due date'),
-            (self.lesson_due.start_time if self.lesson_due else None, 'Lesson homework is due at')
+        for field_value, field_name, label in [
+            (self.due_at, 'due_at', 'Homework due date'),
+            (self.lesson_due.start_time if self.lesson_due else None, 'lesson_due', 'Lesson homework is due at')
         ]:
-            if field and field < past_due_limit:
-                raise ValidationError(
+            if field_value and field_value < past_due_limit:
+                errors[field_name] = ValidationError(
                 message=ERROR_MESSAGE.format(
                     entity=label,
                     days=30,
@@ -173,24 +208,24 @@ class Homework(models.Model):
             )
                 
         if self.lesson_given and self.lesson_given.start_time > now():
-            raise ValidationError(
+            errors['lesson_given'] = ValidationError(
                 message='Homework can\'t be assigned to lesson starting in the future',
                 code='invalid_given_time'
             )
         
 
         fields = [
-            (self.due_at, 'homework due date'),
-            (self.lesson_due.start_time if self.lesson_due else None, 'lesson homework is due at')
+            (self.due_at, 'due_at', 'homework due date'),
+            (self.lesson_due.start_time if self.lesson_due else None, 'lesson_due', 'lesson homework is due at')
         ]
 
         if self.start_time:
 
-            ERROR_MESSAGE = 'Homework start time must be earlier then {entity}.'
+            ERROR_MESSAGE = 'Homework start time must be earlier than {entity}.'
 
-            for field, label in fields:
-                if field and field <= self.start_time:
-                    raise ValidationError(
+            for field_value, field_name, label in fields:
+                if field_value and field_value <= self.start_time:
+                    errors[field_name] = ValidationError(
                         message=ERROR_MESSAGE.format(
                             entity=label
                         ),
@@ -200,16 +235,19 @@ class Homework(models.Model):
 
         if self.lesson_given:
 
-            ERROR_MESSAGE = 'Lesson homework was given at start time must be earlier then {entity}.'
+            ERROR_MESSAGE = 'Lesson homework was given at start time must be earlier than {entity}.'
 
-            for field, label in fields:
-                if field and field <= self.lesson_given.start_time:
-                    raise ValidationError(
+            for field_value, field_name, label in fields:
+                if field_value and field_value <= self.lesson_given.start_time:
+                    errors[field_name] = ValidationError(
                         message=ERROR_MESSAGE.format(
                             entity=label
                         ),
                         code='invalid_start_order'
                     )
+                
+
+        return errors
 
 
     def save(self, *args, **kwargs):

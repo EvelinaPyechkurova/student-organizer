@@ -183,7 +183,7 @@ class AssessmentModelTests(TestCase):
     def test_start_time_must_match(self):
         '''Test creating assessment with start_time not matching attached lesson start_time fails.'''
         try:
-            assessmet = Assessment.objects.create(
+            assessment = Assessment.objects.create(
                 subject=self.subject,
                 lesson=self.lesson,
                 start_time=self.START_TIME + timedelta(hours=1),
