@@ -38,10 +38,10 @@ class LessontModelTests(TestCase):
         try:
             lesson = Lesson.objects.create(
                 subject=self.subject,
-                type="INVALID",
-                start_time=now() + timedelta(days=1)
+                type='INVALID',
+                start_time=self.START_TIME
             )
-            self.fail("ValidationError was not raised for type field length constraint")
+            self.fail('ValidationError was not raised for type field length constraint violation.')
         except ValidationError as e:
             self.assertIn('type', e.error_dict)
 
@@ -49,13 +49,12 @@ class LessontModelTests(TestCase):
     def test_invalid_type_choice(self):
         '''Test creating lesson with type field containing invalid type choice fails.'''
         try:
-            lesson = Lesson(
+            lesson = Lesson.objects.create(
                 subject=self.subject,
-                type="X",
-                start_time=now() + timedelta(days=1)
+                type='X',
+                start_time=self.START_TIME
             )
-            lesson.full_clean()
-            self.fail("ValidationError was not raised for invalid type choice")
+            self.fail('ValidationError was not raised for invalid type choice')
         except ValidationError as e:
             self.assertIn('type', e.error_dict)
 
@@ -65,8 +64,8 @@ class LessontModelTests(TestCase):
         try:
             lesson = Lesson.objects.create(
                 subject=self.subject,
-                )
-            self.fail("TypeError was not raised for missing start_time")
+            )
+            self.fail('TypeError was not raised for missing start_time')
         except TypeError:
             pass
         except ValidationError as e:
@@ -88,41 +87,41 @@ class LessontModelTests(TestCase):
 
 
     def test_minimum_lesson_duration(self):
-        '''Test that creating lesson shorter than 15 minutes fails.'''
+        '''Test creating lesson shorter than 15 minutes fails.'''
         try:
             lesson = Lesson.objects.create(
                 subject=self.subject,
                 type=Lesson.Type.SEMINAR,
-                start_time=now() + timedelta(days=1),
+                start_time=self.START_TIME,
                 duration=Lesson.MIN_DURATION - timedelta(seconds=1)
             )
-            self.fail("ValidationError was not raised for minimum duration not met")
+            self.fail('ValidationError was not raised for minimum duration not met')
         except ValidationError as e:
             error_codes = [err.code for err in e.error_dict.get('duration', [])]
             self.assertIn('min_duration_not_met', error_codes)
 
 
     def test_maximum_lesson_duration(self):
-        '''Test that creating lesson longer than 8 hours fails.'''
+        '''Test creating lesson longer than 8 hours fails.'''
         try:
             lesson = Lesson.objects.create(
                 subject=self.subject,
                 type=Lesson.Type.SEMINAR,
-                start_time=now() + timedelta(days=1),
+                start_time=self.START_TIME,
                 duration=Lesson.MAX_DURATION + timedelta(seconds=1)
             )
-            self.fail("ValidationError was not raised for maximum duration exceeded")
+            self.fail('ValidationError was not raised for maximum duration exceeded')
         except ValidationError as e:
             error_codes = [err.code for err in e.error_dict.get('duration', [])]
             self.assertIn('max_duration_exceeded', error_codes)
 
 
     def test_lesson_str_method(self):
-        '''Test the __str__ method of Subject.'''
+        '''Test the __str__ method of Lesson.'''
         lesson = Lesson.objects.create(
             subject=self.subject,
             type=Lesson.Type.SELF_STUDY,
-            start_time=now() + timedelta(days=1, hours=2)
+            start_time=self.START_TIME
         )
         self.assertIn(self.subject.name, str(lesson))
-        self.assertIn("self-study", str(lesson).lower())
+        self.assertIn('self-study', str(lesson).lower())

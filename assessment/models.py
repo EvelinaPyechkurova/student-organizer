@@ -48,12 +48,15 @@ class Assessment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    objects = AssessmentManager()
 
     def clean(self):
         super().clean()
 
+        errors = {}
+
         if self.lesson and self.subject and self.subject != self.lesson.subject:
-            raise ValidationError(
+            errors['__all__'] = ValidationError(
                 message=(
                     f'The selected lesson belongs to "{self.lesson.subject}" '
                     f'but this assessment is for "{self.subject}". '
@@ -64,41 +67,58 @@ class Assessment(models.Model):
                 code='subject_mismatch'
             )
 
+        
+        if self.lesson and self.start_time and self.start_time != self.lesson.start_time:
+            errors['start_time'] = ValidationError(
+                message=(
+
+                    f'This assessment is linked to a lesson that starts at {localtime(self.lesson.start_time).strftime("%a, %b %d %Y at %H:%M")}, '
+                    f'you have chosen a different start time for the assessment ({localtime(self.start_time).strftime("%a, %b %d %Y at %H:%M")}). '
+                    'Since an assessment connected to a lesson must always use the lesson’s scheduled time, you need to either: '
+                    'remove the selected lesson if this assessment should have its own custom time, or '
+                    'remove the custom start time so the assessment automatically follows the lesson’s schedule..'
+                ),
+                code='start_time_mismatch'
+            )
+
         if not (self.lesson or self.subject):
-            raise ValidationError(
+            errors['__all__'] = ValidationError(
                 message='Assessment must have either a subject or a lesson.',
                 code='required'
             )
         
         if not (self.lesson or self.start_time):
-            raise ValidationError(
+            errors['start_time'] = ValidationError(
                 message="Start time is required if the assessment isn't linked to any lesson.",
                 code='required'
             )
         
         if self.duration and self.duration < Assessment.MIN_DURATION:
-            raise ValidationError(
+            errors['duration'] = ValidationError(
                 message=f'Assessment duration must be at least {Assessment.MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
         if self.duration and self.duration > Assessment.MAX_DURATION:
-            raise ValidationError(
+            errors['duration'] = ValidationError(
                 message=f'Assessment duration can\'t exceed {Assessment.MAX_DURATION.days} days.',
                 code='max_duration_exceeded'
             )
         
         if self.start_time and self.start_time < now():
-            raise ValidationError(
+            errors['start_time'] = ValidationError(
                 message='Assessment must start in the future.',
                 code='assessment_starts_in_past'
             )
         
         if self.lesson and self.lesson.start_time < now():
-            raise ValidationError(
+            errors['lesson'] = ValidationError(
                 message='Assessment can\'t be attached to lesson starting in the past.',
                 code='assessment_starts_in_past'
             )
+        
+        if errors:
+            raise ValidationError(errors)
             
 
     def save(self, *args, **kwargs):
