@@ -7,6 +7,19 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
+class AssessmentManager(models.Manager):
+    
+    def create(self, **kwargs):
+        obj = self.model(**kwargs)
+        obj.save()
+        return obj
+
+    def bulk_create(self, objs, **kwargs):
+        for obj in objs:
+            obj.full_clean()
+        return super().bulk_create(objs, **kwargs)
+
+
 class Assessment(models.Model):
 
     class Meta:

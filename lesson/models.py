@@ -41,7 +41,8 @@ class Lesson(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
-    
+    objects = LessonManager()
+
     def clean(self):
         super().clean()
 
@@ -55,11 +56,11 @@ class Lesson(models.Model):
         
         if self.duration > self.MAX_DURATION:
             errors['duration'] =  ValidationError(
-                message=f'Lesson duration can\'t exceed {Lesson.MAX_DURATION.seconds // 3600} hourse.',
+                message=f'Lesson duration can\'t exceed {Lesson.MAX_DURATION.seconds // 3600} hours.',
                 code='max_duration_exceeded'
             )
         
-        if self.start_time < now():
+        if self.start_time and self.start_time < now():
             errors['start_time'] =  ValidationError(
                 message='Lesson must start in the future.',
                 code='lesson_starts_in_past'

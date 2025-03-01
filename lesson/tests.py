@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.test import TestCase
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
@@ -11,12 +11,12 @@ from .models import Lesson
 
 class LessontModelTests(TestCase):
 
+    SUBJECT_NAME = 'The History of Ukrainian Cybernetics'
     DEFAULT_DURATION = timedelta(minutes=90) # replace with standard for user
     START_TIME = now() + timedelta(minutes=1)
-    SUBJECT_NAME = 'The History of Ukrainian Cybernetics'
 
     def setUp(self):
-        '''Create a test Subject for Lesson model.'''
+        '''Create a test subject for Lesson model.'''
         self.user = User.objects.create_user(username='testuser')
         self.subject = Subject.objects.create(user=self.user, name=self.SUBJECT_NAME)
 
@@ -31,6 +31,46 @@ class LessontModelTests(TestCase):
         self.assertEqual(lesson.type, Lesson.Type.LECTURE)
         self.assertEqual(lesson.start_time, self.START_TIME)
         self.assertEqual(lesson.duration, self.DEFAULT_DURATION)
+
+    
+    def test_type_must_be_one_character(self):
+        '''Test creating lesson with type field containing more than one character fails.'''
+        try:
+            lesson = Lesson.objects.create(
+                subject=self.subject,
+                type="INVALID",
+                start_time=now() + timedelta(days=1)
+            )
+            self.fail("ValidationError was not raised for type field length constraint")
+        except ValidationError as e:
+            self.assertIn('type', e.error_dict)
+
+
+    def test_invalid_type_choice(self):
+        '''Test creating lesson with type field containing invalid type choice fails.'''
+        try:
+            lesson = Lesson(
+                subject=self.subject,
+                type="X",
+                start_time=now() + timedelta(days=1)
+            )
+            lesson.full_clean()
+            self.fail("ValidationError was not raised for invalid type choice")
+        except ValidationError as e:
+            self.assertIn('type', e.error_dict)
+
+
+    def test_start_time_cannot_be_blank(self):
+        '''Test creating lesson without start_time fails.'''
+        try:
+            lesson = Lesson.objects.create(
+                subject=self.subject,
+                )
+            self.fail("TypeError was not raised for missing start_time")
+        except TypeError:
+            pass
+        except ValidationError as e:
+            self.assertIn('start_time', e.error_dict)
 
 
     def test_lesson_start_time_in_past(self):
