@@ -17,7 +17,7 @@ class AssessmentModelTests(TestCase):
     DEFAULT_DURATION = timedelta(minutes=90)
 
     def setUp(self):
-        '''Create a test subject and lesson for Assessment model.'''
+        '''Create a test user, subject and lesson for Assessment model.'''
         self.user = User.objects.create_user(username='testuser')
         self.subject = Subject.objects.create(user=self.user, name=self.SUBJECT_NAME)
         self.lesson = Lesson.objects.create(

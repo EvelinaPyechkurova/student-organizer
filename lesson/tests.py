@@ -16,7 +16,7 @@ class LessontModelTests(TestCase):
     START_TIME = now() + timedelta(minutes=1)
 
     def setUp(self):
-        '''Create a test subject for Lesson model.'''
+        '''Create a test user and subject for Lesson model.'''
         self.user = User.objects.create_user(username='testuser')
         self.subject = Subject.objects.create(user=self.user, name=self.SUBJECT_NAME)
 
