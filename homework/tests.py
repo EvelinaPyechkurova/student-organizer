@@ -179,7 +179,7 @@ class HomeworkModelTests(TestCase):
         try:
             homework = Homework.objects.create(
                 subject=self.subject,
-                due_at=now() - timedelta(days=30),
+                due_at=now() - timedelta(days=31),
                 task='Some task'
             )
             self.fail('ValidationError was not raised for homework with due_at more than 1 month in the past.')
