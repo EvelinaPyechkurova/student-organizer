@@ -168,7 +168,7 @@ class HomeworkModelTests(TestCase):
                 due_at=now() + (Homework.MAX_TIMEFRAME + timedelta(days=1)),
                 task='Some task'
             )
-            self.fail('ValidationError was not raised for homework with due_at more than 1 year in the future.')
+            self.fail('ValidationError was not raised for homework with due_at more than {Homework.MAX_TIMEFRAME.days} days in the future.')
         except ValidationError as e:
             error_codes = [err.code for err in e.error_dict.get('due_at', [])]
             self.assertIn('future_limit_exceeded', error_codes)
@@ -188,3 +188,127 @@ class HomeworkModelTests(TestCase):
             self.assertIn('past_due_date', error_codes)
 
 
+    def test_lesson_due_cannot_be_more_than_1_year_ahead(self):
+        try:
+            future_lesson = Lesson(
+                subject=self.subject,
+                start_time=now() + (Homework.MAX_TIMEFRAME + timedelta(days=1))
+            )
+            homework = Homework.objects.create(
+                lesson_due=future_lesson,
+                task='Some task',
+            )
+            self.fail('ValidationError was not raised for homework with lesson_due more than {Homework.MAX_TIMEFRAME.days} days in the future.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('lesson_due', [])]
+            self.assertIn('future_limit_exceeded', error_codes)
+
+
+    def test_lesson_due_cannot_be_more_than_1_month_in_the_past(self):
+        try:
+            old_lesson = Lesson(
+                subject=self.subject,
+                start_time=now() - timedelta(days=31)
+            )
+            homework = Homework.objects.create(
+                lesson_due=old_lesson,
+                task='Some task',
+            )
+            self.fail('ValidationError was not raised for homework with lesson_due more than one month in the past.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('lesson_due', [])]
+            self.assertIn('past_due_date', error_codes)
+
+
+
+    def test_start_time_must_be_before_due_at(self):
+        '''Test creating homework with start_time not earlier than due_at fails.'''
+        try:
+            Homework.objects.create(
+                subject=self.subject,
+                start_time=now() + timedelta(days=5),
+                due_at=now() + timedelta(days=3),
+                task='Some task'
+            )
+            self.fail('ValidationError was not raised for homework with start_time after due_at.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('due_at', [])]
+            self.assertIn('invalid_start_order', error_codes)
+
+
+    def test_start_time_must_be_before_lesson_due(self):
+        '''Test creating homework with start_time not earlier than lesson_due start fails.'''
+        try:
+            Homework.objects.create(
+                subject=self.subject,
+                start_time=now() + timedelta(days=5),
+                lesson_due=Lesson(
+                    subject=self.subject,
+                    start_time=now() + timedelta(days=3),
+                ),
+                task='Some task'
+            )
+            self.fail('ValidationError was not raised for homework with start_time after due_at.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('lesson_due', [])]
+            self.assertIn('invalid_start_order', error_codes)
+
+
+    def test_lesson_given_start_time_must_be_before_due_at(self):
+        '''Test creating homework with lesson_given start_time not earlier than due_at fails.'''
+        try:
+            Homework.objects.create(
+                lesson_given=self.lesson_due,
+                due_at=now() - timedelta(days=2),
+                task='Some task'
+            )
+            self.fail('ValidationError was not raised for homework with lesson_given start_time after due_at.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('due_at', [])]
+            self.assertIn('invalid_start_order', error_codes)
+
+
+    def test_lesson_given_start_time_must_be_before_lesson_due(self):
+        '''Test creating homework with lesson_given start_time not earlier than lesson_due fails.'''
+        try:
+            Homework.objects.create(
+                lesson_given=self.lesson_due,
+                lesson_due=Lesson(
+                    subject=self.subject,
+                    start_time=now() - timedelta(days=2)
+                ),
+                task='Some task'
+            )
+            self.fail('ValidationError was not raised for lesson_given start_time after due_at.')
+        except ValidationError as e:
+            error_codes = [err.code for err in e.error_dict.get('lesson_due', [])]
+            self.assertIn('invalid_start_order', error_codes)
+
+
+    def test_completion_percentage_validation(self):
+        '''Test creating homework completion percentage not in [0, 100] fails.'''
+        for invalid_value in [-10, 110]:
+            try:
+                Homework.objects.create(
+                    subject=self.subject,
+                    task='Some task',
+                    completion_percent=invalid_value
+                )
+                self.fail(f'ValidationError was not raised for homework with invalid completion percentage: {invalid_value}')
+            except ValidationError as e:
+                error_codes = [err.code for err in e.error_dict.get('completion_percent', [])]
+                self.assertIn('invalid_completion_percent', error_codes)
+
+    
+    def test_task_max_length(self):
+        '''Test creating homework with task exciding max allowed length fails'''
+        long_task = 'A' * (Homework.MAX_TASK_LENGTH + 1)
+        try:
+            homework = Homework.objects.create(
+                subject=self.subject,
+                lesson_due=self.lesson_due,
+                task=long_task
+            )
+            self.fail('ValidationError was not raised when creating homework with task exciding max allowed length')
+        except ValidationError as e:
+            self.assertIn('task', e.error_dict)

@@ -208,7 +208,7 @@ class AssessmentModelTests(TestCase):
             self.fail('ValidationError raised incorrectly for assessment longer than lesson duration.')
 
 
-    def test_lesson_str_method(self):
+    def test_assessment_str_method(self):
         '''Test the __str__ method of Assessment.'''
         assessment = Assessment.objects.create(
             subject=self.subject,
