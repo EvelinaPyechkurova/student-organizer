@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from .models import Subject
 
 class SubjectListView(ListView):
@@ -11,3 +11,6 @@ class SubjectListView(ListView):
     #     '''
     #     return Subject.objects.filter(user=self.request.user)
     
+
+class SubjectDetailView(DetailView):
+    model = Subject
