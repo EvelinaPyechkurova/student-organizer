@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport", content="width=device-width, initial-scale=1.0">
+    <title>Assessments</title>
+</head>
+<body>
+    <ul>
+        {% for assessment in user_assessments %}
+            <li>
+                {{ assessment }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
