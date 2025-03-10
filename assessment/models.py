@@ -135,10 +135,6 @@ class Assessment(models.Model):
 
 
     def __str__(self):
-        if self.lesson:
-            return f'{self.lesson.subject} {self.get_type_display().lower()} on {localtime(self.lesson.start_time).strftime("%a, %b %d %Y at %H:%M")}'
-        elif self.subject:
-            return f'{self.subject} {self.get_type_display().lower()} on {localtime(self.start_time).strftime("%a, %b %d %Y at %H:%M")}'
-        else:
-            return 'Invalid assessment (missing subject and lesson)'
+        source = self.lesson or self
+        return f'{source.subject} {self.get_type_display().lower()} on {localtime(source.start_time).strftime('%a, %b %d %Y at %H:%M')}'
         

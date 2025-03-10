@@ -269,3 +269,12 @@ class Homework(models.Model):
             self.due_at = None
 
         super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        source = self.lesson_given or self.lesson_due or self
+        subject = source.subject
+
+        date = self.due_at or self.lesson_due.start_time
+ 
+        return f'{subject} homework: {self.task[0].lower()}{self.task[1:50]}... (Due: {localtime(date).strftime('%a, %b %d %Y at %H:%M')})'

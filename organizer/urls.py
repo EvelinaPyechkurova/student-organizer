@@ -7,5 +7,5 @@ urlpatterns = [
     path('subjects/', include('subject.urls')),
     path('lessons/', include('lesson.urls')),
     path('assessments/', include('assessment.urls')),
-    path('homeworks/', include('homework.urls')),
+    path('homework/', include('homework.urls')),
 ]

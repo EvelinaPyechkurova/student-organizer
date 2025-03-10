@@ -76,4 +76,4 @@ class Lesson(models.Model):
 
 
     def __str__(self):
-        return f'{self.subject} {self.get_type_display().lower()} on {localtime(self.start_time).strftime("%a, %b %d %Y at %H:%M")}'
+        return f'{self.subject} {self.get_type_display().lower()} on {localtime(self.start_time).strftime('%a, %b %d %Y at %H:%M')}'
