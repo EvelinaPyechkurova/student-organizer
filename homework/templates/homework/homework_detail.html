@@ -2,14 +2,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Homework</title>
+    <title>{{ homework }}</title>
 </head>
 <body>
-    <ul>
-        {% for homework in user_homework %}
-            <li>
-                {{ homework }}
-            </li>
-        {% endfor %}
-    </ul>
+    <h2>Homework</h2>
+
+    {% with source=homework.lesson_given|default:homework.lesson_due|default:homework %}
+        <p>Subject: {{ source.subject }}</p>
+    {% endwith %}
+
+    {% if homework.lesson_given %}
+        <p>Lesson given: {{ homework.lesson_given }}</p>
+    {% endif %}
+
+    {% if homework.lesson_due %}
+        <p>Lesson due: {{ homework.lesson_due }}</p>
+    {% endif %}
+
+    {% comment %} {% with start_time=homework.start_time|default:homework.lesson_given.start_time %}
+        <p>Start time: {{ start_time }}</p>
+    {% endwith %}
+
+    {% with source=homework.due_at|default:homework.lesson_due.start_time %}
+        <p>Due at: {{ homework.due_at }}</p>
+    {% endwith %} {% endcomment %}
+
+    <p>Task: {{ homework.task }}</p>
+
+    <p>Completion percent: {{ homework.completion_percent }}</p>
+    {% if homework.lesson_given %}
+        <p>Lesson given: {{ homework.lesson_given }}</p>
+    {% endif %}
+
+    <p>Created at: {{ homework.created_at }}</p>
+    <p>Last modified: {{ homework.last_modified }}</p>
 </body>
