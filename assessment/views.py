@@ -18,3 +18,9 @@ class AssessmentListView(ListView):
         
 class AssessmentDetailView(DetailView):
     model = Assessment
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assessment = self.get_object()
+        context['source'] = assessment.lesson or assessment
+        return context

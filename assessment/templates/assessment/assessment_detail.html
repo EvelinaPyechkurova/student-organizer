@@ -5,23 +5,21 @@
     <title>Assessments</title>
 </head>
 <body>
-   
-    {% with source=assessment.lesson|default:assessment %}
-        <h2>{{ source.subject }} assessment</h2>
-        {% if assessment.lesson %}
-            <p>Attached to lesson {{ assessment.lesson }}</p>
-        {% endif %}
+    
+    <h2>{{ source.subject }} assessment</h2>
+    {% if assessment.lesson %}
+        <p>Attached to lesson {{ assessment.lesson }}</p>
+    {% endif %}
 
-        <p>Type: {{ assessment.get_type_display|lower }}</p>
-        <p>Start time: {{ source.start_time }}</p>
-        <p>Duration: {{ assessment.duration }}</p>
+    <p>Type: {{ assessment.get_type_display|lower }}</p>
+    <p>Start time: {{ source.start_time }}</p>
+    <p>Duration: {{ assessment.duration }}</p>
 
-        {% if assessment.description %}
-            <p>Description: {{ assessment.description }}</p>
-        {% endif %}
+    {% if assessment.description %}
+        <p>Description: {{ assessment.description }}</p>
+    {% endif %}
 
-        <p>Created at: {{ assessment.created_at }}</p>
-        <p>Last modified: {{ assessment.last_modified }}</p>
-    {% endwith %}
+    <p>Created at: {{ assessment.created_at }}</p>
+    <p>Last modified: {{ assessment.last_modified }}</p>
 
 </body>

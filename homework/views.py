@@ -19,3 +19,13 @@ class HomeworkListView(ListView):
 
 class HomeworkDetailView(DetailView):
     model = Homework
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        homework = self.get_object()
+
+        context['source'] = homework.lesson_given or homework.lesson_due or homework
+        context['start_time'] = homework.start_time or homework.lesson_given.start_time
+        context['due_at'] = homework.due_at or homework.lesson_given.start_time
+
+        return context
