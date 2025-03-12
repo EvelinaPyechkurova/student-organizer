@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ subject }}</title>
-</head>
-<body>
+{% extends "base/base_detail.html" %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block detail_content %}
     <h2>{{ subject }}</h2>
     <ul>
-        <p>User: {{ subject.user }}</p>
-        <p>Created at: {{ subject.created_at }}</p>
-        <p>Last modified: {{ subject.last_modified }}</p>
+        <li>User: {{ subject.user }}</li>
+        <li>Created at: {{ subject.created_at }}</li>
+        <li>Last modified: {{ subject.last_modified }}</li>
     </ul>
-</body>
+{% endblock detail_content %}

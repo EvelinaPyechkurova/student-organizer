@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subjects</title>
-</head>
-<body>
-    <h2>Subjects</h2>
+{% extends "base/base_list.html" %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block list_content %}
+    <h2>Subject</h2>
     <ul>
         {% for subject in user_subjects %}
-            <li>{{ subject }}</li>
+            <li><a href="{% url "subject_details" pk=subject.id %}">{{ subject }}</a></li>
         {% endfor %}
     </ul>
-</body>
+{% endblock list_content %}

@@ -4,6 +4,12 @@ from .models import Subject
 class SubjectListView(ListView):
     model = Subject
     context_object_name = 'user_subjects'
+    # paginate_by = 2
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        return context
 
     def get_queryset(self):
         '''
