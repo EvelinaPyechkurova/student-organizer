@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Homework</title>
-</head>
-<body>
+{% extends "base/base_list.html" %}
+
+{% block title %}Homework{% endblock %}
+
+{% block list_content %}
+    <h2>Homework</h2>
     <ul>
         {% for homework in user_homework %}
-            <li>
-                {{ homework }}
-            </li>
+            <li><a href="{% url "homework_detail" pk=homework.id %}">{{ homework }}</a></li>
         {% endfor %}
     </ul>
-</body>
+{% endblock list_content %}

@@ -6,7 +6,7 @@
     <h2>Lessons</h2>
     <ul>
         {% for lesson in user_lessons %}
-            <li><a href="{% url "lesson_details" pk=lesson.id %}">{{ lesson }}</a></li>
+            <li><a href="{% url "lesson_detail" pk=lesson.id %}">{{ lesson }}</a></li>
         {% endfor %}
     </ul>
 {% endblock list_content %}

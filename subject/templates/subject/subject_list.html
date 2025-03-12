@@ -6,7 +6,7 @@
     <h2>Subject</h2>
     <ul>
         {% for subject in user_subjects %}
-            <li><a href="{% url "subject_details" pk=subject.id %}">{{ subject }}</a></li>
+            <li><a href="{% url "subject_detail" pk=subject.id %}">{{ subject }}</a></li>
         {% endfor %}
     </ul>
 {% endblock list_content %}

@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>{{ homework }}</title>
-</head>
-<body>
-    <h2>Homework</h2>
+{% extends "base/base_detail.html" %}
 
+{% block title %}{{ homework }}{% endblock %}
+
+{% block detail_content %}
+
+    <h2>Homework</h2>
     <p>Subject: {{ source.subject }}</p>
 
     {% if homework.lesson_given %}
@@ -21,9 +19,9 @@
     <p>Due at: {{ due_at }}</p>
 
     <p>Task: {{ homework.task }}</p>
-
     <p>Completion percent: {{ homework.completion_percent }}</p>
 
     <p>Created at: {{ homework.created_at }}</p>
     <p>Last modified: {{ homework.last_modified }}</p>
-</body>
+    
+{% endblock detail_content %}
