@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>{{ lesson }}</title>
-</head>
-<body>
-    <h2>{{ lesson.subject }} lesson</h2>
+{% extends "base/base_detail.html" %}
+
+{% block title %}{{ lesson }}{% endblock %}
+    
+{% block detail_content %}
+    <h2>{{ lesson.subject }}</h2>
     <p>Type: {{ lesson.get_type_display|lower }}</p>
     <p>Start time: {{ lesson.start_time }}</p>
     <p>Duration: {{ lesson.duration }}</p>
     <p>Created at: {{ lesson.created_at }}</p>
     <p>Last modified: {{ lesson.last_modified }}</p>
-</body>
+{% endblock detail_content %}

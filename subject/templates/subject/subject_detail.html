@@ -4,9 +4,7 @@
 
 {% block detail_content %}
     <h2>{{ subject }}</h2>
-    <ul>
-        <li>User: {{ subject.user }}</li>
-        <li>Created at: {{ subject.created_at }}</li>
-        <li>Last modified: {{ subject.last_modified }}</li>
-    </ul>
+    <p>User: {{ subject.user }}</p>
+    <p>Created at: {{ subject.created_at }}</p>
+    <p>Last modified: {{ subject.last_modified }}</p>
 {% endblock detail_content %}

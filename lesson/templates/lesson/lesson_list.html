@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Lessons</title>
-</head>
-<body>
+{% extends "base/base_list.html" %}
+
+{% block title %}Lessons{% endblock %}
+
+{% block list_content %}
     <h2>Lessons</h2>
     <ul>
         {% for lesson in user_lessons %}
-            <li>{{ lesson }}</li>
+            <li><a href="{% url "lesson_details" pk=lesson.id %}">{{ lesson }}</a></li>
         {% endfor %}
     </ul>
-</body>
+{% endblock list_content %}
+    
