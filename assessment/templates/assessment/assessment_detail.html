@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Assessments</title>
-</head>
-<body>
-    
+{% extends "base/base_detail.html" %}
+
+{% block title %}{{ assessment }}{% endblock %}
+
+{% block detail_content %}
+
     <h2>{{ source.subject }} assessment</h2>
+
     {% if assessment.lesson %}
         <p>Attached to lesson {{ assessment.lesson }}</p>
     {% endif %}
@@ -22,4 +21,4 @@
     <p>Created at: {{ assessment.created_at }}</p>
     <p>Last modified: {{ assessment.last_modified }}</p>
 
-</body>
+{% endblock detail_content %}

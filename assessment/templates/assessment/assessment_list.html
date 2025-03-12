@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Assessments</title>
-</head>
-<body>
+{% extends "base/base_list.html" %}
+
+{% block title %}Assessments{% endblock %}
+
+{% block list_content %}
     <ul>
         {% for assessment in user_assessments %}
-            <li>
-                {{ assessment }}
-            </li>
+            <li><a href="{% url "assessment_detail" pk=assessment.id %}">{{ assessment }}</a></li>
         {% endfor %}
     </ul>
-</body>
+{% endblock list_content %}
+
