@@ -4,7 +4,7 @@ from .models import Subject
 class SubjectListView(ListView):
     model = Subject
     context_object_name = 'user_subjects'
-    # paginate_by = 2
+    paginate_by = 1
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -20,8 +20,8 @@ class SubjectListView(ListView):
         queryset = Subject.objects.all()
 
         name_filter = self.request.GET.get('name')
-        print(self.request)
-        print(self.request.GET)
+        # print(self.request)
+        # print(self.request.GET)
         if name_filter:
             queryset = queryset.filter(name__icontains=name_filter)
 

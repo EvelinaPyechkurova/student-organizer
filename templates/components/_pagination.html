@@ -1,3 +1,27 @@
 <div class="pagination">
-    <h3>pagination</h3>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"><-</a>
+        <a href="?page=1">1</a>
+        {% if page_obj.number > 2 %}
+            {% if page_obj.number > 3 %}
+                ...
+            {% endif %}
+            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+    <span class="currect">
+        {{ page_obj.number }}
+    </span>
+    {% if page_obj.has_next %}
+        {% if page_obj.number|add:"1" < page_obj.paginator.num_pages %}
+            <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% endif %}
+
+        {% if page_obj.number|add:"2" < page_obj.paginator.num_pages %}
+            ...
+        {% endif %}
+        
+        <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        <a href="?page={{ page_obj.next_page_number }}">-></a>
+    {% endif %}
 </div>
