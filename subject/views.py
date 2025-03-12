@@ -14,14 +14,13 @@ class SubjectListView(ListView):
     def get_queryset(self):
         '''
         Return subjects of the user sending request
-        filtered by name if provided in the query params.
+        filtered and sorted if provided in the query params.
         '''
         # queryset = Subject.objects.filter(user=self.request.user)
         queryset = Subject.objects.all()
 
         name_filter = self.request.GET.get('name')
-        # print(self.request)
-        # print(self.request.GET)
+
         if name_filter:
             queryset = queryset.filter(name__icontains=name_filter)
 
