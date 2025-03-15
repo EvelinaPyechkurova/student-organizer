@@ -6,14 +6,18 @@ class AssessmentListView(ListView):
     model = Assessment
     context_object_name = 'user_assessments'
 
-    # def get_queryset(self):
-    #     '''
-    #     Return assessments of the user sending requests
-    #     '''
-    #     user = self.request.user
-    #     return Assessment.objects.filter(
-    #         Q(subject__user=user) | Q(lesson__subject__user=user)
-    #     )
+    def get_queryset(self):
+        '''
+        Return assessments of the user sending requests
+        '''
+        # user = self.request.user
+        # return Assessment.objects.filter(
+        #     Q(subject__user=user) | Q(lesson__subject__user=user)
+        # )
+
+        queryset = Assessment.objects.all()
+
+        return queryset
 
         
 class AssessmentDetailView(DetailView):
