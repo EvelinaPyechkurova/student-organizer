@@ -5,7 +5,7 @@
 {% block detail_content %}
 
     <h2>Homework</h2>
-    <p>Subject: {{ source.subject }}</p>
+    <p>Subject: {{ derived_subject }}</p>
 
     {% if homework.lesson_given %}
         <p>Lesson given: {{ homework.lesson_given }}</p>
@@ -15,8 +15,8 @@
         <p>Lesson due: {{ homework.lesson_due }}</p>
     {% endif %}
 
-    <p>Start time: {{ start_time }}</p>
-    <p>Due at: {{ due_at }}</p>
+    <p>Start time: {{ derived_start_time }}</p>
+    <p>Due at: {{ derived_due_at }}</p>
 
     <p>Task: {{ homework.task }}</p>
     <p>Completion percent: {{ homework.completion_percent }}</p>

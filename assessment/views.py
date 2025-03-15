@@ -23,9 +23,7 @@ class AssessmentListView(ListView):
         Return assessments of the user sending requests
         '''
         # user = self.request.user
-        # return Assessment.objects.filter(
-        #     Q(subject__user=user) | Q(lesson__subject__user=user)
-        # )
+        # return Assessment.objects.filter(derived_subject__user=user)
 
         queryset = Assessment.objects.with_derived_fields()
 
