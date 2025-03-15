@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.db import models
+from django.db.models.functions import Coalesce
 from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
 
@@ -18,6 +19,12 @@ class AssessmentManager(models.Manager):
         for obj in objs:
             obj.full_clean()
         return super().bulk_create(objs, **kwargs)
+    
+    def with_derived_fields(self):
+        return self.annotate(
+            derived_subject=Coalesce('subject', 'lesson__subject'),
+            derived_start_time=Coalesce('start_time', 'lesson__start_time'),
+        )
 
 
 class Assessment(models.Model):
