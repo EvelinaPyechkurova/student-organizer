@@ -6,7 +6,10 @@ from .models import Assessment
 
 VALID_FILTERS = {
     'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
-    'sort_by': ['start_time', '-start_time', 'created_at', '-created_at'],
+    'sort_by': {
+        'start_time': 'derived_start_time', '-start_time': '-derived_start_time', 
+        'created_at': 'created_at', '-created_at': '-created_at'
+    },
 }
 
 
@@ -48,6 +51,10 @@ class AssessmentListView(ListView):
                     filter_param=start_time_filter,
                     date_field='derived_start_time'
                 )
+
+        default_sort_param = 'derived_start_time'
+        sort_param = self.request.GET.get('sort_by')
+        queryset = queryset.order_by(VALID_FILTERS['sort_by'].get(sort_param, default_sort_param))
 
         return queryset
 
