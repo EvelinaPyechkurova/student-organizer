@@ -66,3 +66,12 @@ class AssessmentListView(ListView):
 
 class AssessmentDetailView(DetailView):
     model = Assessment
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        print(context.get('assessment').derived_subject)
+        return context
+
+    def get_queryset(self):
+        return Assessment.objects.with_derived_fields()

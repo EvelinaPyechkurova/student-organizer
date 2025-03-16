@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.db import models
+from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
@@ -22,9 +23,9 @@ class AssessmentManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate(
-            derived_subject=Coalesce('subject', 'lesson__subject'),
+            derived_subject=Coalesce('subject_id', 'lesson__subject_id'),
             derived_start_time=Coalesce('start_time', 'lesson__start_time'),
-        )
+        ).select_related('subject', 'lesson')
 
 
 class Assessment(models.Model):

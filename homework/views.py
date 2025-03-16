@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 VALID_FILTERS = {
     'valid_timeframe': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
-    'completion': ['25', '50', '75', '100'],
+    'completion': ['0', '25', '50', '75', '100'],
     'sort_by': {
         'start_time': 'derived_start_time', '-start_time': '-derived_start_time',
         'due_at': 'derived_due_at', '-due_at': '-derived_due_at',

@@ -4,14 +4,14 @@
 
 {% block detail_content %}
 
-    <h2>{{ derived_subject }} assessment</h2>
+    <h2>{{ assessment.derived_subject }} assessment</h2>
 
     {% if assessment.lesson %}
         <p>Attached to lesson {{ assessment.lesson }}</p>
     {% endif %}
 
     <p>Type: {{ assessment.get_type_display|lower }}</p>
-    <p>Start time: {{ derived_start_time }}</p>
+    <p>Start time: {{ assessment.derived_start_time }}</p>
     <p>Duration: {{ assessment.duration }}</p>
 
     {% if assessment.description %}

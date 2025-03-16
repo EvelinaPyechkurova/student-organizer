@@ -6,10 +6,6 @@ class SubjectListView(ListView):
     context_object_name = 'user_subjects'
     paginate_by = 1
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(context)
-        return context
 
     def get_queryset(self):
         '''
