@@ -1,11 +1,14 @@
+from datetime import timedelta
 from django.views.generic import ListView, DetailView
-from django.db.models import Q
 from utils.filters import filter_by_timeframe
+from utils.duration import parse_duration
 from .models import Assessment
 
 
 VALID_FILTERS = {
     'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
+    'duration': [timedelta(minutes=15), timedelta(minutes=30), timedelta(minutes=45),
+                 timedelta(minutes=60), timedelta(minutes=90), timedelta(minutes=120)],
     'sort_by': {
         'start_time': 'derived_start_time', '-start_time': '-derived_start_time', 
         'created_at': 'created_at', '-created_at': '-created_at'
@@ -36,11 +39,15 @@ class AssessmentListView(ListView):
         if type_filter := self.request.GET.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        if min_duration_filter := self.request.GET.get('min_duration'):
-            queryset = queryset.filter(duration__gte=min_duration_filter)
+        if duration_filter := parse_duration(self.request.GET.get('duration')):
+            if duration_filter in VALID_FILTERS['duration']:
+                queryset = queryset.filter(duration=duration_filter)
+        else:
+            if min_duration_filter := parse_duration(self.request.GET.get('min_duration')):
+                queryset = queryset.filter(duration__gte=min_duration_filter)
 
-        if max_duration_filter := self.request.GET.get('max_duration'):
-            queryset = queryset.filter(duration__lte=max_duration_filter)
+            if max_duration_filter := parse_duration(self.request.GET.get('max_duration')):
+                queryset = queryset.filter(duration__lte=max_duration_filter)
 
         if start_time_filter := self.request.GET.get('start_time'):
             if start_time_filter in VALID_FILTERS['start_time']:
@@ -56,6 +63,6 @@ class AssessmentListView(ListView):
 
         return queryset
 
-        
+
 class AssessmentDetailView(DetailView):
     model = Assessment

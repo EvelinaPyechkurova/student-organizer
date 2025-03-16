@@ -35,7 +35,7 @@ def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
         'next_month' : lambda: (
             next_month,
             (next_month + timedelta(days=DAYS_IN_MONTH)).replace(day=1) - timedelta(days=1)
-        )
+        ),
     }
 
     start_date, end_date = time_filters[filter_param]()
