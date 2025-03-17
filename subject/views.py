@@ -1,11 +1,11 @@
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Subject
 
 class SubjectListView(ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 1
-
 
     def get_queryset(self):
         '''
@@ -31,4 +31,17 @@ class SubjectListView(ListView):
     
 
 class SubjectDetailView(DetailView):
+    model = Subject
+    fields = ['name', 'image_url']
+
+
+class SubjectCreateView(CreateView):
+    model = Subject
+
+
+class SubjectUpdateView(UpdateView):
+    model = Subject
+
+
+class SubjectDeleteView(DeleteView):
     model = Subject
