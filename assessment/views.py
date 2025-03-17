@@ -31,7 +31,7 @@ class AssessmentListView(ListView):
         queryset = Assessment.objects.with_derived_fields()
 
         if subject_filter := self.request.GET.get('subject'):
-            queryset = queryset.filter(derived_subject=subject_filter)
+            queryset = queryset.filter(derived_subject_id=subject_filter)
         
         if lesson_filter := self.request.GET.get('lesson'):
             queryset = queryset.filter(lesson=lesson_filter)

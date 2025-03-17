@@ -23,9 +23,9 @@ class AssessmentManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate(
-            derived_subject=Coalesce('subject_id', 'lesson__subject_id'),
+            derived_subject_id=Coalesce('subject', 'lesson__subject'),
             derived_start_time=Coalesce('start_time', 'lesson__start_time'),
-        ).select_related('subject', 'lesson')
+        )
 
 
 class Assessment(models.Model):
@@ -57,6 +57,13 @@ class Assessment(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     objects = AssessmentManager()
+
+    @property
+    def derived_subject(self):
+        if hasattr(self, 'derived_subject_id'):
+            return Subject.objects.get(id=self.derived_subject_id)
+        return self.subject or (self.lesson and self.lesson.subject)
+    
 
     def clean(self):
         super().clean()

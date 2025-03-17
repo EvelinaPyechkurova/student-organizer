@@ -22,7 +22,7 @@ class HomeworkManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate(
-            derived_subject=Coalesce('subject', 'lesson_given__subject', 'lesson_due__subject'),
+            derived_subject_id=Coalesce('subject', 'lesson_given__subject', 'lesson_due__subject'),
             derived_start_time=Coalesce('start_time', 'lesson_given__start_time'),
             derived_due_at=Coalesce('due_at', 'lesson_due__start_time'),
         )
@@ -49,6 +49,13 @@ class Homework(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     objects = HomeworkManager()
+
+    @property
+    def derived_subject(self):
+        if hasattr(self, 'derived_subject_id'):
+            return Subject.objects.get(id=self.derived_subject_id)
+        return self.subject or (self.lesson_given and self.lesson_given.subject) or (self.lesson_due and self.lesson_due.subject)
+
 
     def clean(self):
         super().clean()

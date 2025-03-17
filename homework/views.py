@@ -30,7 +30,7 @@ class HomeworkListView(ListView):
         queryset = Homework.objects.with_derived_fields()
 
         if subject_filter := self.request.GET.get('subject'):
-            queryset = queryset.filter(derived_subject=subject_filter)
+            queryset = queryset.filter(derived_subject_id=subject_filter)
 
         if lesson_given_filter := self.request.GET.get('lesson_given'):
             queryset = queryset.filter(lesson_given=lesson_given_filter)
@@ -77,3 +77,6 @@ class HomeworkListView(ListView):
 class HomeworkDetailView(DetailView):
     model = Homework
 
+    def get_queryset(self):
+        return Homework.objects.with_derived_fields()
+    
