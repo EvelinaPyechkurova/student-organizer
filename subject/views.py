@@ -1,11 +1,13 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from .models import Subject
+from .forms import SubjectForm
 
 class SubjectListView(ListView):
     model = Subject
     context_object_name = 'user_subjects'
-    paginate_by = 1
+    paginate_by = 20
 
     def get_queryset(self):
         '''
@@ -32,16 +34,20 @@ class SubjectListView(ListView):
 
 class SubjectDetailView(DetailView):
     model = Subject
-    fields = ['name', 'image_url']
 
 
 class SubjectCreateView(CreateView):
     model = Subject
+    form_class = SubjectForm
+    success_url = reverse_lazy('subject_list')
+    success_message = 'Subject created successfully!'
 
 
 class SubjectUpdateView(UpdateView):
     model = Subject
+    success_message = 'Subject updated successfully!'
 
 
 class SubjectDeleteView(DeleteView):
     model = Subject
+    success_message = 'Subject deleted successfully!'

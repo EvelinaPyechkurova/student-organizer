@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+    {% block form_title %}{% endblock %}
+    {% block form_content %}{% endblock %}
+
+    <div class="buttons">
+        <button type="submit">Save</button>
+        <a href={% block cancel_link %}{% endblock %}><button type="button">Cancel</button></a>
+    </div>
+
+{% endblock content %}
