@@ -1,6 +1,8 @@
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from utils.filters import filter_by_timeframe
 from .models import Lesson
+from .forms import LessonForm
 
 
 VALID_FILTERS = {
@@ -41,4 +43,17 @@ class LessonListView(ListView):
 
 
 class LessonDetailView(DetailView):
+    model = Lesson
+
+
+class LessonCreateView(CreateView):
+    model = Lesson
+    form_class = LessonForm
+
+
+class LessonUpdateView(UpdateView):
+    model = Lesson
+
+
+class LessonDeleteView(DeleteView):
     model = Lesson

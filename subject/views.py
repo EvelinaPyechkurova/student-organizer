@@ -53,7 +53,6 @@ class SubjectCreateView(CreateView):
         return form
     
 
-
 class SubjectUpdateView(UpdateView):
     model = Subject
     success_message = 'Subject updated successfully!'
