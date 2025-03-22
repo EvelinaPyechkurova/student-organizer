@@ -42,10 +42,26 @@ class SubjectCreateView(CreateView):
     success_url = reverse_lazy('subject_list')
     success_message = 'Subject created successfully!'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = reverse_lazy('subject_list')
+        return context
+    
+    def get_form(self):
+        form = super().get_form()
+        form.instance.user = self.request.user
+        return form
+    
+
 
 class SubjectUpdateView(UpdateView):
     model = Subject
     success_message = 'Subject updated successfully!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = reverse_lazy('subject_list')
+        return context
 
 
 class SubjectDeleteView(DeleteView):

@@ -2,11 +2,17 @@
 
 {% block content %}
     {% block form_title %}{% endblock %}
-    {% block form_content %}{% endblock %}
 
-    <div class="buttons">
-        <button type="submit">Save</button>
-        <a href={% block cancel_link %}{% endblock %}><button type="button">Cancel</button></a>
-    </div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% block form_content %}
+            {{ form.as_p }}
+        {% endblock %}
+
+        <div class="buttons">
+            <button type="submit">Save</button>
+            <a href="{{ cancel_link }}" class="button-link">Cancel</a>
+        </div>
+    </form>
 
 {% endblock content %}
