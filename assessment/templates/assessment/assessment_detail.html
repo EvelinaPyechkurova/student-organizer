@@ -2,6 +2,9 @@
 
 {% block title %}{{ assessment }}{% endblock %}
 
+{% block update %}{% url "assessment_update" assessment.pk %}{% endblock %}
+{% block delete %}{% url "assessment_delete" assessment.pk %}{% endblock %}
+
 {% block detail_content %}
 
     <h2>{{ assessment.derived_subject }} assessment</h2>

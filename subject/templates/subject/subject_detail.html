@@ -2,6 +2,9 @@
 
 {% block title %}{{ subject }}{% endblock %}
 
+{% block update %}{% url "subject_update" subject.pk %}{% endblock %}
+{% block delete %}{% url "subject_delete" subject.pk %}{% endblock %}
+
 {% block detail_content %}
     <h2>{{ subject }}</h2>
     <p>User: {{ subject.user }}</p>

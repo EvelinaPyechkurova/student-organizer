@@ -1,6 +1,9 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+    <div class="action-buttons">
+        <a href="{% block create_button %}{% endblock %}" >Create</a>
+    </div>
     {% block list_content %}{% endblock %}
     {% include "components/_pagination.html" %}
 {% endblock %}

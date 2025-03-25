@@ -1,5 +1,10 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+    <div class="action-buttons">
+        <a href="{% block update %}{% endblock %}" class="button-link">Update</a>
+        <a href="{% block delete %}{% endblock %}" class="button-link">Delete</a>
+    </div>
+
     {% block detail_content %}{% endblock %}
 {% endblock %}

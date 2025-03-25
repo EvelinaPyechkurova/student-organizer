@@ -2,6 +2,8 @@
 
 {% block title %}Assessments{% endblock %}
 
+{% block create_button %}{% url "assessment_create" %}{% endblock %}
+
 {% block list_content %}
     <ul>
         {% for assessment in user_assessments %}

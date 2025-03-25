@@ -1,6 +1,9 @@
 {% extends "base/base_detail.html" %}
 
 {% block title %}{{ lesson }}{% endblock %}
+
+{% block update %}{% url "lesson_update" lesson.pk %}{% endblock %}
+{% block delete %}{% url "lesson_delete" lesson.pk %}{% endblock %}
     
 {% block detail_content %}
     <h2>{{ lesson.subject }}</h2>
