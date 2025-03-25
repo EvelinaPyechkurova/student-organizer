@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
 from .models import Assessment
@@ -16,6 +17,8 @@ VALID_FILTERS = {
         'created_at': 'created_at', '-created_at': '-created_at'
     },
 }
+
+CANCEL_LINK = reverse_lazy('assessment_list')
 
 
 class AssessmentListView(ListView):
@@ -82,6 +85,14 @@ class AssessmentDetailView(DetailView):
 class AssessmentCreateView(CreateView):
     model = Assessment
     form_class = AssessmentForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = CANCEL_LINK
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
 class AssessmentUpdateView(UpdateView):

@@ -152,4 +152,3 @@ class Assessment(models.Model):
     def __str__(self):
         source = self.lesson or self
         return f'{source.subject} {self.get_type_display().lower()} on {localtime(source.start_time).strftime('%a, %b %d %Y at %H:%M')}'
-        

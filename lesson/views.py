@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
 from .models import Lesson
 from .forms import LessonForm
@@ -9,6 +10,8 @@ VALID_FILTERS = {
     'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
     'sort_by': ['start_time', '-start_time', 'created_at', '-created_at'],
 }
+
+CANCEL_LINK = reverse_lazy('lesson_list')
 
 
 class LessonListView(ListView):
@@ -49,6 +52,14 @@ class LessonDetailView(DetailView):
 class LessonCreateView(CreateView):
     model = Lesson
     form_class = LessonForm
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = CANCEL_LINK
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
 
 
 class LessonUpdateView(UpdateView):
