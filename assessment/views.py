@@ -1,8 +1,10 @@
 from datetime import timedelta
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
 from .models import Assessment
+from .forms import AssessmentForm
 
 
 VALID_FILTERS = {
@@ -75,3 +77,16 @@ class AssessmentDetailView(DetailView):
 
     def get_queryset(self):
         return Assessment.objects.with_derived_fields()
+    
+
+class AssessmentCreateView(CreateView):
+    model = Assessment
+    form_class = AssessmentForm
+
+
+class AssessmentUpdateView(UpdateView):
+    model = Assessment
+
+
+class AssessmentDeleteView(DeleteView):
+    model = Assessment
