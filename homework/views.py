@@ -1,4 +1,5 @@
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from utils.filters import filter_by_timeframe
 from .models import Homework
 from django.utils.timezone import now
@@ -80,3 +81,14 @@ class HomeworkDetailView(DetailView):
     def get_queryset(self):
         return Homework.objects.with_derived_fields()
     
+
+class HomeworkCreateView(CreateView):
+    model = Homework
+
+
+class HomeworkUpdateView(UpdateView):
+    model = Homework
+
+
+class HomeworkDeleteView(DeleteView):
+    model = Homework

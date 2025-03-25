@@ -5,6 +5,12 @@
 {% block update %}{% url "subject_update" subject.pk %}{% endblock %}
 {% block delete %}{% url "subject_delete" subject.pk %}{% endblock %}
 
+{% block contextual_actions %}
+    <a href="{% url "lesson_create" %}">Add Lesson</a>
+    <a href="{% url "assessment_create" %}">Add Assessment</a>
+    <a href="{% url "homework_create" %}">Add Homework</a>
+{% endblock %}
+
 {% block detail_content %}
     <h2>{{ subject }}</h2>
     <p>User: {{ subject.user }}</p>

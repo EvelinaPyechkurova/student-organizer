@@ -6,5 +6,9 @@
         <a href="{% block delete %}{% endblock %}" class="button-link">Delete</a>
     </div>
 
+    <div class="contextual-actions">
+        {% block contextual_actions %}{% endblock %}
+    </div>
+
     {% block detail_content %}{% endblock %}
 {% endblock %}

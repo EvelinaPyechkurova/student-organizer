@@ -1,6 +1,8 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.timezone import now
+from datetime import timedelta
 from utils.filters import filter_by_timeframe
 from .models import Lesson
 from .forms import LessonForm
@@ -47,6 +49,18 @@ class LessonListView(ListView):
 
 class LessonDetailView(DetailView):
     model = Lesson
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = self.object
+        now_time = now()
+        start_time = context['lesson'].start_time
+
+        context['can_add_assessment'] = start_time > now_time
+        context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - timedelta(days=365)
+        context['can_add_lesson_due'] = start_time < now_time and start_time > now_time - timedelta(days=365)
+        print(context)
+        return context
 
 
 class LessonCreateView(CreateView):

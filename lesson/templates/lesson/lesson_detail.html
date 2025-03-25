@@ -4,6 +4,18 @@
 
 {% block update %}{% url "lesson_update" lesson.pk %}{% endblock %}
 {% block delete %}{% url "lesson_delete" lesson.pk %}{% endblock %}
+
+{% block contextual_actions %}
+    {% if can_add_assessment %}
+        <a href="{% url "assessment_create" %}">Add Assessment</a> 
+    {% endif %}
+    {% if can_add_lesson_given %}
+        <a href="{% url "homework_create" %}">Add Homework Given</a>
+    {% endif %}
+    {% if can_add_lesson_due %}
+        <a href="{% url "homework_create" %}">Add Homework Due</a>
+    {% endif %}
+{% endblock %}
     
 {% block detail_content %}
     <h2>{{ lesson.subject }}</h2>
