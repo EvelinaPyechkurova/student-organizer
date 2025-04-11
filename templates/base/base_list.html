@@ -4,6 +4,12 @@
     <div class="action-buttons">
         <a href="{% block create_button %}{% endblock %}" >Create</a>
     </div>
-    {% block list_content %}{% endblock %}
+
+    <div class="list-content">
+        {% block list_content %}
+            <h2 class="list-items-title">{% block list_items_name %}{% endblock %}</h2>
+        {% endblock %}
+    </div>
+
     {% include "components/_pagination.html" %}
 {% endblock %}

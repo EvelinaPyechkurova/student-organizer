@@ -5,7 +5,7 @@
 {% block create_button %}{% url "lesson_create" %}{% endblock %}
 
 {% block list_content %}
-    <h2>Lessons</h2>
+    {% block list_items_name %}Lessons{% endblock %}
     <ul>
         {% for lesson in user_lessons %}
             <li><a href="{% url "lesson_detail" pk=lesson.id %}">{{ lesson }}</a></li>

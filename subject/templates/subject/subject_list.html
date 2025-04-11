@@ -5,7 +5,7 @@
 {% block create_button %}{% url "subject_create" %}{% endblock %}
 
 {% block list_content %}
-    <h2>Subject</h2>
+    {% block list_items_name %}Subjects{% endblock %}
     <ul>
         {% for subject in user_subjects %}
             <li><a href="{% url "subject_detail" pk=subject.id %}">{{ subject }}</a></li>

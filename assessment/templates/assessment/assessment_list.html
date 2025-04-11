@@ -5,6 +5,7 @@
 {% block create_button %}{% url "assessment_create" %}{% endblock %}
 
 {% block list_content %}
+    {% block list_items_name %}Assessments{% endblock %}
     <ul>
         {% for assessment in user_assessments %}
             <li><a href="{% url "assessment_detail" pk=assessment.id %}">{{ assessment }}</a></li>
