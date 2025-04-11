@@ -7,7 +7,7 @@ from .forms import HomeworkForm
 
 from django.utils.timezone import now
 
-from homework.models import Homework
+from lesson.models import Lesson
 
 
 VALID_FILTERS = {
@@ -93,22 +93,36 @@ class HomeworkCreateView(CreateView):
     model = Homework
     form_class = HomeworkForm
 
-    # def get_initial(self):
-    #     initial = super().get_initial()
-    #     lesson_given_id = self.request.GET.get('lesson_given')
-    #     lesson_due_id = self.request.GET.get('lesson_due')
-    #     subject_id = self.request.GET.get('subject')
+    def get_initial(self):
+        initial = super().get_initial()
+        lesson_given_id = self.request.GET.get('lesson_given')
+        lesson_due_id = self.request.GET.get('lesson_due')
+        subject_id = self.request.GET.get('subject')
 
-    #     if lesson_given_id:
-    #         try:
-    #             pass
-    #         except 
-    #     elif lesson_due_id:
-    #         pass
-    #     elif subject_id:
-    #         initial['subject'] = subject_id
+        if lesson_given_id:
+            try:
+                lesson_given = Lesson.objects.get(pk=lesson_given_id)
+                initial.update({
+                    'subject': lesson_given.subject,
+                    'lesson_given': lesson_given_id,
+                    'start_time': lesson_given.start_time,
+                })
+            except Lesson.DoesNotExist:
+                pass
+        elif lesson_due_id:
+            try:
+                lesson_due = Lesson.objects.get(pk=lesson_due_id)
+                initial.update({
+                    'subject': lesson_due.subject,
+                    'lesson_due': lesson_due_id,
+                    'due_at': lesson_due.due_at,
+                })
+            except Lesson.DoesNotExist:
+                pass
+        elif subject_id:
+            initial['subject'] = subject_id
 
-        # return initial
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
