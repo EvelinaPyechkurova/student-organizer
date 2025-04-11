@@ -7,6 +7,8 @@ from utils.duration import parse_duration
 from .models import Assessment
 from .forms import AssessmentForm
 
+from lesson.models import Lesson
+
 
 VALID_FILTERS = {
     'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
@@ -74,8 +76,6 @@ class AssessmentDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
-        print(context.get('assessment').derived_subject)
         return context
 
     def get_queryset(self):
@@ -85,6 +85,28 @@ class AssessmentDetailView(DetailView):
 class AssessmentCreateView(CreateView):
     model = Assessment
     form_class = AssessmentForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        lesson_id = self.request.GET.get('lesson')
+        subject_id = self.request.GET.get('subject')
+
+        if lesson_id:
+            try:
+                lesson = Lesson.objects.get(pk=lesson_id)
+                initial.update({
+                    'subject': lesson.subject,
+                    'lesson': lesson_id,
+                    'start_time': lesson.start_time,
+                    'duration': lesson.duration,
+                })
+            except Lesson.DoesNotExist:
+                pass
+            
+        elif subject_id:
+            initial['subject'] = subject_id
+
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

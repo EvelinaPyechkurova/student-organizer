@@ -67,6 +67,13 @@ class LessonDetailView(DetailView):
 class LessonCreateView(CreateView):
     model = Lesson
     form_class = LessonForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        subject_id = self.request.GET.get('subject')
+        if subject_id:
+            initial['subject'] = subject_id
+        return initial
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,7 +82,7 @@ class LessonCreateView(CreateView):
     
     def get_success_url(self):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
-
+    
 
 class LessonUpdateView(UpdateView):
     model = Lesson

@@ -6,9 +6,9 @@
 {% block delete %}{% url "subject_delete" subject.pk %}{% endblock %}
 
 {% block contextual_actions %}
-    <a href="{% url "lesson_create" %}">Add Lesson</a>
-    <a href="{% url "assessment_create" %}">Add Assessment</a>
-    <a href="{% url "homework_create" %}">Add Homework</a>
+    <a href="{% url "lesson_create" %}?subject={{ subject.pk }}">Add Lesson</a>
+    <a href="{% url "assessment_create" %}?subject={{ subject.pk }}">Add Assessment</a>
+    <a href="{% url "homework_create" %}?subject={{ subject.pk }}">Add Homework</a>
 {% endblock %}
 
 {% block detail_content %}

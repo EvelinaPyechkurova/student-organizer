@@ -45,15 +45,15 @@ class SubjectCreateView(CreateView):
     form_class = SubjectForm
     success_message = 'Subject created successfully!'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
-    
     def get_form(self):
         form = super().get_form()
         form.instance.user = self.request.user
         return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = CANCEL_LINK
+        return context
     
     def get_success_url(self):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
