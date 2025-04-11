@@ -10,10 +10,10 @@
         <a href="{% url "assessment_create" %}?lesson={{ lesson.pk }}">Add Assessment</a> 
     {% endif %}
     {% if can_add_lesson_given %}
-        <a href="{% url "homework_create" %}?lesson={{ lesson.pk }}">Add Homework Given</a>
+        <a href="{% url "homework_create" %}?lesson_given={{ lesson.pk }}">Add Homework Given</a>
     {% endif %}
     {% if can_add_lesson_due %}
-        <a href="{% url "homework_create" %}?lesson={{ lesson.pk }}">Add Homework Due</a>
+        <a href="{% url "homework_create" %}?lesson_due={{ lesson.pk }}">Add Homework Due</a>
     {% endif %}
 {% endblock %}
     

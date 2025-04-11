@@ -115,7 +115,7 @@ class HomeworkCreateView(CreateView):
                 initial.update({
                     'subject': lesson_due.subject,
                     'lesson_due': lesson_due_id,
-                    'due_at': lesson_due.due_at,
+                    'due_at': lesson_due.start_time,
                 })
             except Lesson.DoesNotExist:
                 pass
