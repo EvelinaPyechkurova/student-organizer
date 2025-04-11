@@ -2,12 +2,11 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from datetime import timedelta
 from utils.filters import filter_by_timeframe
 from .models import Lesson
 from .forms import LessonForm
 
-from organizer.constants import MAX_TIMEFRAME
+from utils.constants import MAX_TIMEFRAME
 
 
 VALID_FILTERS = {
@@ -86,7 +85,7 @@ class LessonCreateView(CreateView):
 
 class LessonUpdateView(UpdateView):
     model = Lesson
-
+ 
 
 class LessonDeleteView(DeleteView):
     model = Lesson

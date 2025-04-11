@@ -1,8 +1,13 @@
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
 from .models import Homework
+from .forms import HomeworkForm
+
 from django.utils.timezone import now
+
+from homework.models import Homework
 
 
 VALID_FILTERS = {
@@ -15,6 +20,8 @@ VALID_FILTERS = {
         'created_at': 'created_at', '-created_at': '-created_at'
     },
 }
+
+CANCEL_LINK = reverse_lazy('homework_list')
 
 
 class HomeworkListView(ListView):
@@ -80,10 +87,37 @@ class HomeworkDetailView(DetailView):
 
     def get_queryset(self):
         return Homework.objects.with_derived_fields()
-    
+
 
 class HomeworkCreateView(CreateView):
     model = Homework
+    form_class = HomeworkForm
+
+    # def get_initial(self):
+    #     initial = super().get_initial()
+    #     lesson_given_id = self.request.GET.get('lesson_given')
+    #     lesson_due_id = self.request.GET.get('lesson_due')
+    #     subject_id = self.request.GET.get('subject')
+
+    #     if lesson_given_id:
+    #         try:
+    #             pass
+    #         except 
+    #     elif lesson_due_id:
+    #         pass
+    #     elif subject_id:
+    #         initial['subject'] = subject_id
+
+        # return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = CANCEL_LINK
+        return context
+        
+    def get_success_url(self):
+        return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
+    
 
 
 class HomeworkUpdateView(UpdateView):

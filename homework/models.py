@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
-from organizer.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME
+from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME
 
 class HomeworkManager(models.Manager):
 
@@ -128,8 +128,7 @@ class Homework(models.Model):
                         second_entity='this homework',
                         second_subject=self.subject,
                         solution = (
-                            'To fix this, either '
-                            'select a lesson from the same subject as the homework, or '
+                            'either select a lesson from the same subject as the homework, or '
                             'remove either the lesson or the subject so the remaining one is used.'
                         )
                     ),  
@@ -144,8 +143,7 @@ class Homework(models.Model):
                         second_entity='this homework',
                         second_subject=self.subject,
                         solution = (
-                            'To fix this, either '
-                            'select a lesson from the same subject as the homework, or '
+                            'either select a lesson from the same subject as the homework, or '
                             'remove either the lesson or the subject so the remaining one is used.'
                         )
                     ),  
@@ -159,7 +157,7 @@ class Homework(models.Model):
                         first_subject=self.lesson_given.subject,
                         second_entity='lesson the homework is due at',
                         second_subject=self.lesson_due.subject,
-                        solution = 'To fix this, choose two lessons from the same subject.'
+                        solution = 'choose two lessons from the same subject.'
                     ),  
                     code='subject_mismatch'
                 )    

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 
-from organizer.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
+from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
 
 class LessonManager(models.Manager):
 

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
-from organizer.constants import MAX_SUBJECTS_PER_USER, MAX_SUBJECT_NAME_LENGTH
+from utils.constants import MAX_SUBJECTS_PER_USER, MAX_SUBJECT_NAME_LENGTH
 
 class SubjectManager(models.Manager):
 

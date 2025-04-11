@@ -2,8 +2,9 @@
 
 {% block title %}Homework{% endblock %}
 
+{% block create_button %}{% url "homework_create" %}{% endblock %}
+
 {% block list_content %}
-    <h2>Homework</h2>
     <ul>
         {% for homework in user_homework %}
             <li><a href="{% url "homework_detail" pk=homework.id %}">{{ homework }}</a></li>

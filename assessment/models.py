@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
-from organizer.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
+from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
 
 class AssessmentManager(models.Manager):
     
