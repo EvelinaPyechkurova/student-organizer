@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 
+from organizer.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
+
 class LessonManager(models.Manager):
 
     def create(self, **kwargs):
@@ -23,9 +25,6 @@ class Lesson(models.Model):
 
     class Meta:
         db_table = 'lesson'
-
-    MIN_DURATION = timedelta(minutes=15)
-    MAX_DURATION = timedelta(hours=8)
 
     class Type(models.TextChoices):
         LECTURE = 'L', 'Lecture'
@@ -48,15 +47,15 @@ class Lesson(models.Model):
 
         errors = {}
 
-        if self.duration < self.MIN_DURATION:
+        if self.duration < MIN_DURATION:
             errors['duration'] =  ValidationError(
-                message=f'Lesson duration must be at least {Lesson.MIN_DURATION.seconds // 60} minutes.',
+                message=f'Lesson duration must be at least {MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
-        if self.duration > self.MAX_DURATION:
+        if self.duration > MAX_DURATION:
             errors['duration'] =  ValidationError(
-                message=f'Lesson duration can\'t exceed {Lesson.MAX_DURATION.seconds // 3600} hours.',
+                message=f'Lesson duration can\'t exceed {MAX_DURATION.seconds // 3600} hours.',
                 code='max_duration_exceeded'
             )
         

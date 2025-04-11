@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
+from organizer.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME
+
 class HomeworkManager(models.Manager):
 
     def create(self, **kwargs):
@@ -32,9 +34,6 @@ class Homework(models.Model):
 
     class Meta:
         db_table = 'homework'
-
-    MAX_TIMEFRAME = timedelta(days=365)
-    MAX_TASK_LENGTH = 1000
 
         
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
@@ -174,10 +173,10 @@ class Homework(models.Model):
 
         ERROR_MESSAGE = '{entity} can\'t be set more than {days} days in the {direction}.'
 
-        max_days = Homework.MAX_TIMEFRAME.days
+        max_days = MAX_TIMEFRAME.days
 
-        past_limit = now() - Homework.MAX_TIMEFRAME
-        future_limit = now() + Homework.MAX_TIMEFRAME
+        past_limit = now() - MAX_TIMEFRAME
+        future_limit = now() + MAX_TIMEFRAME
         
 
         for field_value, field_name, label in [

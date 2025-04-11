@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
+from organizer.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
+
 class AssessmentManager(models.Manager):
     
     def create(self, **kwargs):
@@ -32,9 +34,6 @@ class Assessment(models.Model):
 
     class Meta:
         db_table = 'assessment'
-
-    MIN_DURATION = timedelta(minutes=5)
-    MAX_DURATION = timedelta(days=7)
 
     class Type(models.TextChoices):
         TEST = 'T', 'Test'
@@ -108,15 +107,15 @@ class Assessment(models.Model):
                 code='required'
             )
         
-        if self.duration and self.duration < Assessment.MIN_DURATION:
+        if self.duration and self.duration < MIN_DURATION:
             errors['duration'] = ValidationError(
-                message=f'Assessment duration must be at least {Assessment.MIN_DURATION.seconds // 60} minutes.',
+                message=f'Assessment duration must be at least {MIN_DURATION.seconds // 60} minutes.',
                 code='min_duration_not_met'
             )
         
-        if self.duration and self.duration > Assessment.MAX_DURATION:
+        if self.duration and self.duration > MAX_DURATION:
             errors['duration'] = ValidationError(
-                message=f'Assessment duration can\'t exceed {Assessment.MAX_DURATION.days} days.',
+                message=f'Assessment duration can\'t exceed {MAX_DURATION.days} days.',
                 code='max_duration_exceeded'
             )
         

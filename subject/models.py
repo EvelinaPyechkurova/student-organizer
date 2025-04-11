@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
+from organizer.constants import MAX_SUBJECTS_PER_USER, MAX_SUBJECT_NAME_LENGTH
+
 class SubjectManager(models.Manager):
 
     def create(self, **kwargs):
@@ -22,9 +24,6 @@ class Subject(models.Model):
     class Meta:
         db_table = 'subject'
 
-    MAX_SUBJECTS_PER_USER = 200
-    MAX_SUBJECT_NAME_LENGTH = 150
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False) # must not be changed since creation
     name = models.CharField(max_length=MAX_SUBJECT_NAME_LENGTH)
     image_url = models.URLField(blank=True, null=True)
@@ -38,9 +37,9 @@ class Subject(models.Model):
 
         errors = {}
 
-        if self.user.subject_set.count() >= Subject.MAX_SUBJECTS_PER_USER:
+        if self.user.subject_set.count() >= MAX_SUBJECTS_PER_USER:
             errors['user'] = ValidationError(
-                message=f'You can\'t have more that {Subject.MAX_SUBJECTS_PER_USER} subjects per user.', 
+                message=f'You can\'t have more that {MAX_SUBJECTS_PER_USER} subjects per user.', 
                 code='max_subjects_reached'
             )
         

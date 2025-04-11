@@ -7,6 +7,8 @@ from utils.filters import filter_by_timeframe
 from .models import Lesson
 from .forms import LessonForm
 
+from organizer.constants import MAX_TIMEFRAME
+
 
 VALID_FILTERS = {
     'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
@@ -52,13 +54,12 @@ class LessonDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        lesson = self.object
         now_time = now()
         start_time = context['lesson'].start_time
 
         context['can_add_assessment'] = start_time > now_time
-        context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - timedelta(days=365)
-        context['can_add_lesson_due'] = start_time < now_time and start_time > now_time - timedelta(days=365)
+        context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
+        context['can_add_lesson_due'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
         print(context)
         return context
 
