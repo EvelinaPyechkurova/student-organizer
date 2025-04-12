@@ -90,3 +90,5 @@ class LessonUpdateView(UpdateView):
 
 class LessonDeleteView(DeleteView):
     model = Lesson
+    success_message = 'Lesson deleted successfully!'
+    success_url = reverse_lazy('lesson_list')
