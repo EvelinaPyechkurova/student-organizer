@@ -145,4 +145,5 @@ class HomeworkUpdateView(UpdateView):
 
 class HomeworkDeleteView(DeleteView):
     model = Homework
+    success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('homework_list')
