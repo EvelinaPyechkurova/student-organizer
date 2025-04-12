@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from .models import Subject
 from .forms import SubjectForm
 
+from utils.mixins import ModelNameMixin
+
 
 CANCEL_LINK = reverse_lazy('subject_list')
 
@@ -36,7 +38,7 @@ class SubjectListView(ListView):
         return queryset
     
 
-class SubjectDetailView(DetailView):
+class SubjectDetailView(ModelNameMixin, DetailView):
     model = Subject
 
 

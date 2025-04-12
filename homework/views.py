@@ -2,6 +2,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
+from utils.mixins import ModelNameMixin
 from .models import Homework
 from .forms import HomeworkForm
 
@@ -82,8 +83,13 @@ class HomeworkListView(ListView):
         return queryset
     
 
-class HomeworkDetailView(DetailView):
+class HomeworkDetailView(ModelNameMixin, DetailView):
     model = Homework
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(HomeworkDetailView.mro())
+        return context
 
     def get_queryset(self):
         return Homework.objects.with_derived_fields()
@@ -133,10 +139,10 @@ class HomeworkCreateView(CreateView):
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
     
 
-
 class HomeworkUpdateView(UpdateView):
     model = Homework
 
 
 class HomeworkDeleteView(DeleteView):
     model = Homework
+    success_url = reverse_lazy('homework_list')

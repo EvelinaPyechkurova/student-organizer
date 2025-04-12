@@ -4,6 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
+from utils.mixins import ModelNameMixin
 from .models import Assessment
 from .forms import AssessmentForm
 
@@ -71,11 +72,12 @@ class AssessmentListView(ListView):
         return queryset
 
 
-class AssessmentDetailView(DetailView):
+class AssessmentDetailView(ModelNameMixin, DetailView):
     model = Assessment
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(context)
         return context
 
     def get_queryset(self):

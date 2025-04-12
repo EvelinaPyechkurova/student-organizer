@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="action-buttons">
-        <a href="{% block update %}{% endblock %}" class="button-link">Update</a>
-        <a href="{% block delete %}{% endblock %}" class="button-link">Delete</a>
+        <a href="{% url model_name|add:'_update' object.pk %}" class="button-link">Update</a>
+        <a href="{% url model_name|add:'_delete' object.pk %}" class="button-link">Delete</a>
     </div>
 
     <div class="contextual-actions">

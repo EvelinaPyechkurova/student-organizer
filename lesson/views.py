@@ -3,6 +3,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from utils.filters import filter_by_timeframe
+from utils.mixins import ModelNameMixin
 from .models import Lesson
 from .forms import LessonForm
 
@@ -48,7 +49,7 @@ class LessonListView(ListView):
         return queryset
 
 
-class LessonDetailView(DetailView):
+class LessonDetailView(ModelNameMixin, DetailView):
     model = Lesson
     
     def get_context_data(self, **kwargs):
