@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+
+{% block title %}Confirm delete{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+
+        {% block warning_message %}
+           <h2>You are going to delete {{ object }}. This action has no return. Are u sure?</h2>
+        {% endblock %}
+
+        {{ form }}
+
+        <div class="buttons">
+            <button type="submit">Confirm</button>
+            <a href="{{ cancel_link }}" class="button-link">Cancel</a>
+        </div>
+    </form>
+{% endblock content %}

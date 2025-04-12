@@ -74,3 +74,4 @@ class SubjectUpdateView(UpdateView):
 class SubjectDeleteView(DeleteView):
     model = Subject
     success_message = 'Subject deleted successfully!'
+    success_url = reverse_lazy('subject_list')
