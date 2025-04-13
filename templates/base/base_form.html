@@ -10,9 +10,9 @@
         {% endblock %}
 
         <div class="buttons">
-            <button type="">Save</button>
-            <button type="reset">Clear form</button>
-            <a href="{{ cancel_link }}" class="button-link">Cancel</a>
+            <button type="">{% block save_label %}Save{% endblock %}</button>
+            <button type="reset">{% block reset_lable %}Undo changes{% endblock %}</button>
+            <a href="{{ cancel_link }}" class="button-link">{% block cancel_label %}Cancel{% endblock %}</a>
         </div>
     </form>
 
