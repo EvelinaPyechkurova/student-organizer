@@ -4,6 +4,7 @@ from .models import Assessment
 class AssessmentBaseForm(ModelForm):
     class Meta:
         model = Assessment
+        fields = []
 
 
 class AssessmentCreateForm(AssessmentBaseForm):

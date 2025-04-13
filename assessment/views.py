@@ -79,7 +79,7 @@ class AssessmentDetailView(ModelNameMixin, DetailView):
         return Assessment.objects.with_derived_fields()
     
 
-class AssessmentCreateView(CreateView):
+class AssessmentCreateView(ModelNameMixin, CreateView):
     model = Assessment
     form_class = AssessmentCreateForm
 
@@ -114,7 +114,7 @@ class AssessmentCreateView(CreateView):
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentUpdateView(UpdateView):
+class AssessmentUpdateView(ModelNameMixin, UpdateView):
     model = Assessment
     form_class = AssessmentUpdateForm
     success_message = 'Assessment updated successfully!'

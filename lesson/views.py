@@ -64,7 +64,7 @@ class LessonDetailView(ModelNameMixin, DetailView):
         return context
 
 
-class LessonCreateView(CreateView):
+class LessonCreateView(ModelNameMixin, CreateView):
     model = Lesson
     form_class = LessonCreateForm
     success_message = 'Lesson created successfully!'
@@ -86,7 +86,7 @@ class LessonCreateView(CreateView):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
     
 
-class LessonUpdateView(UpdateView):
+class LessonUpdateView(ModelNameMixin, UpdateView):
     model = Lesson
     form_class = LessonUpdateForm
     success_message = 'Lesson updated successfully!'

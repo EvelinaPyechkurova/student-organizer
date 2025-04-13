@@ -101,7 +101,7 @@ class HomeworkDetailView(ModelNameMixin, DetailView):
         return Homework.objects.with_derived_fields()
 
 
-class HomeworkCreateView(CreateView):
+class HomeworkCreateView(ModelNameMixin, CreateView):
     model = Homework
     form_class = HomeworkForm
 
@@ -145,7 +145,7 @@ class HomeworkCreateView(CreateView):
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
     
 
-class HomeworkUpdateView(UpdateView):
+class HomeworkUpdateView(ModelNameMixin, UpdateView):
     model = Homework
 
 

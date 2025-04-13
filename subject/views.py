@@ -42,7 +42,7 @@ class SubjectDetailView(ModelNameMixin, DetailView):
     model = Subject
 
 
-class SubjectCreateView(CreateView):
+class SubjectCreateView(ModelNameMixin, CreateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject created successfully!'
@@ -62,7 +62,7 @@ class SubjectCreateView(CreateView):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
     
 
-class SubjectUpdateView(UpdateView):
+class SubjectUpdateView(ModelNameMixin, UpdateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject updated successfully!'
@@ -107,5 +107,5 @@ class SubjectDeleteView(ModelNameMixin, DeleteView):
             if value
         }:
             context['related_objects'] = related_objects
-           
+        print(context)
         return context
