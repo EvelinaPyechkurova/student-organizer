@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -46,6 +47,11 @@ class HomeworkListView(ListView):
 
         if lesson_due_filter := self.request.GET.get('lesson_due'):
             queryset = queryset.filter(lesson_due=lesson_due_filter)
+
+        if lesson_filter := self.request.GET.get('lesson'):
+            queryset = queryset.filter(
+                Q(lesson_given=lesson_filter) | Q(lesson_due=lesson_filter)
+            )
 
         if completion_filter := self.request.GET.get('completion'):
             if completion_filter in VALID_FILTERS['completion']:

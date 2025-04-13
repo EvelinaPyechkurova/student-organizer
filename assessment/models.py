@@ -1,7 +1,6 @@
 from datetime import timedelta
 
 from django.db import models
-from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
