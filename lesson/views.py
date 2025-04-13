@@ -92,3 +92,21 @@ class LessonDeleteView(ModelNameMixin, DeleteView):
     model = Lesson
     success_message = 'Lesson deleted successfully!'
     success_url = reverse_lazy('lesson_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = self.object
+
+        assessment_count = lesson.assessment_set.count()
+        homework_count = lesson.given_homework.count() + lesson.due_homework.count()
+
+        if related_objects := {
+            key: value for (key, value) in [
+                ('assessment', assessment_count),
+                ('homework', homework_count),
+            ]
+            if value
+        }:
+            context['related_objects'] = related_objects
+
+        return context
