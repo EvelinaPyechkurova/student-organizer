@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from utils.filters import filter_by_timeframe
 from utils.mixins import ModelNameMixin
 from .models import Lesson
-from .forms import LessonForm
+from .forms import LessonCreateForm, LessonUpdateForm
 
 from utils.constants import MAX_TIMEFRAME
 
@@ -66,7 +66,9 @@ class LessonDetailView(ModelNameMixin, DetailView):
 
 class LessonCreateView(CreateView):
     model = Lesson
-    form_class = LessonForm
+    form_class = LessonCreateForm
+    success_message = 'Lesson created successfully!'
+    template_name_suffix = '_form_create'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -86,6 +88,12 @@ class LessonCreateView(CreateView):
 
 class LessonUpdateView(UpdateView):
     model = Lesson
+    form_class = LessonUpdateForm
+    success_message = 'Lesson updated successfully!'
+    template_name_suffix = '_form_update'
+
+    def get_success_url(self):
+        return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
  
 
 class LessonDeleteView(ModelNameMixin, DeleteView):

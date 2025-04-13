@@ -46,7 +46,7 @@ class SubjectCreateView(CreateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject created successfully!'
-    template_name_suffix = '_create_form'
+    template_name_suffix = '_form_create'
 
     def get_form(self):
         form = super().get_form()
@@ -66,12 +66,15 @@ class SubjectUpdateView(UpdateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject updated successfully!'
-    template_name_suffix = '_update_form'
+    template_name_suffix = '_form_update'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['cancel_link'] = CANCEL_LINK
         return context
+    
+    def get_success_url(self):
+        return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
 
 
 class SubjectDeleteView(ModelNameMixin, DeleteView):
