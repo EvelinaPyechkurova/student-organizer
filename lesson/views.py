@@ -88,7 +88,7 @@ class LessonUpdateView(UpdateView):
     model = Lesson
  
 
-class LessonDeleteView(DeleteView):
+class LessonDeleteView(ModelNameMixin, DeleteView):
     model = Lesson
     success_message = 'Lesson deleted successfully!'
     success_url = reverse_lazy('lesson_list')

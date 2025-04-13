@@ -23,7 +23,7 @@ class HomeworkManager(models.Manager):
         return super().bulk_create(objs, **kwargs)
     
     def with_derived_fields(self):
-        return self.annotate(
+        return self.annotate( # TO-DO: make sure homework is deleted when its subject is deleted, no matter if they are connected directly or via lesson
             derived_subject_id=Coalesce('subject', 'lesson_given__subject', 'lesson_due__subject'),
             derived_start_time=Coalesce('start_time', 'lesson_given__start_time'),
             derived_due_at=Coalesce('due_at', 'lesson_due__start_time'),
@@ -37,8 +37,8 @@ class Homework(models.Model):
 
         
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
-    lesson_given = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name='given_homeworks')
-    lesson_due = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name='due_homeworks')
+    lesson_given = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name='given_homework')
+    lesson_due = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, related_name='due_homework')
     start_time = models.DateTimeField(blank=True, null=True)
     due_at = models.DateTimeField(blank=True, null=True)
     task = models.CharField(max_length=MAX_TASK_LENGTH)

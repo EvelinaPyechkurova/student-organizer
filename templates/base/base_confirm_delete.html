@@ -6,9 +6,32 @@
     <form action="" method="post">
         {% csrf_token %}
 
-        {% block warning_message %}
-           <h2>You are going to delete {{ object }}. This action has no return. Are u sure?</h2>
-        {% endblock %}
+        <h2>Are you sure you want to delete {{ object }}?</h2>
+
+        <p class="warning-message">
+            Said {{ model_name }} will be permanently and irreversibly removed from your organizer.
+        </p>
+
+        {% if related_objects %}
+            <div class="deletion-impact">
+                <p class="impact-message">
+                    This will also delete the following related objects
+                    <ul>
+                        {% for type, count in related_objects.items %}
+                            <li>
+                                <a href="{% url type|add:'_list' %}?{{ model_name }}={{ object.pk }}">
+                                    {% if type == "homework" %}
+                                        {{ count }} homework task{{ count|pluralize }}
+                                    {% else %}
+                                        {{ count }} {{ type|lower}}{{count|pluralize }}
+                                    {% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </p>
+            </div>
+        {% endif %}
 
         {{ form }}
 

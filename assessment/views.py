@@ -123,7 +123,7 @@ class AssessmentUpdateView(UpdateView):
     model = Assessment
 
 
-class AssessmentDeleteView(DeleteView):
+class AssessmentDeleteView(ModelNameMixin, DeleteView):
     model = Assessment
     success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('assessment_list')

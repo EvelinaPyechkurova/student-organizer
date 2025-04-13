@@ -71,7 +71,35 @@ class SubjectUpdateView(UpdateView):
         return context
 
 
-class SubjectDeleteView(DeleteView):
+class SubjectDeleteView(ModelNameMixin, DeleteView):
     model = Subject
     success_message = 'Subject deleted successfully!'
     success_url = reverse_lazy('subject_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject = self.object
+
+        lesson_count = subject.lesson_set.count()
+
+        assessment_count = sum(
+            (lesson.assessment_set.count() for lesson in subject.lesson_set.all()), 
+            subject.assessment_set.count()
+        )
+
+        homework_count = sum(
+            (lesson.given_homework.count() + lesson.due_homework.count() for lesson in subject.lesson_set.all()),
+            subject.homework_set.count()
+        )
+
+        if related_objects := {
+            key: value for (key, value) in [
+                ('lesson', lesson_count),
+                ('assessment', assessment_count),
+                ('homework', homework_count)
+            ]
+            if value
+        }:
+            context['related_objects'] = related_objects
+           
+        return context

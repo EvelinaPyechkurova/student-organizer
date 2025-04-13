@@ -38,7 +38,7 @@ class HomeworkListView(ListView):
 
         queryset = Homework.objects.with_derived_fields()
 
-        if subject_filter := self.request.GET.get('subject'):
+        if subject_filter := self.request.GET.get('subject'): # name := expr, expr is calculated at then assigned
             queryset = queryset.filter(derived_subject_id=subject_filter)
 
         if lesson_given_filter := self.request.GET.get('lesson_given'):
@@ -143,7 +143,7 @@ class HomeworkUpdateView(UpdateView):
     model = Homework
 
 
-class HomeworkDeleteView(DeleteView):
+class HomeworkDeleteView(ModelNameMixin, DeleteView):
     model = Homework
     success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('homework_list')
