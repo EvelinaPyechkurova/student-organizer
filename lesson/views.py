@@ -60,7 +60,7 @@ class LessonDetailView(ModelNameMixin, DetailView):
         context['can_add_assessment'] = start_time > now_time
         context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
         context['can_add_lesson_due'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
-        print(context)
+        
         return context
 
 

@@ -6,7 +6,7 @@ from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
 from utils.mixins import ModelNameMixin
 from .models import Assessment
-from .forms import AssessmentForm
+from .forms import AssessmentCreateForm, AssessmentUpdateForm
 
 from lesson.models import Lesson
 
@@ -75,18 +75,13 @@ class AssessmentListView(ListView):
 class AssessmentDetailView(ModelNameMixin, DetailView):
     model = Assessment
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(context)
-        return context
-
     def get_queryset(self):
         return Assessment.objects.with_derived_fields()
     
 
 class AssessmentCreateView(CreateView):
     model = Assessment
-    form_class = AssessmentForm
+    form_class = AssessmentCreateForm
 
     def get_initial(self):
         initial = super().get_initial()
@@ -121,6 +116,25 @@ class AssessmentCreateView(CreateView):
 
 class AssessmentUpdateView(UpdateView):
     model = Assessment
+    form_class = AssessmentUpdateForm
+    success_message = 'Assessment updated successfully!'
+    template_name_suffix = '_form_update'
+
+    def get_queryset(self):
+        queryset = Assessment.objects.with_derived_fields()
+        return queryset
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.object.derived_subject_id:
+            form.fields['lesson'].queryset = Lesson.objects.filter(
+                subject=self.object.derived_subject_id
+            )
+        return form
+
+
+    def get_success_url(self):
+        return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
 class AssessmentDeleteView(ModelNameMixin, DeleteView):
