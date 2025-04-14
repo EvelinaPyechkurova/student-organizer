@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
-from utils.mixins import ModelNameMixin, DerivedFieldsMixin
+from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin
 from .models import Homework
 from .forms import HomeworkCreateForm, HomeworkUpdateForm
 
@@ -93,7 +93,8 @@ class HomeworkDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
     model = Homework
 
 
-class HomeworkCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
+class HomeworkCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
+                         CreateView):
     model = Homework
     form_class = HomeworkCreateForm
     template_name_suffix = '_form_create'
@@ -129,17 +130,13 @@ class HomeworkCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
             initial['subject'] = subject_id
 
         return initial
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
         
     def get_success_url(self):
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
     
 
-class HomeworkUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
+class HomeworkUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
+                         UpdateView):
     model = Homework
     form_class = HomeworkUpdateForm
     template_name_suffix = '_form_update'
@@ -158,7 +155,8 @@ class HomeworkUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
 
 
-class HomeworkDeleteView(ModelNameMixin, DeleteView):
+class HomeworkDeleteView(CancelLinkMixin, ModelNameMixin, 
+                         DeleteView):
     model = Homework
     success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('homework_list')

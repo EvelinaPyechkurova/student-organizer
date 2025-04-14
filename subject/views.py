@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from .models import Subject
 from .forms import SubjectForm
 
-from utils.mixins import ModelNameMixin
+from utils.mixins import ModelNameMixin, CancelLinkMixin
 
 
 CANCEL_LINK = reverse_lazy('subject_list')
@@ -42,7 +42,7 @@ class SubjectDetailView(ModelNameMixin, DetailView):
     model = Subject
 
 
-class SubjectCreateView(ModelNameMixin, CreateView):
+class SubjectCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject created successfully!'
@@ -52,32 +52,22 @@ class SubjectCreateView(ModelNameMixin, CreateView):
         form = super().get_form()
         form.instance.user = self.request.user
         return form
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
     
     def get_success_url(self):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
     
 
-class SubjectUpdateView(ModelNameMixin, UpdateView):
+class SubjectUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject updated successfully!'
     template_name_suffix = '_form_update'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
     
     def get_success_url(self):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
 
 
-class SubjectDeleteView(ModelNameMixin, DeleteView):
+class SubjectDeleteView(CancelLinkMixin, ModelNameMixin, DeleteView):
     model = Subject
     success_message = 'Subject deleted successfully!'
     success_url = reverse_lazy('subject_list')
@@ -107,5 +97,5 @@ class SubjectDeleteView(ModelNameMixin, DeleteView):
             if value
         }:
             context['related_objects'] = related_objects
-        print(context)
+
         return context

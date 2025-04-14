@@ -14,4 +14,5 @@ MAX_ASSESSMENT_DURATION = timedelta(hours=8)
 
 # ---- Homework ----
 MAX_TIMEFRAME = timedelta(days=365)
+RECENT_PAST_TIMEFRAME = timedelta(days=30)
 MAX_TASK_LENGTH = 1000

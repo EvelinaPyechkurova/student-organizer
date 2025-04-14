@@ -3,11 +3,11 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from utils.filters import filter_by_timeframe
-from utils.mixins import ModelNameMixin
+from utils.mixins import ModelNameMixin, CancelLinkMixin
 from .models import Lesson
 from .forms import LessonCreateForm, LessonUpdateForm
 
-from utils.constants import MAX_TIMEFRAME
+from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 
 
 VALID_FILTERS = {
@@ -59,12 +59,12 @@ class LessonDetailView(ModelNameMixin, DetailView):
 
         context['can_add_assessment'] = start_time > now_time
         context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
-        context['can_add_lesson_due'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME
+        context['can_add_lesson_due'] = start_time < now_time + MAX_TIMEFRAME and start_time > now_time - RECENT_PAST_TIMEFRAME
         
         return context
 
 
-class LessonCreateView(ModelNameMixin, CreateView):
+class LessonCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
     model = Lesson
     form_class = LessonCreateForm
     success_message = 'Lesson created successfully!'
@@ -77,16 +77,11 @@ class LessonCreateView(ModelNameMixin, CreateView):
             initial['subject'] = subject_id
         return initial
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
-    
     def get_success_url(self):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
     
 
-class LessonUpdateView(ModelNameMixin, UpdateView):
+class LessonUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
     model = Lesson
     form_class = LessonUpdateForm
     success_message = 'Lesson updated successfully!'
@@ -96,7 +91,7 @@ class LessonUpdateView(ModelNameMixin, UpdateView):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
  
 
-class LessonDeleteView(ModelNameMixin, DeleteView):
+class LessonDeleteView(CancelLinkMixin, ModelNameMixin, DeleteView):
     model = Lesson
     success_message = 'Lesson deleted successfully!'
     success_url = reverse_lazy('lesson_list')

@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
-from utils.mixins import ModelNameMixin, DerivedFieldsMixin
+from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin
 from .models import Assessment
 from .forms import AssessmentCreateForm, AssessmentUpdateForm
 
@@ -74,7 +74,8 @@ class AssessmentDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
     model = Assessment
 
 
-class AssessmentCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
+class AssessmentCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
+                           CreateView):
     model = Assessment
     form_class = AssessmentCreateForm
     template_name_suffix = '_form_create'
@@ -109,16 +110,12 @@ class AssessmentCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
 
         return initial
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_link'] = CANCEL_LINK
-        return context
-    
     def get_success_url(self):
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
+class AssessmentUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
+                           UpdateView):
     model = Assessment
     form_class = AssessmentUpdateForm
     template_name_suffix = '_form_update'
@@ -132,12 +129,12 @@ class AssessmentUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
         )
         return form
 
-
     def get_success_url(self):
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentDeleteView(ModelNameMixin, DeleteView):
+class AssessmentDeleteView(CancelLinkMixin, ModelNameMixin,
+                           DeleteView):
     model = Assessment
     success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('assessment_list')

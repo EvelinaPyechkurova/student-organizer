@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
-from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME
+from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 
 class HomeworkManager(models.Manager):
 
@@ -206,7 +206,7 @@ class Homework(models.Model):
                     code='future_limit_exceeded'
                 )
             
-        past_due_limit = now() - timedelta(days=30)
+        past_due_limit = now() - RECENT_PAST_TIMEFRAME
 
         for field_value, field_name, label in [
             (self.due_at, 'due_at', 'Homework due date'),
