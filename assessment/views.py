@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.utils.timezone import now
 from utils.filters import filter_by_timeframe
 from utils.duration import parse_duration
 from utils.mixins import ModelNameMixin, DerivedFieldsMixin
@@ -33,10 +34,6 @@ class AssessmentListView(DerivedFieldsMixin, ListView):
         '''
         Return assessments of the user sending requests
         '''
-        # user = self.request.user
-        # return Assessment.objects.filter(derived_subject__user=user)
-
-        # queryset = Assessment.objects.with_derived_fields()
         queryset = super().get_queryset()
 
         if subject_filter := self.request.GET.get('subject'):
@@ -76,19 +73,19 @@ class AssessmentListView(DerivedFieldsMixin, ListView):
 class AssessmentDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
     model = Assessment
 
-    # def get_queryset(self):
-    #     return Assessment.objects.with_derived_fields()
-    
 
 class AssessmentCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
     model = Assessment
     form_class = AssessmentCreateForm
-
-    # def get_queryset(self):
-    #     return Assessment.objects.with_derived_fields()
+    template_name_suffix = '_form_create'
+    success_message = 'Assessment created successfully!'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        form.fields['lesson'].queryset = Lesson.objects.filter(
+            start_time__gte=now()
+        )
+        return form
 
     def get_initial(self):
         initial = super().get_initial()
@@ -124,19 +121,15 @@ class AssessmentCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
 class AssessmentUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
     model = Assessment
     form_class = AssessmentUpdateForm
-    success_message = 'Assessment updated successfully!'
     template_name_suffix = '_form_update'
-
-    # def get_queryset(self):
-    #     queryset = Assessment.objects.with_derived_fields()
-    #     return queryset
+    success_message = 'Assessment updated successfully!'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        if self.object.derived_subject_id:
-            form.fields['lesson'].queryset = Lesson.objects.filter(
-                subject=self.object.derived_subject_id
-            )
+        form.fields['lesson'].queryset = Lesson.objects.filter(
+            subject=self.object.derived_subject_id,
+            start_time__gte=now()
+        )
         return form
 
 
