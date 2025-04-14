@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
-from utils.mixins import ModelNameMixin
+from utils.mixins import ModelNameMixin, DerivedFieldsMixin
 from .models import Homework
 from .forms import HomeworkCreateForm, HomeworkUpdateForm
 
@@ -26,7 +26,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('homework_list')
 
 
-class HomeworkListView(ListView):
+class HomeworkListView(DerivedFieldsMixin, ListView):
     model = Homework
     context_object_name = 'user_homework'
 
@@ -37,7 +37,7 @@ class HomeworkListView(ListView):
         # user = self.request.user
         # queryset = Homework.objects.filter(derived_subject__user=user)
 
-        queryset = Homework.objects.with_derived_fields()
+        queryset = super().get_queryset()
 
         if subject_filter := self.request.GET.get('subject'): # name := expr, expr is calculated at then assigned
             queryset = queryset.filter(derived_subject_id=subject_filter)
@@ -89,16 +89,15 @@ class HomeworkListView(ListView):
         return queryset
     
 
-class HomeworkDetailView(ModelNameMixin, DetailView):
+class HomeworkDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
     model = Homework
 
-    def get_queryset(self):
-        return Homework.objects.with_derived_fields()
 
-
-class HomeworkCreateView(ModelNameMixin, CreateView):
+class HomeworkCreateView(DerivedFieldsMixin, ModelNameMixin, CreateView):
     model = Homework
     form_class = HomeworkCreateForm
+    template_name_suffix = '_form_create'
+    success_message = 'Homework created successfully!'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -140,15 +139,11 @@ class HomeworkCreateView(ModelNameMixin, CreateView):
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
     
 
-class HomeworkUpdateView(ModelNameMixin, UpdateView):
+class HomeworkUpdateView(DerivedFieldsMixin, ModelNameMixin, UpdateView):
     model = Homework
     form_class = HomeworkUpdateForm
-    success_message = 'Homework updated successfully!'
     template_name_suffix = '_form_update'
-
-    def get_queryset(self):
-        queryset = Homework.objects.with_derived_fields()
-        return queryset
+    success_message = 'Homework updated successfully!'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
