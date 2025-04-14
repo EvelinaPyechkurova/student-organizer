@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from utils.filters import filter_by_timeframe
 from utils.mixins import ModelNameMixin
 from .models import Homework
-from .forms import HomeworkForm
+from .forms import HomeworkCreateForm, HomeworkUpdateForm
 
 from django.utils.timezone import now
 
@@ -92,18 +92,13 @@ class HomeworkListView(ListView):
 class HomeworkDetailView(ModelNameMixin, DetailView):
     model = Homework
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(HomeworkDetailView.mro())
-        return context
-
     def get_queryset(self):
         return Homework.objects.with_derived_fields()
 
 
 class HomeworkCreateView(ModelNameMixin, CreateView):
     model = Homework
-    form_class = HomeworkForm
+    form_class = HomeworkCreateForm
 
     def get_initial(self):
         initial = super().get_initial()
@@ -147,6 +142,25 @@ class HomeworkCreateView(ModelNameMixin, CreateView):
 
 class HomeworkUpdateView(ModelNameMixin, UpdateView):
     model = Homework
+    form_class = HomeworkUpdateForm
+    success_message = 'Homework updated successfully!'
+    template_name_suffix = '_form_update'
+
+    def get_queryset(self):
+        queryset = Homework.objects.with_derived_fields()
+        return queryset
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.object.derived_subject_id:
+            form.fields['lesson_due'].queryset = Lesson.objects.filter(
+                subject=self.object.derived_subject_id
+            )
+        return form
+
+
+    def get_success_url(self):
+        return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
 
 
 class HomeworkDeleteView(ModelNameMixin, DeleteView):
