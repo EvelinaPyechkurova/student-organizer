@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from .models import Subject
 from .forms import SubjectForm
 
-from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin
+from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
 from utils.filters import apply_sorting
 
 
@@ -29,7 +29,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('subject_list')
 
 
-class SubjectListView(FilterConfigMixin, ListView):
+class SubjectListView(FilterStateMixin, FilterConfigMixin, ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 20
@@ -49,17 +49,6 @@ class SubjectListView(FilterConfigMixin, ListView):
         queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
         return queryset
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        get_request = self.request.GET
-
-        context['selected_values'] = {
-            field: get_request.get(field, VALID_FILTERS[field].get('default', ''))
-            for field in VALID_FILTERS
-        }
-
-        return context
     
 
 class SubjectDetailView(ModelNameMixin, DetailView):
