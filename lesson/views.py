@@ -5,16 +5,17 @@ from django.utils.timezone import now
 from utils.filters import filter_by_timeframe, apply_sorting
 from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
 from .models import Lesson
+from subject.models import Subject
 from .forms import LessonCreateForm, LessonUpdateForm
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 
 
 VALID_FILTERS = {
-    # 'subject': {
-    #     'type': 'select',
-    #     'comment explaining': 'get all subjects names and ids from subject in json, so when user chooses name from dropdown, ID is send', 
-    # },
+    'subject': {
+        'type': 'select',
+        'options': list(Subject.objects.values_list('id', 'name')), # refactore to universal function
+    },
     'type': {
         'type': 'select',
         'options': Lesson.Type.choices,
@@ -68,7 +69,7 @@ class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
         if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        start_time_filter = get_request.get('start_time')
+        start_time_filter = get_request.get('start_time') # refactore to universal function
         if start_time_filter := get_request.get('start_time'):
             valid_timeframe_options = [option[0] for option in VALID_FILTERS['start_time']['options']]
             if start_time_filter in valid_timeframe_options:
