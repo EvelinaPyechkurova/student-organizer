@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -124,9 +125,11 @@ class AssessmentUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         form.fields['lesson'].queryset = Lesson.objects.filter(
-            subject=self.object.derived_subject_id,
-            start_time__gte=now()
+            Q(subject=self.object.derived_subject_id) & (
+                Q(pk=self.object.lesson_id) | Q(start_time__gte=now())
+            )
         )
+    
         return form
 
     def get_success_url(self):

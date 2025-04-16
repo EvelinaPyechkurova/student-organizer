@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.filters import filter_by_timeframe
 from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin
 from .models import Homework
@@ -145,8 +146,16 @@ class HomeworkUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         if self.object.derived_subject_id:
+            now_time = now()
             form.fields['lesson_due'].queryset = Lesson.objects.filter(
-                subject=self.object.derived_subject_id
+                Q(subject=self.object.derived_subject_id) & (
+                    Q(start_time__gte=max(
+                        now_time - RECENT_PAST_TIMEFRAME,
+                        self.object.derived_start_time
+                    )) &
+                    Q(start_time__lte=now_time + MAX_TIMEFRAME) |
+                    Q(pk=self.object.lesson_due_id)
+                )
             )
         return form
 
