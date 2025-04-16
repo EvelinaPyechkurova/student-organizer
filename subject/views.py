@@ -13,7 +13,7 @@ VALID_FILTERS = {
         'type': 'text',
         'label': 'Name Contains'
     },
-    'sort-by': {
+    'sort_by': {
         'type': 'select',
         'label': 'Sort By',
         'default': 'name',

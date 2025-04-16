@@ -2,8 +2,8 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from utils.filters import filter_by_timeframe
-from utils.mixins import ModelNameMixin, CancelLinkMixin
+from utils.filters import filter_by_timeframe, apply_sorting
+from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
 from .models import Lesson
 from .forms import LessonCreateForm, LessonUpdateForm
 
@@ -11,14 +11,44 @@ from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 
 
 VALID_FILTERS = {
-    'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
-    'sort_by': ['start_time', '-start_time', 'created_at', '-created_at'],
+    # 'subject': {
+    #     'type': 'select',
+    #     'comment explaining': 'get all subjects names and ids from subject in json, so when user chooses name from dropdown, ID is send', 
+    # },
+    'type': {
+        'type': 'select',
+        'options': Lesson.Type.choices,
+    },
+    'start_time': {
+        'type': 'select',
+        'label': 'Start Time',
+        'options': [
+            ('today', 'Today'),
+            ('tomorrow', 'Tomorrow'),
+            ('next3', 'Next 3 Days'),
+            ('this_week', 'This Week'),
+            ('next_week', 'Next Week'),
+            ('this_month', 'This Month'),
+            ('next_month', 'Next Month'),
+        ]
+    },
+    'sort_by': {
+        'type': 'select',
+        'label': 'Sort By',
+        'default': 'start_time',
+        'options': [
+            ('start_time', 'Start Time ⭡'),
+            ('-start_time', 'Start Time ⭣'),
+            ('created_at', 'Created At ⭡'),
+            ('-created_at', 'Created At ⭣')
+        ]
+    }
 }
 
 CANCEL_LINK = reverse_lazy('lesson_list')
 
 
-class LessonListView(ListView):
+class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
     model = Lesson
     context_object_name = 'user_lessons'
     paginate_by = 20
@@ -30,21 +60,21 @@ class LessonListView(ListView):
         '''
         # queryset = Lesson.objects.filter(subject__user=self.request.user)
         queryset = Lesson.objects.all()
+        get_request = self.request.GET
 
-        if subject_filter := self.request.GET.get('subject'):
+        if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(subject=subject_filter)
 
-        if type_filter := self.request.GET.get('type'):
+        if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        start_time_filter = self.request.GET.get('start_time')
-        if start_time_filter := self.request.GET.get('start_time'):
-            if start_time_filter in VALID_FILTERS['start_time']:
+        start_time_filter = get_request.get('start_time')
+        if start_time_filter := get_request.get('start_time'):
+            valid_timeframe_options = [option[0] for option in VALID_FILTERS['start_time']['options']]
+            if start_time_filter in valid_timeframe_options:
                 queryset = filter_by_timeframe(queryset, filter_param=start_time_filter)
 
-        default_sort_param = 'start_time'
-        sort_param = self.request.GET.get('sort_by')
-        queryset = queryset.order_by(sort_param if sort_param in VALID_FILTERS['sort_by'] else default_sort_param)
+        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
         return queryset
 

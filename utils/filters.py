@@ -7,13 +7,13 @@ def apply_sorting(get_request, queryset, valid_filters):
     Sorts the provided queryset by parameters, provided in valid filters.
     Either recieves correct param from GET request, or uses default one.
     '''
-    sort_param = get_request.get('sort-by')
+    sort_param = get_request.get('sort_by')
     if sort_param:
-        valid_sort_options = [option[0] for option in valid_filters['sort-by']['options']]
+        valid_sort_options = [option[0] for option in valid_filters['sort_by']['options']]
         if sort_param in valid_sort_options:
             queryset = queryset.order_by(sort_param)
         else:
-            queryset = queryset.order_by(valid_filters['sort-by']['default'])
+            queryset = queryset.order_by(valid_filters['sort_by']['default'])
     return queryset
 
 

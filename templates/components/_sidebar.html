@@ -11,6 +11,7 @@
 
         {% elif settings.type == "select" %}
             <select name="{{ field }}" id="{{ field }}">
+                <option value="">-- All --</option>
                 {% for option_value, option_label in settings.options %}
                     <option value="{{ option_value }}"
                     {% if selected_values|get_item:field == option_value %}selected{% endif %}> 
