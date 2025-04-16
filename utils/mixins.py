@@ -30,6 +30,7 @@ class FilterConfigMixin:
         context = super().get_context_data(**kwargs)
         module = __import__(self.__module__, fromlist=['VALID_FILTERS'])
         try:
+            context['request'] = self.request.GET
             VALID_FILTERS = getattr(module, 'VALID_FILTERS')
             context['valid_filters'] = VALID_FILTERS
         except AttributeError:

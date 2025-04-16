@@ -1,7 +1,26 @@
-{% comment %} <form action="" method="get" class="filter-sidebar">
+{% load custom_tags %}
+
+<form action="" method="get" class="filter-sidebar">
+
     {% for field, settings in valid_filters.items %}
     <div class="filter-field">
+        <label for="{{ field }}">{{ settings.label }}</label>
 
+        {% if settings.type == "text" %}
+            <input type="{{ text }}" name="{{ field }}" id="{{ field }}" value="{{ selected_values|get_item:field }}">
+
+        {% elif settings.type == "select" %}
+            <select name="{{ field }}" id="{{ field }}">
+                {% for option_value, option_label in settings.options %}
+                    <option value="{{ option_value }}"
+                    {% if selected_values|get_item:field == option_value %}selected{% endif %}> 
+                        {{ option_label }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endif %}
     </div>
     {% endfor %}
-</form> {% endcomment %}
+
+    <button type="submit">Apply Filters</button>
+</form>

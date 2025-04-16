@@ -3,8 +3,7 @@ from datetime import timedelta
 
 
 def apply_sorting(request, queryset, valid_filters):
-    sort_param = request.GET.get('sort_by')
-    print(sort_param)
+    sort_param = request.get('sort-by')
     if sort_param:
         valid_sort_options = [option[0] for option in valid_filters['sort-by']['options']]
         if sort_param in valid_sort_options:

@@ -41,13 +41,25 @@ class SubjectListView(FilterConfigMixin, ListView):
         '''
         # queryset = Subject.objects.filter(user=self.request.user)
         queryset = Subject.objects.all()
+        get_request = self.request.GET
 
-        if name_filter := self.request.GET.get('name'):
+        if name_filter := get_request.get('name'):
             queryset = queryset.filter(name__icontains=name_filter)
 
-        queryset = apply_sorting(self.request, queryset, VALID_FILTERS)
+        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        get_request = self.request.GET
+
+        context['selected_values'] = {
+            field: get_request.get(field, VALID_FILTERS[field].get('default', ''))
+            for field in VALID_FILTERS
+        }
+
+        return context
     
 
 class SubjectDetailView(ModelNameMixin, DetailView):
