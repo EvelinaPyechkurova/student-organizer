@@ -4,13 +4,32 @@ from django.urls import reverse_lazy
 from .models import Subject
 from .forms import SubjectForm
 
-from utils.mixins import ModelNameMixin, CancelLinkMixin
+from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin
+from utils.filters import apply_sorting
 
+
+VALID_FILTERS = {
+    'name': {
+        'type': 'text',
+        'label': 'Name Contains'
+    },
+    'sort-by': {
+        'type': 'select',
+        'label': 'Sort By',
+        'default': 'name',
+        'options': [
+            ('name', 'Name ⭡'),
+            ('-name', 'Name ⭣'),
+            ('created_at', 'Created At ⭡'),
+            ('-created_at', 'Created At ⭣')
+        ]
+    }
+}
 
 CANCEL_LINK = reverse_lazy('subject_list')
 
 
-class SubjectListView(ListView):
+class SubjectListView(FilterConfigMixin, ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 20
@@ -23,17 +42,10 @@ class SubjectListView(ListView):
         # queryset = Subject.objects.filter(user=self.request.user)
         queryset = Subject.objects.all()
 
-        name_filter = self.request.GET.get('name')
-
-        if name_filter:
+        if name_filter := self.request.GET.get('name'):
             queryset = queryset.filter(name__icontains=name_filter)
 
-        default_sort_param = 'name'
-        sort_param = self.request.GET.get('sort_by')
-        if sort_param and sort_param in ['name', '-name', 'created_at', '-created_at']:
-            queryset = queryset.order_by(sort_param)
-        else:
-            queryset = queryset.order_by(default_sort_param)
+        queryset = apply_sorting(self.request, queryset, VALID_FILTERS)
 
         return queryset
     

@@ -2,6 +2,18 @@ from django.utils.timezone import now, localtime
 from datetime import timedelta
 
 
+def apply_sorting(request, queryset, valid_filters):
+    sort_param = request.GET.get('sort_by')
+    print(sort_param)
+    if sort_param:
+        valid_sort_options = [option[0] for option in valid_filters['sort-by']['options']]
+        if sort_param in valid_sort_options:
+            queryset = queryset.order_by(sort_param)
+        else:
+            queryset = queryset.order_by(valid_filters['sort-by']['default'])
+    return queryset
+
+
 def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
     '''
     Filters the provided queryset by timeframe conditions like 'today', 'this_week', etc.

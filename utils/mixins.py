@@ -23,4 +23,19 @@ class CancelLinkMixin:
                 f'defined in its module {module.__name__}.'
             )
         
-        return context  
+        return context
+    
+class FilterConfigMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        module = __import__(self.__module__, fromlist=['VALID_FILTERS'])
+        try:
+            VALID_FILTERS = getattr(module, 'VALID_FILTERS')
+            context['valid_filters'] = VALID_FILTERS
+        except AttributeError:
+            raise AttributeError(
+                f'{self.__class__.__name__} requires a VALID_FILTERS constant '
+                f'defined in its module {module.__name__}.'
+            )
+        
+        return context

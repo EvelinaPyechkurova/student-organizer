@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+    {% include "components/_sidebar.html" %}
     <div class="action-buttons">
         <a href="{% block create_button %}{% endblock %}" >Create</a>
     </div>
