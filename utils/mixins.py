@@ -54,6 +54,7 @@ class FilterStateMixin:
                 field: get_request.get(field, VALID_FILTERS[field].get('default', ''))
                 for field in VALID_FILTERS
             }
+            return context
         except AttributeError:
             raise AttributeError(
                 f'{self.__class__.__name__} requires a VALID_FILTERS and self.request.GET constant '

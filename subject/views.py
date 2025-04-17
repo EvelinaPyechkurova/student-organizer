@@ -1,11 +1,12 @@
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+
+from utils.filters import apply_sorting
+from utils.mixins import CancelLinkMixin, FilterConfigMixin, FilterStateMixin, ModelNameMixin
+
 from .models import Subject
 from .forms import SubjectForm
-
-from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
-from utils.filters import apply_sorting
 
 
 VALID_FILTERS = {

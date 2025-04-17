@@ -1,32 +1,76 @@
 from datetime import timedelta
+
 from django.db.models import Q
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from utils.filters import filter_by_timeframe
-from utils.duration import parse_duration
-from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin
-from .models import Assessment
-from .forms import AssessmentCreateForm, AssessmentUpdateForm
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+from utils.constants import VALID_TIMEFRAME_OPTIONS
+from utils.duration import parse_duration
+from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
+from utils.mixins import CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, FilterConfigMixin, FilterStateMixin
+
+from subject.models import Subject
 from lesson.models import Lesson
+from .forms import AssessmentCreateForm, AssessmentUpdateForm
+from .models import Assessment
 
 
 VALID_FILTERS = {
-    'start_time': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
-    'duration': [timedelta(minutes=15), timedelta(minutes=30), timedelta(minutes=45),
-                 timedelta(minutes=60), timedelta(minutes=90), timedelta(minutes=120)],
-    'sort_by': {
-        'start_time': 'derived_start_time', '-start_time': '-derived_start_time', 
-        'created_at': 'created_at', '-created_at': '-created_at'
+    'subject': {
+        'type': 'select',
+        'label': 'Subject',
+        'options': generate_select_options(Subject, order_by='name'),
     },
+    'lesson': {
+        'type': 'select',
+        'label': 'Assessment Lesson',
+        'options': generate_select_options(Lesson, order_by='start_time'),
+    },
+    'type': {
+        'type': 'select',
+        'label': 'Assessment Type',
+        'options': Assessment.Type.choices
+    },
+    'duration': {
+        'type': 'select',
+        'label': 'Duration',
+        'options': [
+            timedelta(minutes=15), timedelta(minutes=30), timedelta(minutes=45),
+            timedelta(minutes=60), timedelta(minutes=90), timedelta(minutes=120)
+        ]
+    },
+    'min_duration': {
+        'type': 'text',
+        'label': 'Minimum Duration',
+    },
+    'max_duration': {
+        'type': 'text',
+        'label': 'Maximum Duration',
+    },
+    'start_time': {
+        'type': 'select',
+        'label': 'Start Time',
+        'options': VALID_TIMEFRAME_OPTIONS,
+    },
+    'sort_by': {
+        'type': 'select',
+        'label': 'Sort By',
+        'default': 'start_time',
+        'options': [
+            ('start_time', 'Start Time ⭡', 'derived_start_time'),
+            ('-start_time', 'Start Time ⭣', '-derived_start_time'),
+            ('created_at', 'Created At ⭡'),
+            ('-created_at', 'Created At ⭣')
+        ]
+    }
 }
 
 CANCEL_LINK = reverse_lazy('assessment_list')
 
 
-class AssessmentListView(DerivedFieldsMixin, ListView):
+class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin, ListView):
     model = Assessment
     context_object_name = 'user_assessments'
     paginate_by = 20
@@ -36,37 +80,31 @@ class AssessmentListView(DerivedFieldsMixin, ListView):
         Return assessments of the user sending requests
         '''
         queryset = super().get_queryset()
+        get_request = self.request.GET
 
-        if subject_filter := self.request.GET.get('subject'):
+        if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
         
-        if lesson_filter := self.request.GET.get('lesson'):
+        if lesson_filter := get_request.get('lesson'):
             queryset = queryset.filter(lesson=lesson_filter)
 
-        if type_filter := self.request.GET.get('type'):
+        if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        if duration_filter := parse_duration(self.request.GET.get('duration')):
-            if duration_filter in VALID_FILTERS['duration']:
+        if duration_filter := parse_duration(get_request.get('duration')):
+            if duration_filter in VALID_FILTERS['duration']['options']:
                 queryset = queryset.filter(duration=duration_filter)
         else:
-            if min_duration_filter := parse_duration(self.request.GET.get('min_duration')):
+            if min_duration_filter := parse_duration(get_request.get('min_duration')):
                 queryset = queryset.filter(duration__gte=min_duration_filter)
 
-            if max_duration_filter := parse_duration(self.request.GET.get('max_duration')):
+            if max_duration_filter := parse_duration(get_request.get('max_duration')):
                 queryset = queryset.filter(duration__lte=max_duration_filter)
 
-        if start_time_filter := self.request.GET.get('start_time'):
-            if start_time_filter in VALID_FILTERS['start_time']:
-                queryset = filter_by_timeframe(
-                    queryset,
-                    filter_param=start_time_filter,
-                    date_field='derived_start_time'
-                )
 
-        default_sort_param = 'derived_start_time'
-        sort_param = self.request.GET.get('sort_by')
-        queryset = queryset.order_by(VALID_FILTERS['sort_by'].get(sort_param, default_sort_param))
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS)
+
+        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
         return queryset
 

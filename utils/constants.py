@@ -1,5 +1,16 @@
 from datetime import timedelta
 
+# -- -- General ----
+VALID_TIMEFRAME_OPTIONS = [
+    ('today', 'Today'),
+    ('tomorrow', 'Tomorrow'),
+    ('next3', 'Next 3 Days'),
+    ('this_week', 'This Week'),
+    ('next_week', 'Next Week'),
+    ('this_month', 'This Month'),
+    ('next_month', 'Next Month'),
+]
+
 # ----- Subject ----
 MAX_SUBJECTS_PER_USER = 200
 MAX_SUBJECT_NAME_LENGTH = 150

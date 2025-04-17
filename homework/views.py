@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
-from utils.filters import filter_by_timeframe
+from utils.filters import generate_select_options, apply_timeframe_filter_if_valid, apply_sorting
 from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin
 from .models import Homework
 from .forms import HomeworkCreateForm, HomeworkUpdateForm
@@ -14,9 +14,14 @@ from lesson.models import Lesson
 
 
 VALID_FILTERS = {
+    'subject': {
+        'type': 'select',
+        'label': 'Subject',
+   #     'options': generate_select_options(Subject, fields=('id', 'name'), order_by='name')
+    },
     'valid_timeframe': ['today', 'tomorrow', 'next3', 'this_week', 'next_week', 'this_month', 'next_month'],
     'completion': ['0', '25', '50', '75', '100'],
-    'sort_by': {
+    'sort_by': { 
         'start_time': 'derived_start_time', '-start_time': '-derived_start_time',
         'due_at': 'derived_due_at', '-due_at': '-derived_due_at',
         'completion': 'completion_percent', '-completion': '-completion_percent',

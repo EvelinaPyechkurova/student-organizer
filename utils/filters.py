@@ -11,7 +11,11 @@ def apply_sorting(get_request, queryset, valid_filters):
     if sort_param:
         valid_sort_options = [option[0] for option in valid_filters['sort_by']['options']]
         if sort_param in valid_sort_options:
-            queryset = queryset.order_by(sort_param)
+            for option in valid_filters['sort_by']['options']:
+                if option[0] == sort_param:
+                    sort_field = option[2] if len(option) > 2 else option[0]
+                    queryset = queryset.order_by(sort_field)
+                    break
         else:
             queryset = queryset.order_by(valid_filters['sort_by']['default'])
     return queryset
@@ -71,11 +75,18 @@ def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_fil
     return queryset
 
 
-def generate_select_options(model, queryset=None, fields=('id', 'name'), order_by='-created_at'):
+def generate_select_options(model, queryset=None, value_field='id', label_func=str, order_by='-created_at'):
     '''
-    Generate a list of (value, label) tuples for select dropdowns,
-    based on the given model, fields, and optional queryset.
+    Generates a list of (value, label) tuples for select fields.
+    label_func can be a field name (str) or a callable (function).
     '''
     if queryset == None:
         queryset = model.objects.all().order_by(order_by)
-    return list(queryset.values_list(*fields))
+
+    options = []
+    for obj in queryset:
+        value = getattr(obj, value_field)
+        label = label_func(obj) if callable(label_func) else getattr(obj, label_func)
+        options.append((value, label))
+
+    return options

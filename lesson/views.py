@@ -1,39 +1,32 @@
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
-from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
-from .models import Lesson
-from subject.models import Subject
-from .forms import LessonCreateForm, LessonUpdateForm
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
+from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAME_OPTIONS
+from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
+from utils.mixins import CancelLinkMixin, FilterConfigMixin, FilterStateMixin, ModelNameMixin
+
+from subject.models import Subject
+from .models import Lesson
+from .forms import LessonCreateForm, LessonUpdateForm
 
 
 VALID_FILTERS = {
     'subject': {
         'type': 'select',
         'label': 'Subject',
-        'options': generate_select_options(Subject, fields=('id', 'name'), order_by='name'),
+        'options': generate_select_options(Subject, order_by='name'),
     },
     'type': {
         'type': 'select',
-        'label': 'Type',
+        'label': 'Lesson Type',
         'options': Lesson.Type.choices,
     },
     'start_time': {
         'type': 'select',
         'label': 'Start Time',
-        'options': [
-            ('today', 'Today'),
-            ('tomorrow', 'Tomorrow'),
-            ('next3', 'Next 3 Days'),
-            ('this_week', 'This Week'),
-            ('next_week', 'Next Week'),
-            ('this_month', 'This Month'),
-            ('next_month', 'Next Month'),
-        ]
+        'options': VALID_TIMEFRAME_OPTIONS,
     },
     'sort_by': {
         'type': 'select',
