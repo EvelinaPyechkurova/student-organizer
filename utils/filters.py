@@ -69,4 +69,13 @@ def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_fil
         if filter_value in valid_timeframe_options:
             queryset = filter_by_timeframe(queryset, filter_value, param_name)
     return queryset
-        
+
+
+def generate_select_options(model, queryset=None, fields=('id', 'name'), order_by='-created_at'):
+    '''
+    Generate a list of (value, label) tuples for select dropdowns,
+    based on the given model, fields, and optional queryset.
+    '''
+    if queryset == None:
+        queryset = model.objects.all().order_by(order_by)
+    return list(queryset.values_list(*fields))

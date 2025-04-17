@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from utils.filters import filter_by_timeframe, apply_sorting, apply_timeframe_filter_if_valid
+from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
 from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
 from .models import Lesson
 from subject.models import Subject
@@ -15,7 +15,7 @@ VALID_FILTERS = {
     'subject': {
         'type': 'select',
         'label': 'Subject',
-        'options': list(Subject.objects.values_list('id', 'name')), # refactore to universal function
+        'options': generate_select_options(Subject, fields=('id', 'name'), order_by='name'),
     },
     'type': {
         'type': 'select',
