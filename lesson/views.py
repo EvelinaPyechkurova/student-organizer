@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from utils.filters import filter_by_timeframe, apply_sorting
+from utils.filters import filter_by_timeframe, apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import ModelNameMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
 from .models import Lesson
 from subject.models import Subject
@@ -14,10 +14,12 @@ from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 VALID_FILTERS = {
     'subject': {
         'type': 'select',
+        'label': 'Subject',
         'options': list(Subject.objects.values_list('id', 'name')), # refactore to universal function
     },
     'type': {
         'type': 'select',
+        'label': 'Type',
         'options': Lesson.Type.choices,
     },
     'start_time': {
@@ -69,11 +71,7 @@ class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
         if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        start_time_filter = get_request.get('start_time') # refactore to universal function
-        if start_time_filter := get_request.get('start_time'):
-            valid_timeframe_options = [option[0] for option in VALID_FILTERS['start_time']['options']]
-            if start_time_filter in valid_timeframe_options:
-                queryset = filter_by_timeframe(queryset, filter_param=start_time_filter)
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS)
 
         queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 

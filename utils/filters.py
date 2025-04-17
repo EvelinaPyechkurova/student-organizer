@@ -56,3 +56,17 @@ def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
     start_date, end_date = time_filters[filter_param]()
     return queryset.filter(**{f'{date_field}__date__range': [start_date, end_date]})
 
+
+def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_filters):
+    '''
+    Applies timeframe filtering to the queryset
+    if the given param_name is in valid_filters.
+
+    Assumes that the model field name matches the param_name.
+    '''
+    if filter_value := get_request.get(param_name):
+        valid_timeframe_options = [option[0] for option in valid_filters[param_name]['options']]
+        if filter_value in valid_timeframe_options:
+            queryset = filter_by_timeframe(queryset, filter_value, param_name)
+    return queryset
+        
