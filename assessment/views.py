@@ -118,7 +118,7 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
                 queryset = queryset.filter(derived_duration__lte=max_duration_filter)
 
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS)
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS, data_field='derived_start_time')
 
         queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
