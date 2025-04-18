@@ -6,21 +6,26 @@
         <div class="filter-field">
             <label for="{{ field }}">{{ settings.label }}</label>
 
-            {% if settings.type == "text" %}
-                <input type="{{ text }}" name="{{ field }}" id="{{ field }}" value="{{ selected_values|get_item:field }}">
-
-            {% elif settings.type == "select" %}
+            {% if settings.type == "select" %}
                 <select name="{{ field }}" id="{{ field }}">
                     <option value="">-- All --</option>
                     {% for option in settings.options %}
                         {% with option_value=option.0 option_label=option.1 %}
                             <option value="{{ option_value }}"
-                            {% if selected_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
+                                {% if selected_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
                                 {{ option_label }}
                             </option>
                         {% endwith %}
                     {% endfor %}
                 </select>
+            {% else %}
+                <input type="{{ settings.type }}" name="{{ field }}" id="{{ field }}" value="{{ selected_values|get_item:field }}"
+                    {% if settings.attributes %}
+                        {% for attribute, attr_value in settings.attributes %}
+                            {{ attribute }}="{{ attr_value }}"
+                        {% endfor %}
+                    {% endif %}
+                >
             {% endif %}
         </div>
     {% endfor %}

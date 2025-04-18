@@ -31,7 +31,7 @@ VALID_FILTERS = {
     'type': {
         'type': 'select',
         'label': 'Assessment Type',
-        'options': Assessment.Type.choices
+        'options': Assessment.Type.choices,
     },
     'duration': {
         'type': 'select',
@@ -43,14 +43,22 @@ VALID_FILTERS = {
             ('60', '1 Hour'),
             ('90', '1 Hour 30 Minutes'),
             ('120', '2 Hours'),
-        ]
+        ],
     },
     'min_duration': {
-        'type': 'text',
+        'type': 'number',
+        'attributes': [
+            ('min', '1'),
+            ('placeholder', 'Minutes (e.g., 15)'),
+        ],
         'label': 'Minimum Duration',
     },
     'max_duration': {
-        'type': 'text',
+        'type': 'number',
+        'attributes': [
+            ('min', '1'),
+            ('placeholder', 'Minutes (e.g., 90)'),
+        ],
         'label': 'Maximum Duration',
     },
     'start_time': {
@@ -104,10 +112,10 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
                 
         else:
             if min_duration_filter := parse_duration(get_request.get('min_duration')):
-                queryset = queryset.filter(duration__gte=min_duration_filter)
+                queryset = queryset.filter(derived_duration__gte=min_duration_filter)
 
             if max_duration_filter := parse_duration(get_request.get('max_duration')):
-                queryset = queryset.filter(duration__lte=max_duration_filter)
+                queryset = queryset.filter(derived_duration__lte=max_duration_filter)
 
 
         queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS)
