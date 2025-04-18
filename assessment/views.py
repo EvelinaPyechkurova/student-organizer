@@ -37,8 +37,12 @@ VALID_FILTERS = {
         'type': 'select',
         'label': 'Duration',
         'options': [
-            timedelta(minutes=15), timedelta(minutes=30), timedelta(minutes=45),
-            timedelta(minutes=60), timedelta(minutes=90), timedelta(minutes=120)
+            ('15', '15 Minutes'),
+            ('30', '30 Minutes'),
+            ('45', '45 Minutes'),
+            ('60', '1 Hour'),
+            ('90', '1 Hour 30 Minutes'),
+            ('120', '2 Hours'),
         ]
     },
     'min_duration': {
@@ -91,9 +95,13 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
         if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        if duration_filter := parse_duration(get_request.get('duration')):
-            if duration_filter in VALID_FILTERS['duration']['options']:
-                queryset = queryset.filter(duration=duration_filter)
+        
+        if duration_filter := get_request.get('duration'):
+            valid_duration_options = [option[0] for option in VALID_FILTERS['duration']['options']]
+            if duration_filter in valid_duration_options:
+                if duration_filter := parse_duration(duration_filter):
+                    queryset = queryset.filter(derived_duration=duration_filter)
+                
         else:
             if min_duration_filter := parse_duration(get_request.get('min_duration')):
                 queryset = queryset.filter(duration__gte=min_duration_filter)

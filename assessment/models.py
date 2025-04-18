@@ -26,6 +26,7 @@ class AssessmentManager(models.Manager):
         return self.annotate(
             derived_subject_id=Coalesce('subject', 'lesson__subject'),
             derived_start_time=Coalesce('start_time', 'lesson__start_time'),
+            derived_duration=Coalesce('duration', 'lesson__duration')
         )
 
 
