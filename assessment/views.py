@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -47,19 +45,19 @@ VALID_FILTERS = {
     },
     'min_duration': {
         'type': 'number',
+        'label': 'Minimum Duration',
         'attributes': [
             ('min', '1'),
             ('placeholder', 'Minutes (e.g., 15)'),
         ],
-        'label': 'Minimum Duration',
     },
     'max_duration': {
         'type': 'number',
+        'label': 'Maximum Duration',
         'attributes': [
             ('min', '1'),
             ('placeholder', 'Minutes (e.g., 90)'),
         ],
-        'label': 'Maximum Duration',
     },
     'start_time': {
         'type': 'select',
@@ -118,7 +116,7 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
                 queryset = queryset.filter(derived_duration__lte=max_duration_filter)
 
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS, data_field='derived_start_time')
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS, model_field_name='derived_start_time')
 
         queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
