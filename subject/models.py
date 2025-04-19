@@ -1,7 +1,5 @@
 from django.db import models
-
 from django.contrib.auth.models import User
-
 from django.core.exceptions import ValidationError
 
 from utils.constants import MAX_SUBJECTS_PER_USER, MAX_SUBJECT_NAME_LENGTH

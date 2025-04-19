@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.filters import apply_sorting
-from utils.mixins import CancelLinkMixin, FilterConfigMixin, FilterStateMixin, ModelNameMixin
+from utils.mixins import CancelLinkMixin, ModelNameMixin, FilterConfigMixin, FilterStateMixin
 
 from .models import Subject
 from .forms import SubjectForm
