@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 
 from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
+from utils.default import set_dafault_if_none
 
 class LessonManager(models.Manager):
 
@@ -36,7 +37,7 @@ class Lesson(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     type = models.CharField(max_length=1, choices=Type, default=Type.LECTURE)
     start_time = models.DateTimeField()
-    duration = models.DurationField(default=timedelta(minutes=90)) # replace with standard for user
+    duration = models.DurationField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -71,6 +72,7 @@ class Lesson(models.Model):
         
     def save(self, *args, **kwargs):
         self.full_clean()
+        set_dafault_if_none(self, 'duration', self.subject.user.userprofile.lesson_length)
         super().save(*args, **kwargs)
 
 

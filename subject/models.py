@@ -22,7 +22,7 @@ class Subject(models.Model):
     class Meta:
         db_table = 'subject'
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False) # must not be changed since creation
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=MAX_SUBJECT_NAME_LENGTH)
     image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

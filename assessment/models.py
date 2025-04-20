@@ -9,6 +9,7 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
+from utils.default import set_dafault_if_none
 
 class AssessmentManager(models.Manager):
     
@@ -140,10 +141,6 @@ class Assessment(models.Model):
         if self.lesson:
             self.subject = None
             self.start_time = None
-
-        else:
-            if not self.duration:
-                self.duration = timedelta(minutes=90) # replace with standard for user
 
         super().save(*args, **kwargs)
 

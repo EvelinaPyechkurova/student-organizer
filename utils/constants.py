@@ -29,7 +29,7 @@ RECENT_PAST_TIMEFRAME = timedelta(days=30)
 MAX_TASK_LENGTH = 1000
 
 # -- User Profile --
-DEFAULT_LESSON_LENGTH = timedelta(minutes=90)
+DEFAULT_LESSON_DURATION = timedelta(minutes=90)
 
 DEFAULT_RECIEVE_LESSON_REMAINDERS = False
 DEFAULT_LESSON_REMAINDER_TIMING = timedelta(hours=1)
