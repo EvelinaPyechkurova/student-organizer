@@ -54,8 +54,7 @@ class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
         Return lessons of the user sending request
         filtered and sorted if provided in the query params.
         '''
-        # queryset = Lesson.objects.filter(subject__user=self.request.user)
-        queryset = Lesson.objects.all()
+        queryset = Lesson.objects.filter(subject__user=self.request.user)
         get_request = self.request.GET
 
         if subject_filter := get_request.get('subject'):

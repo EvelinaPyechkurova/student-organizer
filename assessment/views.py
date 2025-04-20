@@ -89,6 +89,7 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
         '''
         Return assessments of the user sending requests
         '''
+#        queryset = super().get_queryset().filter(derived_subject__user=self.request.user)
         queryset = super().get_queryset()
         get_request = self.request.GET
 

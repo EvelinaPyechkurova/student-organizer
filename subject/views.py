@@ -40,8 +40,7 @@ class SubjectListView(FilterStateMixin, FilterConfigMixin, ListView):
         Return subjects of the user sending request
         filtered and sorted if provided in the query params.
         '''
-        # queryset = Subject.objects.filter(user=self.request.user)
-        queryset = Subject.objects.all()
+        queryset = Subject.objects.filter(user=self.request.user)
         get_request = self.request.GET
 
         if name_filter := get_request.get('name'):

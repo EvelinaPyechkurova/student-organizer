@@ -102,9 +102,7 @@ class HomeworkListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin, 
         '''
         Return homework of the user sending requests
         '''
-        # user = self.request.user
-        # queryset = Homework.objects.filter(derived_subject__user=user)
-
+        # queryset = super().get_queryset().filter(derived_subject__user=self.request.user)
         queryset = super().get_queryset()
         get_request = self.request.GET
 

@@ -1,4 +1,8 @@
 <nav>
+    <form method="POST" action="{% url "user_logout" %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="button-linl">Logout</button>
+    </form>
     <a href="{% url "subject_list" %}">Subjects</a>
     <a href="{% url "lesson_list" %}">Lessons</a>
     <a href="{% url "assessment_list" %}">Assessments</a>
