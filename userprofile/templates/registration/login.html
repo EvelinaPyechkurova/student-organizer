@@ -1,0 +1,10 @@
+{% extends "base/base_form.html" %}
+{% block title %}Login{% endblock %}
+{% block form_title %}Login{% endblock %}
+{% block form_action_buttons %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="buttons">
+        <input class="button-link" type="submit" value="login">
+        <a href="{% url 'password_reset' %}" class="button-link">Lost password?</a>
+    </div>
+{% endblock %}

@@ -9,11 +9,13 @@
             {{ form.as_p }}
         {% endblock %}
 
-        <div class="buttons">
-            <button type="">{% block save_label %}Save{% endblock %}</button>
-            <button type="reset">{% block reset_label %}Undo changes{% endblock %}</button>
-            <a href="{{ cancel_link }}" class="button-link">{% block cancel_label %}Cancel{% endblock %}</a>
-        </div>
+        {% block form_action_buttons %}
+            <div class="buttons">
+                <button type="">{% block save_label %}Save{% endblock %}</button>
+                <button type="reset">{% block reset_label %}Undo changes{% endblock %}</button>
+                <a href="{{ cancel_link }}" class="button-link">{% block cancel_label %}Cancel{% endblock %}</a>
+            </div>
+        {% endblock form_action_buttons %}
     </form>
 
 {% endblock content %}

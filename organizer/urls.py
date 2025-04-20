@@ -8,4 +8,6 @@ urlpatterns = [
     path('lessons/', include('lesson.urls')),
     path('assessments/', include('assessment.urls')),
     path('homework/', include('homework.urls')),
+    path('auth/', include('userprofile.auth_urls')),
+    path('profile/', include('userprofile.profile_urls')),
 ]

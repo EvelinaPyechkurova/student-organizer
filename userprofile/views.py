@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from django.views.generic import DetailView, UpdateView, DeleteView
 
-# Create your views here.
+class ProfileDetailView(DetailView):
+    pass
+
+class ProfileUpdateView(UpdateView):
+    pass
+
+class ProfileDeleteView(DeleteView):
+    pass
+
+class RegistrationView:
+    pass
