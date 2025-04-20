@@ -63,7 +63,7 @@ class SubjectCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
 
     def get_form(self):
         form = super().get_form()
-        form.instance.user = self.request.user.userprofile
+        form.instance.user = self.request.user
         return form
     
     def get_success_url(self):
