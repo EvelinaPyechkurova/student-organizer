@@ -1,8 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 
 
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin, View):
     template_name = 'dashboard.html'
 
     def get(self, request):
