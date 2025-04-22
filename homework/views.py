@@ -1,8 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
+
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAME_OPTIONS
 from utils.filters import generate_select_options, apply_timeframe_filter_if_valid, apply_sorting
 from utils.mixins import ModelNameMixin, DerivedFieldsMixin, CancelLinkMixin, FilterConfigMixin, FilterStateMixin
@@ -93,7 +95,8 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('homework_list')
 
 
-class HomeworkListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin, ListView):
+class HomeworkListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin,
+                       DerivedFieldsMixin, ListView):
     model = Homework
     context_object_name = 'user_homework'
     paginate_by = 10
@@ -139,12 +142,13 @@ class HomeworkListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin, 
         return queryset
     
 
-class HomeworkDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
+class HomeworkDetailView(LoginRequiredMixin, DerivedFieldsMixin, ModelNameMixin,
+                         DetailView):
     model = Homework
 
 
-class HomeworkCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
-                         CreateView):
+class HomeworkCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin,
+                         ModelNameMixin, CreateView):
     model = Homework
     form_class = HomeworkCreateForm
     template_name_suffix = '_form_create'
@@ -185,8 +189,8 @@ class HomeworkCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
     
 
-class HomeworkUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
-                         UpdateView):
+class HomeworkUpdateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin,
+                         ModelNameMixin, UpdateView):
     model = Homework
     form_class = HomeworkUpdateForm
     template_name_suffix = '_form_update'
@@ -213,7 +217,7 @@ class HomeworkUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
         return reverse_lazy('homework_detail', kwargs = {'pk': self.object.pk})
 
 
-class HomeworkDeleteView(CancelLinkMixin, ModelNameMixin, 
+class HomeworkDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, 
                          DeleteView):
     model = Homework
     success_message = 'Assessment deleted successfully!'
