@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.timezone import now
@@ -80,7 +81,8 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('assessment_list')
 
 
-class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin, ListView):
+class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin,
+                         DerivedFieldsMixin, ListView):
     model = Assessment
     context_object_name = 'user_assessments'
     paginate_by = 20
@@ -124,12 +126,13 @@ class AssessmentListView(FilterStateMixin, FilterConfigMixin, DerivedFieldsMixin
         return queryset
 
 
-class AssessmentDetailView(DerivedFieldsMixin, ModelNameMixin, DetailView):
+class AssessmentDetailView(LoginRequiredMixin, DerivedFieldsMixin, ModelNameMixin,
+                           DetailView):
     model = Assessment
 
 
-class AssessmentCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
-                           CreateView):
+class AssessmentCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin,
+                           ModelNameMixin, CreateView):
     model = Assessment
     form_class = AssessmentCreateForm
     template_name_suffix = '_form_create'
@@ -168,8 +171,8 @@ class AssessmentCreateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, 
-                           UpdateView):
+class AssessmentUpdateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin, 
+                           ModelNameMixin, UpdateView):
     model = Assessment
     form_class = AssessmentUpdateForm
     template_name_suffix = '_form_update'
@@ -189,7 +192,7 @@ class AssessmentUpdateView(CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin,
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentDeleteView(CancelLinkMixin, ModelNameMixin,
+class AssessmentDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin,
                            DeleteView):
     model = Assessment
     success_message = 'Assessment deleted successfully!'
