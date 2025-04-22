@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views.generic import ListView, DetailView
@@ -44,7 +45,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('lesson_list')
 
 
-class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
+class LessonListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, ListView):
     model = Lesson
     context_object_name = 'user_lessons'
     paginate_by = 20
@@ -70,7 +71,7 @@ class LessonListView(FilterStateMixin, FilterConfigMixin, ListView):
         return queryset
 
 
-class LessonDetailView(ModelNameMixin, DetailView):
+class LessonDetailView(LoginRequiredMixin, ModelNameMixin, DetailView):
     model = Lesson
     
     def get_context_data(self, **kwargs):
@@ -85,7 +86,7 @@ class LessonDetailView(ModelNameMixin, DetailView):
         return context
 
 
-class LessonCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
+class LessonCreateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, CreateView):
     model = Lesson
     form_class = LessonCreateForm
     success_message = 'Lesson created successfully!'
@@ -102,7 +103,7 @@ class LessonCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
     
 
-class LessonUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
+class LessonUpdateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, UpdateView):
     model = Lesson
     form_class = LessonUpdateForm
     success_message = 'Lesson updated successfully!'
@@ -112,7 +113,7 @@ class LessonUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
  
 
-class LessonDeleteView(CancelLinkMixin, ModelNameMixin, DeleteView):
+class LessonDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, DeleteView):
     model = Lesson
     success_message = 'Lesson deleted successfully!'
     success_url = reverse_lazy('lesson_list')
