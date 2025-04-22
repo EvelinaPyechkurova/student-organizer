@@ -1,15 +1,19 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
+
 class ModelNameMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_name'] = self.model._meta.model_name
         return context
     
+
 class DerivedFieldsMixin:
     def get_queryset(self):
         if hasattr(self.model.objects, 'with_derived_fields'):
             return self.model.objects.with_derived_fields()
         return super().get_queryset()
     
+
 class ConstantContextMixin:
     constant_name = None
     context_key = None
@@ -34,14 +38,17 @@ class ConstantContextMixin:
         
         return context
     
+
 class CancelLinkMixin(ConstantContextMixin):
     constant_name = 'CANCEL_LINK'
     context_key = 'cancel_link'
       
+
 class FilterConfigMixin(ConstantContextMixin):
     constant_name = 'VALID_FILTERS'
     context_key = 'valid_filters'
     
+
 class FilterStateMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,4 +68,14 @@ class FilterStateMixin:
                 f'defined in its module {module.__name__}.'
             )
 
-        return context
+
+class OwnershipRequired(UserPassesTestMixin):
+    '''
+    Allows access if the object's owner matches the request user.
+    '''
+    owner_field = 'user'
+
+    def test_func(self):
+        obj = self.get_object()
+        owner = getattr(obj, self.owner_field, None)
+        return owner == self.request.user or owner == self.request.user.id

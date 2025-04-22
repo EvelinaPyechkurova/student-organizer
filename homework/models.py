@@ -24,6 +24,7 @@ class HomeworkManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate( # TO-DO: make sure homework is deleted when its subject is deleted, no matter if they are connected directly or via lesson
+            derived_user_id = Coalesce('subject__user', 'lesson_given__subject__user', 'lesson_due__subject__user'),
             derived_subject_id=Coalesce('subject', 'lesson_given__subject', 'lesson_due__subject'),
             derived_start_time=Coalesce('start_time', 'lesson_given__start_time'),
             derived_due_at=Coalesce('due_at', 'lesson_due__start_time'),

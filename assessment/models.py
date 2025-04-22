@@ -9,7 +9,6 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
-from utils.default import set_dafault_if_none
 
 class AssessmentManager(models.Manager):
     
@@ -25,6 +24,7 @@ class AssessmentManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate(
+            derived_user_id = Coalesce('subject__user', 'lesson__subject__user'),
             derived_subject_id=Coalesce('subject', 'lesson__subject'),
             derived_start_time=Coalesce('start_time', 'lesson__start_time'),
             derived_duration=Coalesce('duration', 'lesson__duration')

@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db import models
 from django.utils.timezone import localtime, now
 from django.core.exceptions import ValidationError
@@ -20,6 +18,11 @@ class LessonManager(models.Manager):
         for obj in objs:
             obj.full_clean()
         return super().bulk_create(objs, **kwargs)
+    
+    def with_derived_fields(self):
+        return self.annotate(
+            derived_user_id = models.F('subject__user')
+        )
     
 
 class Lesson(models.Model):
