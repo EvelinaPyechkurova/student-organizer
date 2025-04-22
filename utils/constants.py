@@ -20,8 +20,8 @@ MIN_LESSON_DURATION = timedelta(minutes=15)
 MAX_LESSON_DURATION = timedelta(hours=8)
 
 # --- Assessment ---
-MIN_ASSESSMENT_DURATION = timedelta(minutes=15)
-MAX_ASSESSMENT_DURATION = timedelta(hours=8)
+MIN_ASSESSMENT_DURATION = timedelta(minutes=5)
+MAX_ASSESSMENT_DURATION = timedelta(days=7)
 
 # ---- Homework ----
 MAX_TIMEFRAME = timedelta(days=365)

@@ -8,7 +8,11 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from utils.constants import VALID_TIMEFRAME_OPTIONS
 from utils.duration import parse_duration
 from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
-from utils.mixins import CancelLinkMixin, DerivedFieldsMixin, ModelNameMixin, FilterConfigMixin, FilterStateMixin
+from utils.mixins import (
+    CancelLinkMixin, ModelNameMixin,
+    FilterConfigMixin, FilterStateMixin,
+    OwnershipRequiredMixin, DerivedFieldsMixin
+)
 
 from subject.models import Subject
 from lesson.models import Lesson
@@ -126,15 +130,17 @@ class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin
         return queryset
 
 
-class AssessmentDetailView(LoginRequiredMixin, DerivedFieldsMixin, ModelNameMixin,
-                           DetailView):
+class AssessmentDetailView(LoginRequiredMixin, DerivedFieldsMixin, OwnershipRequiredMixin,
+                           ModelNameMixin, DetailView):
     model = Assessment
+    owner_field = 'derived_user_id'
 
 
 class AssessmentCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin,
                            ModelNameMixin, CreateView):
     model = Assessment
     form_class = AssessmentCreateForm
+    owner_field = 'derived_user_id'
     template_name_suffix = '_form_create'
     success_message = 'Assessment created successfully!'
 
@@ -171,10 +177,11 @@ class AssessmentCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMix
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentUpdateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin, 
-                           ModelNameMixin, UpdateView):
+class AssessmentUpdateView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLinkMixin,
+                           DerivedFieldsMixin, ModelNameMixin, UpdateView):
     model = Assessment
     form_class = AssessmentUpdateForm
+    owner_field = 'derived_user_id'
     template_name_suffix = '_form_update'
     success_message = 'Assessment updated successfully!'
 
@@ -192,8 +199,9 @@ class AssessmentUpdateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMix
         return reverse_lazy('assessment_detail', kwargs = {'pk': self.object.pk})
 
 
-class AssessmentDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin,
-                           DeleteView):
+class AssessmentDeleteView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLinkMixin,
+                           ModelNameMixin, DeleteView):
     model = Assessment
+    owner_field = 'derived_user_id'
     success_message = 'Assessment deleted successfully!'
     success_url = reverse_lazy('assessment_list')
