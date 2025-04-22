@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+    <h2>Hello, {{ context.first_name.1 }}!</h2>
+
+    <ul>
+        {% for key, val in context.items %}
+            <li>{{ val.0 }}: {{ val.1 }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

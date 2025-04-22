@@ -5,6 +5,6 @@
     <input type="hidden" name="next" value="{{ next }}">
     <div class="buttons">
         <input class="button-link" type="submit" value="login">
-        <a href="{% url 'password_reset' %}" class="button-link">Lost password?</a>
+        {% comment %} <a href="{% url 'password_reset' %}" class="button-link">Lost password?</a> {% endcomment %}
     </div>
 {% endblock %}

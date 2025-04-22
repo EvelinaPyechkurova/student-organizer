@@ -19,13 +19,13 @@ class UserProfile(models.Model):
     assessment_duration = models.DurationField(default=DEFAULT_LESSON_DURATION)
     
     recieve_lesson_remainders = models.BooleanField(default=DEFAULT_RECIEVE_LESSON_REMAINDERS)
-    lesson_renainder_timing = models.DurationField(default=DEFAULT_LESSON_REMAINDER_TIMING)
+    lesson_remainder_timing = models.DurationField(default=DEFAULT_LESSON_REMAINDER_TIMING)
 
     recieve_assessment_remainders = models.BooleanField(default=DEFAULT_RECIEVE_ASSESSMENT_REMAINDERS)
-    assessment_renainder_timing = models.DurationField(default=DEFAULT_ASSESSMENT_REMAINDER_TIMING)
+    assessment_remainder_timing = models.DurationField(default=DEFAULT_ASSESSMENT_REMAINDER_TIMING)
 
     recieve_homework_remainders = models.BooleanField(default=DEFAULT_RECIEVE_HOMEWORK_REMAINDERS)
-    homework_renainder_timing = models.DurationField(default=DEFAULT_HOMEWORK_REMAINDER_TIMING)
+    homework_remainder_timing = models.DurationField(default=DEFAULT_HOMEWORK_REMAINDER_TIMING)
 
     def __str__(self):
         return f'{self.user.username} profile'

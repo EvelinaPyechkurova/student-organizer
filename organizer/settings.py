@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'assessment.apps.AssessmentConfig',
     'homework.apps.HomeworkConfig',
     'userprofile.apps.UserprofileConfig',
+    'dashboard.apps.DashboardConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
