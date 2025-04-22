@@ -200,7 +200,7 @@ class AssessmentUpdateView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLin
 
 
 class AssessmentDeleteView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLinkMixin,
-                           ModelNameMixin, DeleteView):
+                         DerivedFieldsMixin, ModelNameMixin, DeleteView):
     model = Assessment
     owner_field = 'derived_user_id'
     success_message = 'Assessment deleted successfully!'
