@@ -1,6 +1,7 @@
-from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 from utils.filters import apply_sorting
 from utils.mixins import CancelLinkMixin, ModelNameMixin, FilterConfigMixin, FilterStateMixin
@@ -30,7 +31,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('subject_list')
 
 
-class SubjectListView(FilterStateMixin, FilterConfigMixin, ListView):
+class SubjectListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 20
@@ -51,11 +52,11 @@ class SubjectListView(FilterStateMixin, FilterConfigMixin, ListView):
         return queryset
     
 
-class SubjectDetailView(ModelNameMixin, DetailView):
+class SubjectDetailView(LoginRequiredMixin, ModelNameMixin, DetailView):
     model = Subject
 
 
-class SubjectCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
+class SubjectCreateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, CreateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject created successfully!'
@@ -70,7 +71,7 @@ class SubjectCreateView(CancelLinkMixin, ModelNameMixin, CreateView):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
     
 
-class SubjectUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
+class SubjectUpdateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, UpdateView):
     model = Subject
     form_class = SubjectForm
     success_message = 'Subject updated successfully!'
@@ -80,7 +81,7 @@ class SubjectUpdateView(CancelLinkMixin, ModelNameMixin, UpdateView):
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
 
 
-class SubjectDeleteView(CancelLinkMixin, ModelNameMixin, DeleteView):
+class SubjectDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, DeleteView):
     model = Subject
     success_message = 'Subject deleted successfully!'
     success_url = reverse_lazy('subject_list')
