@@ -6,7 +6,11 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAME_OPTIONS
 from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
-from utils.mixins import CancelLinkMixin, FilterConfigMixin, FilterStateMixin, ModelNameMixin
+from utils.mixins import (
+    CancelLinkMixin, ModelNameMixin,
+    FilterConfigMixin, FilterStateMixin,
+    OwnershipRequiredMixin, DerivedFieldsMixin
+)
 
 from subject.models import Subject
 from .models import Lesson
@@ -71,8 +75,10 @@ class LessonListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, Li
         return queryset
 
 
-class LessonDetailView(LoginRequiredMixin, ModelNameMixin, DetailView):
+class LessonDetailView(LoginRequiredMixin, DerivedFieldsMixin, OwnershipRequiredMixin,
+                       ModelNameMixin, DetailView):
     model = Lesson
+    owner_field = 'derived_user_id'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -103,20 +109,24 @@ class LessonCreateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, Crea
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
     
 
-class LessonUpdateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, UpdateView):
+class LessonUpdateView(LoginRequiredMixin, DerivedFieldsMixin, OwnershipRequiredMixin,
+                       CancelLinkMixin, ModelNameMixin, UpdateView):
     model = Lesson
     form_class = LessonUpdateForm
     success_message = 'Lesson updated successfully!'
     template_name_suffix = '_form_update'
+    owner_field = 'derived_user_id'
 
     def get_success_url(self):
         return reverse_lazy('lesson_detail', kwargs = {'pk': self.object.pk})
  
 
-class LessonDeleteView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, DeleteView):
+class LessonDeleteView(LoginRequiredMixin, DerivedFieldsMixin, OwnershipRequiredMixin,
+                       CancelLinkMixin, ModelNameMixin, DeleteView):
     model = Lesson
     success_message = 'Lesson deleted successfully!'
     success_url = reverse_lazy('lesson_list')
+    owner_field = 'derived_user_id'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

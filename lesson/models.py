@@ -75,7 +75,7 @@ class Lesson(models.Model):
         
     def save(self, *args, **kwargs):
         self.full_clean()
-        set_dafault_if_none(self, 'duration', self.subject.user.userprofile.lesson_length)
+        set_dafault_if_none(self, 'duration', self.subject.user.userprofile.lesson_duration)
         super().save(*args, **kwargs)
 
 

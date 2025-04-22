@@ -69,7 +69,7 @@ class FilterStateMixin:
             )
 
 
-class OwnershipRequired(UserPassesTestMixin):
+class OwnershipRequiredMixin(UserPassesTestMixin):
     '''
     Allows access if the object's owner matches the request user.
     '''

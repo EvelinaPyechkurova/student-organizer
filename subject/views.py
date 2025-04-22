@@ -7,7 +7,7 @@ from utils.filters import apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     FilterConfigMixin, FilterStateMixin,
-    OwnershipRequired,
+    OwnershipRequiredMixin,
 )
 
 from .models import Subject
@@ -57,7 +57,7 @@ class SubjectListView(LoginRequiredMixin, FilterStateMixin,
         return queryset
     
 
-class SubjectDetailView(LoginRequiredMixin, OwnershipRequired, ModelNameMixin,
+class SubjectDetailView(LoginRequiredMixin, OwnershipRequiredMixin, ModelNameMixin,
                         DetailView):
     model = Subject
 
@@ -78,7 +78,7 @@ class SubjectCreateView(LoginRequiredMixin, CancelLinkMixin,
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
     
 
-class SubjectUpdateView(LoginRequiredMixin, OwnershipRequired, CancelLinkMixin,
+class SubjectUpdateView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLinkMixin,
                         ModelNameMixin, UpdateView):
     model = Subject
     form_class = SubjectForm
@@ -89,7 +89,7 @@ class SubjectUpdateView(LoginRequiredMixin, OwnershipRequired, CancelLinkMixin,
         return reverse_lazy('subject_detail', kwargs = {'pk': self.object.pk})
 
 
-class SubjectDeleteView(LoginRequiredMixin, OwnershipRequired, CancelLinkMixin,
+class SubjectDeleteView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLinkMixin,
                         ModelNameMixin, DeleteView):
     model = Subject
     success_message = 'Subject deleted successfully!'
