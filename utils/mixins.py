@@ -1,6 +1,10 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 class ModelNameMixin:
+    '''
+    Adds model name to context data for
+    convinient creation of reusable templates.
+    '''
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['model_name'] = self.model._meta.model_name
@@ -8,6 +12,10 @@ class ModelNameMixin:
     
 
 class DerivedFieldsMixin:
+    '''
+    Overrides queryset to contain fields
+    that are derived from oher entities in some way.
+    '''
     def get_queryset(self):
         if hasattr(self.model.objects, 'with_derived_fields'):
             return self.model.objects.with_derived_fields()

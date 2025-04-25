@@ -95,9 +95,9 @@ class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin
         '''
         Return assessments of the user sending requests
         '''
-#        queryset = super().get_queryset().filter(derived_subject__user=self.request.user)
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
+        print(self.request.user.id)
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
@@ -146,7 +146,8 @@ class AssessmentCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMix
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['lesson'].queryset = Lesson.objects.filter(
+        form.fields['lesson'].queryset = Lesson.objects.with_derived_fields().filter(
+            derived_user_id=self.request.user.id,
             start_time__gte=now()
         )
         return form
@@ -187,7 +188,7 @@ class AssessmentUpdateView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLin
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['lesson'].queryset = Lesson.objects.filter(
+        form.fields['lesson'].queryset = Lesson.objects.with_derived_fields().filter(
             Q(subject=self.object.derived_subject_id) & (
                 Q(pk=self.object.lesson_id) | Q(start_time__gte=now())
             )

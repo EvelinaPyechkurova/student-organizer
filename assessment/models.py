@@ -24,7 +24,7 @@ class AssessmentManager(models.Manager):
     
     def with_derived_fields(self):
         return self.annotate(
-            derived_user_id = Coalesce('subject__user', 'lesson__subject__user'),
+            derived_user_id=Coalesce('subject__user', 'lesson__subject__user'),
             derived_subject_id=Coalesce('subject', 'lesson__subject'),
             derived_start_time=Coalesce('start_time', 'lesson__start_time'),
             derived_duration=Coalesce('duration', 'lesson__duration')
