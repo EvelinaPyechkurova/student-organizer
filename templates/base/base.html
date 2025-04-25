@@ -6,7 +6,9 @@
     <title>{% block title %}Student orginizer{% endblock %}</title>
 </head>
 <body>
-    {% include "components/_navbar.html" %}
+    {% block navbar %}
+        {% include "components/_navbar.html" %}
+    {% endblock %}
     <div class="content">
         {% block content %}{% endblock %}
     </div>
