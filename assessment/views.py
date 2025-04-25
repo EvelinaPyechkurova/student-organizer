@@ -146,10 +146,15 @@ class AssessmentCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMix
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['lesson'].queryset = Lesson.objects.with_derived_fields().filter(
-            derived_user_id=self.request.user.id,
-            start_time__gte=now()
+        user_id = self.request.user.id
+
+        form.fields['subject'].queryset = Subject.objects.filter(user=user_id)
+
+        form.fields['lesson'].queryset = (
+            Lesson.objects.with_derived_fields()
+            .filter(derived_user_id=user_id, start_time__gte=now())
         )
+
         return form
 
     def get_initial(self):
@@ -188,7 +193,8 @@ class AssessmentUpdateView(LoginRequiredMixin, OwnershipRequiredMixin, CancelLin
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['lesson'].queryset = Lesson.objects.with_derived_fields().filter(
+
+        form.fields['lesson'].queryset = Lesson.objects.filter(
             Q(subject=self.object.derived_subject_id) & (
                 Q(pk=self.object.lesson_id) | Q(start_time__gte=now())
             )

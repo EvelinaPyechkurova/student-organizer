@@ -98,6 +98,13 @@ class LessonCreateView(LoginRequiredMixin, CancelLinkMixin, ModelNameMixin, Crea
     success_message = 'Lesson created successfully!'
     template_name_suffix = '_form_create'
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['subject'].queryset = Subject.objects.filter(
+            user=self.request.user.id
+        )
+        return form
+    
     def get_initial(self):
         initial = super().get_initial()
         subject_id = self.request.GET.get('subject')
