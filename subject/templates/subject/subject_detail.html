@@ -11,8 +11,8 @@
     <a href="{% url "homework_create" %}?subject={{ subject.pk }}">Add Homework</a>
 {% endblock %}
 
+{% block detail_header %}{{ subject }}{% endblock %}
 {% block detail_content %}
-    <h2>{{ subject }}</h2>
     <p>User: {{ subject.user }}</p>
     <p>Created at: {{ subject.created_at }}</p>
     <p>Last modified: {{ subject.last_modified }}</p>

@@ -58,6 +58,12 @@ class Assessment(models.Model):
 
     objects = AssessmentManager()
     
+    @property
+    def derived_subject(self):
+        if hasattr(self, 'derived_subject_id'):
+            return Subject.objects.get(id=self.derived_subject_id)
+        return self.subject or (self.lesson and self.lesson.subject)
+    
 
     def clean(self):
         super().clean()

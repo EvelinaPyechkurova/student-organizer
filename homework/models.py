@@ -50,6 +50,12 @@ class Homework(models.Model):
 
     objects = HomeworkManager()
 
+    @property
+    def derived_subject(self):
+        if hasattr(self, 'derived_subject_id'):
+            return Subject.objects.get(id=self.derived_subject_id)
+        return self.subject or (self.lesson_given and self.lesson_given.subject) or (self.lesson_due and self.lesson_due.subject)
+
 
     def clean(self):
         super().clean()

@@ -2,9 +2,9 @@
 
 {% block title %}{{ homework }}{% endblock %}
 
+{% block detail_header %}Homework{% endblock %}
 {% block detail_content %}
 
-    <h2>Homework</h2>
     <p>Subject: {{ homework.derived_subject }}</p>
 
     {% if homework.lesson_given %}

@@ -5,9 +5,8 @@
 {% block update %}{% url "assessment_update" assessment.pk %}{% endblock %}
 {% block delete %}{% url "assessment_delete" assessment.pk %}{% endblock %}
 
+{% block detail_header %}{{ assessment.derived_subject }} assessment{% endblock %}
 {% block detail_content %}
-
-    <h2>{{ assessment.derived_subject }} assessment</h2>
 
     {% if assessment.lesson %}
         <p>Attached to lesson {{ assessment.lesson }}</p>
