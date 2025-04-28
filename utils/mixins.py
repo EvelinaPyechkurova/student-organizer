@@ -87,3 +87,11 @@ class OwnershipRequiredMixin(UserPassesTestMixin):
         obj = self.get_object()
         owner = getattr(obj, self.owner_field, None)
         return owner == self.request.user or owner == self.request.user.id
+    
+
+class UserObjectMixin:
+    '''
+    Adds current user as object for profile views
+    '''
+    def get_object(self):
+        return self.request.user

@@ -1,0 +1,12 @@
+{% extends "base/base_confirm_delete.html" %}
+
+{% block delete_question %}your account{% endblock %}
+
+{% block delete_warning_message %}
+    All your user data, preferences, subjects, lessons, assessments, and homework 
+    will be permanently and irreversibly deleted. This action cannot be undone.
+{% endblock %}
+
+{% block related_objects_warning %}{% endblock %}
+
+{% block confirm_deletion %}Yes, delete my account{% endblock %}

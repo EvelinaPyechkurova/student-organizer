@@ -6,37 +6,45 @@
     <form action="" method="post">
         {% csrf_token %}
 
-        <h2>Are you sure you want to delete {{ object }}?</h2>
-
+        <h2>Are you sure you want to delete 
+            {% block delete_question %}
+                {{ object }}?
+            {% endblock %}
+        </h2>
+        
         <p class="warning-message">
-            Said {{ model_name }} will be permanently and irreversibly removed from your organizer.
+            {% block delete_warning_message %}
+                Said {{ model_name }} will be permanently and irreversibly removed from your organizer.
+            {% endblock %}
         </p>
 
-        {% if related_objects %}
-            <div class="deletion-impact">
-                <p class="impact-message">
+        {% block related_objects_warning %}
+            {% if related_objects %}
+                <div class="deletion-impact">
+                    <p class="impact-message">
                     This will also delete the following related objects
-                    <ul>
-                        {% for type, count in related_objects.items %}
-                            <li>
-                                <a href="{% url type|add:'_list' %}?{{ model_name }}={{ object.pk }}">
-                                    {% if type == "homework" %}
-                                        {{ count }} homework task{{ count|pluralize }}
-                                    {% else %}
-                                        {{ count }} {{ type|lower}}{{count|pluralize }}
-                                    {% endif %}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </p>
-            </div>
-        {% endif %}
+                        <ul>
+                            {% for type, count in related_objects.items %}
+                                <li>
+                                    <a href="{% url type|add:'_list' %}?{{ model_name }}={{ object.pk }}">
+                                        {% if type == "homework" %}
+                                            {{ count }} homework task{{ count|pluralize }}
+                                        {% else %}
+                                            {{ count }} {{ type|lower}}{{count|pluralize }}
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </p>
+                </div>
+            {% endif %}
+        {% endblock %}
 
         {{ form }}
 
         <div class="buttons">
-            <button type="submit">Confirm</button>
+            <button type="submit">{% block confirm_deletion %}Confirm{% endblock confirm_deletion %}</button>
             <a href="{{ cancel_link }}" class="button-link">Cancel</a>
         </div>
     </form>

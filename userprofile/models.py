@@ -12,7 +12,6 @@ from utils.constants import (
 )
 
 class UserProfile(models.Model):
-    # "These are our recommended reminder settings — you can change them anytime."
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     lesson_duration = models.DurationField(default=DEFAULT_LESSON_DURATION)
