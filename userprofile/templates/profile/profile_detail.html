@@ -1,0 +1,33 @@
+{% extends "base/base_detail.html" %}
+
+{% block title %}{{ user }}{% endblock %}
+
+{% block action_buttons %}
+    <a href="{% url model_name|add:'_update' %}" class="button-link">Edit</a>
+    <a href="{% url model_name|add:'_delete' %}" class="button-link">Delete</a>
+{% endblock %}
+
+{% block detail_content %}
+    <fieldset>
+        <legend>Your profile</legend>
+        <p>Username: {{ user.username }}</p>
+        <p>Name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+        <p>Joined at: {{ user.date_joined }}</p>
+        <p>Last login: {{ login.last_login }}</p>
+    </fieldset>
+    <fieldset>
+        <legend>Your preferences</legend>
+        {% with profile=user.userprofile %}
+            <p>Recieve lesson remainders: {{ profile.recieve_lesson_remainders }}</p>
+            <p>Lesson remainders timing: {{ profile.lesson_remainder_timing }}</p>
+
+            <p>Recieve assessment remainders: {{ profile.recieve_assessment_remainders }}</p>
+            <p>Assessment remainders timing: {{ profile.assessment_remainder_timing }}</p>
+
+            <p>Recieve homework remainders: {{ profile.recieve_homework_remainders }}</p>
+            <p>Homework remainders timing: {{ profile.homework_remainder_timing }}</p>
+
+        {% endwith %}
+    </fieldset>
+{% endblock %}

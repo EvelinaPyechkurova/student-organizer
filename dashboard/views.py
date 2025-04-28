@@ -4,7 +4,7 @@ from django.views import View
 
 
 class DashboardView(LoginRequiredMixin, View):
-    template_name = 'dashboard.html'
+    template_name = 'dashboard/dashboard.html'
 
     def get(self, request):
         user = request.user
