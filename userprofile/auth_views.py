@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
@@ -14,10 +15,11 @@ class UserRegisterView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cancel_link'] = reverse_lazy('user_login')
+        context['cancel_link'] = reverse_lazy('profile_update')
         return context
 
     def form_valid(self, form):
         responce = super().form_valid(form)
         UserProfile.objects.create(user=self.object)
+        login(self.request, self.object)
         return responce
