@@ -2,32 +2,50 @@
 
 {% block title %}{{ user }}{% endblock %}
 
+{% block detail_header %}Welcome, {{ user.first_name }}!{% endblock %}
+
 {% block action_buttons %}
-    <a href="{% url model_name|add:'_update' %}" class="button-link">Edit</a>
-    <a href="{% url model_name|add:'_delete' %}" class="button-link">Delete</a>
+    <a href="{% url model_name|add:'_update' %}" class="button-link">Edit your profile</a>
+    <a href="{% url model_name|add:'_delete' %}" class="button-link">Delete your account</a>
 {% endblock %}
 
 {% block detail_content %}
+    <p class="info-text">
+        Here you can view and update your personal information and reminder settings to customize your experience.
+    </p>
     <fieldset>
-        <legend>Your profile</legend>
-        <p>Username: {{ user.username }}</p>
-        <p>Name: {{ user.first_name }}</p>
-        <p>Last name: {{ user.last_name }}</p>
-        <p>Joined at: {{ user.date_joined }}</p>
-        <p>Last login: {{ login.last_login }}</p>
+        <legend>Profile Information</legend>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <p><strong>Member since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+        <p><strong>Last login:</strong> 
+            {% if user.last_login %}
+                {{ user.last_login|date:"F j, Y, g:i a" }}
+            {% else %}
+                Never
+            {% endif %}
+        </p>
+    </fieldset>
+
+    <fieldset>
+        <legend>Default Durations</legend>
+        {% with profile=user.userprofile %}
+            <p><strong>Default lesson duration:</strong> {{ profile.lesson_duration }}</p>
+            <p><strong>Default assessment duration:</strong> {{ profile.assessment_duration }}</p>
+        {% endwith %}
+    </fieldset>
+
     </fieldset>
     <fieldset>
-        <legend>Your preferences</legend>
-        {% with profile=user.userprofile %}
-            <p>Recieve lesson remainders: {{ profile.recieve_lesson_remainders }}</p>
-            <p>Lesson remainders timing: {{ profile.lesson_remainder_timing }}</p>
-
-            <p>Recieve assessment remainders: {{ profile.recieve_assessment_remainders }}</p>
-            <p>Assessment remainders timing: {{ profile.assessment_remainder_timing }}</p>
-
-            <p>Recieve homework remainders: {{ profile.recieve_homework_remainders }}</p>
-            <p>Homework remainders timing: {{ profile.homework_remainder_timing }}</p>
-
-        {% endwith %}
+        <legend>Reminder Preferences</legend>
+        {% for reminder in reminders %}
+            <p><strong>{{ reminder.label }}:</strong>
+                {% if reminder.enabled %}
+                    Enabled ({{ reminder.timing }})
+                {% else %}
+                    Disabled
+                {% endif %}
+        {% endfor %}
     </fieldset>
 {% endblock %}
