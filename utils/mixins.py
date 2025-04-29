@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 class ModelNameMixin:
@@ -95,3 +96,15 @@ class UserObjectMixin:
     '''
     def get_object(self):
         return self.request.user
+    
+
+class DateTimeWidgetMixin:
+    datetime_fields = ['start_time']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.datetime_fields:
+            if field in self.fields:
+                self.fields[field].widget = forms.DateTimeInput(
+                    attrs={'type': 'datetime-local'}
+                )

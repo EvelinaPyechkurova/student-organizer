@@ -1,5 +1,7 @@
 {% extends "base/base_detail.html" %}
 
+{% load custom_tags %}
+
 {% block title %}{{ assessment }}{% endblock %}
 
 {% block update %}{% url "assessment_update" assessment.pk %}{% endblock %}
@@ -7,20 +9,24 @@
 
 {% block detail_header %}{{ assessment.derived_subject }} assessment{% endblock %}
 {% block detail_content %}
+    <fieldset class="assessment-details">
+        <legend>Assessment Details</legend>
 
-    {% if assessment.lesson %}
-        <p>Attached to lesson {{ assessment.lesson }}</p>
-    {% endif %}
+        {% if assessment.lesson %}
+            <strong>Attached to </strong>
+            {% with lesson=assessment.lesson %}
+                <a href="{% url 'lesson_detail' pk=lesson.id %}">
+                    {{ lesson.subject }} {{ lesson.get_type_display|lower }} on {{ lesson.start_time|date:"l, F j, Y \\a\\t H:i" }}
+                </a>
+            {% endwith %}
+        {% endif %}
 
-    <p>Type: {{ assessment.get_type_display|lower }}</p>
-    <p>Start time: {{ assessment.derived_start_time }}</p>
-    <p>Duration: {{ assessment.derived_duration }}</p>
+        <p><strong>Type:</strong> {{ assessment.get_type_display }}</p>
+        <p><strong>Start time:</strong> {{ assessment.start_time|date:"l, F d, Y \\a\\t H:i" }}</p>
+        <p><strong>Duration:</strong> {{ assessment.derived_duration|get_human_duration }}</p>
 
-    {% if assessment.description %}
-        <p>Description: {{ assessment.description }}</p>
-    {% endif %}
-
-    <p>Created at: {{ assessment.created_at }}</p>
-    <p>Last modified: {{ assessment.last_modified }}</p>
-
+        {% if assessment.description %}
+            <p><strong>Description:</strong>: {{ assessment.description }}</p>
+        {% endif %}
+    </fieldset>
 {% endblock detail_content %}

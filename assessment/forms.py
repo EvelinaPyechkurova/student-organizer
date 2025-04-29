@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 from .models import Assessment
 
-class AssessmentBaseForm(ModelForm):
+from utils.mixins import DateTimeWidgetMixin
+
+class AssessmentBaseForm(DateTimeWidgetMixin, ModelForm):
     class Meta:
         model = Assessment
         fields = []

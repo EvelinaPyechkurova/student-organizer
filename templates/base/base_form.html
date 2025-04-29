@@ -13,6 +13,7 @@
         {% csrf_token %}
         {% block image %}{% endblock %}
         {% block form_content %}
+            {% block info_fields %}{% endblock %}
             {{ form.as_p }}
         {% endblock %}
         {% block metadata %}
