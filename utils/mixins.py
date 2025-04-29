@@ -99,7 +99,7 @@ class UserObjectMixin:
     
 
 class DateTimeWidgetMixin:
-    datetime_fields = ['start_time']
+    datetime_fields = ['start_time', 'due_at']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

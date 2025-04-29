@@ -1,1 +1,13 @@
 {% extends "base/base_form_update.html" %}
+{% block info_fields %}
+    <p>Subject: {{ homework.derived_subject }}</p>
+    {% if homework.lesson_given %}
+        <p>This homework was <strong>assigned during</strong> 
+        <a href="{% url 'lesson_detail' pk=homework.lesson_given.id %}">
+            the {{ homework.lesson_given.subject }} {{ homework.lesson_given.get_type_display|lower }} on 
+            {{ homework.lesson_given.start_time|date:"l, F j, Y \\a\\t H:i" }}
+        </a>.</p>
+    {% endif %}
+    <p>Assigned on: {{ homework.derived_start_time|date:"l, F j, Y \\a\\t H:i" }}</p>
+
+{% endblock %}

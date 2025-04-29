@@ -159,6 +159,28 @@ class HomeworkCreateView(LoginRequiredMixin, CancelLinkMixin, DerivedFieldsMixin
     template_name_suffix = '_form_create'
     success_message = 'Homework created successfully!'
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+       
+        now_time = now()
+        form.fields['subject'].queryset = Subject.objects.filter(
+            user=self.request.user.id
+        )
+
+        form.fields['lesson_given'].queryset = Lesson.objects.filter(
+            Q(subject__user=self.request.user) &
+            Q(start_time__gte=now_time - RECENT_PAST_TIMEFRAME) &
+            Q(start_time__lte=now_time)
+        )
+
+        form.fields['lesson_due'].queryset = Lesson.objects.filter(
+            Q(subject__user=self.request.user) &
+            Q(start_time__gte=now_time - RECENT_PAST_TIMEFRAME) &
+            Q(start_time__lte=now_time + MAX_TIMEFRAME)
+        )
+
+        return form
+
     def get_initial(self):
         initial = super().get_initial()
         lesson_given_id = self.request.GET.get('lesson_given')

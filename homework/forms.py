@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 from .models import Homework
 
-class HomeworkBaseForm(ModelForm):
+from utils.mixins import DateTimeWidgetMixin
+
+class HomeworkBaseForm(DateTimeWidgetMixin, ModelForm):
     class Meta:
         model = Homework
         fields = []
