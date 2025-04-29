@@ -1,12 +1,21 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+    {% if object.derived_image_url %}
+        <div class=" subject-banner">
+            <img src="{{ object.derived_image_url }}" alt="subject banner">
+        </div>
+    {% endif %}
+
     {% block form_title %}{% endblock %}
 
     <form action="" method="post">
         {% csrf_token %}
+        {% block image %}{% endblock %}
         {% block form_content %}
             {{ form.as_p }}
+        {% endblock %}
+        {% block metadata %}
         {% endblock %}
 
         {% block form_action_buttons %}

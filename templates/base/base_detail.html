@@ -1,6 +1,17 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+
+    {% block image_banner %}
+        {% if object.derived_image_url %}
+            <div class=" subject-banner">
+                <img src="{{ object.derived_image_url }}" alt="subject banner">
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    <h2 class="detail-header">{% block detail_header %}{% endblock %}</h2>
+
     <div class="action-buttons">
         {% block action_buttons %}
             <a href="{% url model_name|add:'_update' object.pk %}" class="button-link">Edit</a>
@@ -8,10 +19,20 @@
         {% endblock %}
     </div>
 
+    <div class="metadata">
+        {% block metadata %}
+            <small class="timestamp">
+                Created: {{ object.created_at|date:"j E Y, H:i" }}
+                {% if object.last_modified != object.created_at %}
+                    Last updated: {{ object.last_modified|date:"j E Y, H:i" }}
+                {% endif %}
+            </small>
+        {% endblock %}
+    </div>
+
+    {% block detail_content %}{% endblock %}
+    
     <div class="contextual-actions">
         {% block contextual_actions %}{% endblock %}
     </div>
-
-    <h2 class="detail-header">{% block detail_header %}{% endblock %}</h2>
-    {% block detail_content %}{% endblock %}
 {% endblock %}

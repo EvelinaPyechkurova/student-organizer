@@ -13,7 +13,9 @@
 
 {% block detail_header %}{{ subject }}{% endblock %}
 {% block detail_content %}
-    <p>User: {{ subject.user }}</p>
-    <p>Created at: {{ subject.created_at }}</p>
-    <p>Last modified: {{ subject.last_modified }}</p>
+    {% if subject.image_url %}
+        <div class="subject-image">
+            <img src="{{ subject.image_url }}" alt="{{ subject.name }} image" style="max-height: 150px;">
+        </div>
+    {% endif %}
 {% endblock detail_content %}
