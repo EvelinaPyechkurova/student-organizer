@@ -1,5 +1,7 @@
 {% extends "base/base_detail.html" %}
 
+{% load custom_tags %}
+
 {% block title %}{{ lesson }}{% endblock %}
 
 {% block update %}{% url "lesson_update" lesson.pk %}{% endblock %}
@@ -19,7 +21,11 @@
     
 {% block detail_header %}{{ lesson.subject }}{% endblock %}
 {% block detail_content %}
-    <p>Type: {{ lesson.get_type_display|lower }}</p>
-    <p>Start time: {{ lesson.start_time }}</p>
-    <p>Duration: {{ lesson.duration }}</p>
-{% endblock detail_content %}
+    <fieldset class="lesson-details">
+        <legend>Lesson Details</legend>
+        
+        <p><strong>Type:</strong> {{ lesson.get_type_display }}</p>
+        <p><strong>Start time:</strong> {{ lesson.start_time|date:"l, F d, Y \\a\\t H:i" }}</p>
+        <p><strong>Duration:</strong> {{ lesson.duration|get_human_duration }} </p>
+    </fieldset>
+{% endblock %}
