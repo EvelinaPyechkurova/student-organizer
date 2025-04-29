@@ -7,10 +7,18 @@ class LessonCreateForm(ModelForm):
         model = Lesson
         fields = ['subject', 'type', 'start_time', 'duration']
         widgets = {
-            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'start_time': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'},
+            ),
         }
+
 
 class LessonUpdateForm(ModelForm):
     class Meta:
         model = Lesson
         fields = ['type', 'start_time', 'duration']
+        widgets = {
+            'start_time': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'},
+            ),
+        }
