@@ -4,11 +4,11 @@
 
 {% block create_button %}{% url "subject_create" %}{% endblock %}
 
+{% block list_items_name %}Subjects{% endblock %}
 {% block list_content %}
-    {% block list_items_name %}Subjects{% endblock %}
     <ul>
         {% for subject in user_subjects %}
-            <li><a href="{% url "subject_detail" pk=subject.id %}">{{ subject }}</a></li>
+            <li class="preview"><a href="{% url "subject_detail" pk=subject.id %}">{{ subject }}</a></li>
         {% endfor %}
     </ul>
 {% endblock list_content %}
