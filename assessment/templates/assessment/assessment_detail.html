@@ -9,9 +9,7 @@
 
 {% block detail_header %}{{ assessment.derived_subject }} assessment{% endblock %}
 {% block detail_content %}
-    <fieldset class="assessment-details">
-        <legend>Assessment Details</legend>
-
+    <div class="detail-content">
         {% if assessment.lesson %}
             <strong>Attached to </strong>
             {% with lesson=assessment.lesson %}
@@ -28,5 +26,5 @@
         {% if assessment.description %}
             <p><strong>Description:</strong>: {{ assessment.description }}</p>
         {% endif %}
-    </fieldset>
+    </div>
 {% endblock detail_content %}

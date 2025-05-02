@@ -9,23 +9,21 @@
 
 {% block contextual_actions %}
     {% if can_add_assessment %}
-        <a href="{% url "assessment_create" %}?lesson={{ lesson.pk }}">Add Assessment</a> 
+        <a href="{% url "assessment_create" %}?lesson={{ lesson.pk }}" class="button-link">Add Assessment</a> 
     {% endif %}
     {% if can_add_lesson_given %}
-        <a href="{% url "homework_create" %}?lesson_given={{ lesson.pk }}">Add Homework Given</a>
+        <a href="{% url "homework_create" %}?lesson_given={{ lesson.pk }}" class="button-link">Add Homework Given</a>
     {% endif %}
     {% if can_add_lesson_due %}
-        <a href="{% url "homework_create" %}?lesson_due={{ lesson.pk }}">Add Homework Due</a>
+        <a href="{% url "homework_create" %}?lesson_due={{ lesson.pk }}" class="button-link">Add Homework Due</a>
     {% endif %}
 {% endblock %}
     
 {% block detail_header %}{{ lesson.subject }}{% endblock %}
 {% block detail_content %}
-    <fieldset class="lesson-details">
-        <legend>Lesson Details</legend>
-        
+    <div class="content-detail">
         <p><strong>Type:</strong> {{ lesson.get_type_display }}</p>
         <p><strong>Start time:</strong> {{ lesson.start_time|date:"l, F d, Y \\a\\t H:i" }}</p>
         <p><strong>Duration:</strong> {{ lesson.duration|get_human_duration }} </p>
-    </fieldset>
+    </div>
 {% endblock %}

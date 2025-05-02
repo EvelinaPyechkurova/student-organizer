@@ -7,27 +7,27 @@
         {{ homework.derived_subject }}</a> homework
 {% endblock %}
 {% block detail_content %}
+    <div class="detail-content">
+        {% if homework.lesson_given %}
+            <p>This homework was <strong>assigned during</strong> 
+            <a href="{% url 'lesson_detail' pk=homework.lesson_given.id %}">
+                the {{ homework.lesson_given.subject }} {{ homework.lesson_given.get_type_display|lower }} on 
+                {{ homework.lesson_given.start_time|date:"l, F j, Y \\a\\t H:i" }}
+            </a></p>
+        {% endif %}
 
-    {% if homework.lesson_given %}
-        <p>This homework was <strong>assigned during</strong> 
-        <a href="{% url 'lesson_detail' pk=homework.lesson_given.id %}">
-            the {{ homework.lesson_given.subject }} {{ homework.lesson_given.get_type_display|lower }} on 
-            {{ homework.lesson_given.start_time|date:"l, F j, Y \\a\\t H:i" }}
-        </a>.</p>
-    {% endif %}
+        {% if homework.lesson_due %}
+            <p>This homework is <strong>due by</strong> 
+            <a href="{% url 'lesson_detail' pk=homework.lesson_due.id %}">
+                the {{ homework.lesson_due.subject }} {{ homework.lesson_due.get_type_display|lower }} on 
+                {{ homework.lesson_due.start_time|date:"l, F j, Y \\a\\t H:i" }}
+            </a></p>
+        {% endif %}
 
-    {% if homework.lesson_due %}
-        <p>It is <strong>due by</strong> 
-        <a href="{% url 'lesson_detail' pk=homework.lesson_due.id %}">
-            the {{ homework.lesson_due.subject }} {{ homework.lesson_due.get_type_display|lower }} on 
-            {{ homework.lesson_due.start_time|date:"l, F j, Y \\a\\t H:i" }}
-        </a>.</p>
-    {% endif %}
+        <p><strong>Assigned on:</strong> {{ homework.derived_start_time|date:"l, F j, Y \\a\\t H:i" }}</p>
+        <p><strong>Due by:</strong> {{ homework.derived_due_at|date:"l, F j, Y \\a\\t H:i" }}</p>
 
-    <p><strong>Assigned on::</strong> {{ homework.derived_start_time|date:"l, F j, Y \\a\\t H:i" }}</p>
-    <p><strong>Due by:</strong> {{ homework.derived_due_at|date:"l, F j, Y \\a\\t H:i" }}</p>
-
-    <p><strong>Task:</strong> {{ homework.task }}</p>
-    <p><strong>Completion percent:</strong> {{ homework.completion_percent }}</p>
-    
+        <p><strong>Task:</strong> {{ homework.task }}</p>
+        <p><strong>Completion percent:</strong> {{ homework.completion_percent }}</p>
+    </div>
 {% endblock detail_content %}
