@@ -1,12 +1,16 @@
-<nav>
-    <a href="{% url "profile_detail" %}">Profile</a>
-    <a href="{% url "subject_list" %}">Subjects</a>
-    <a href="{% url "lesson_list" %}">Lessons</a>
-    <a href="{% url "assessment_list" %}">Assessments</a>
-    <a href="{% url "homework_list" %}">Homework</a>
+<nav class="navbar">
 
-    <form method="POST" action="{% url "user_logout" %}" style="display: inline;">
-        {% csrf_token %}
-        <button type="submit" class="button-link">Logout</button>
-    </form>
+    <h1>Student Organizer</h1>
+    <div class="links">
+        <a href="{% url "profile_detail" %}">Profile</a>
+        <a href="{% url "subject_list" %}">Subjects</a>
+        <a href="{% url "lesson_list" %}">Lessons</a>
+        <a href="{% url "assessment_list" %}">Assessments</a>
+        <a href="{% url "homework_list" %}">Homework</a>
+
+        <form method="POST" action="{% url "user_logout" %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="button-link">Logout</button>
+        </form>
+    </div>
 </nav>
