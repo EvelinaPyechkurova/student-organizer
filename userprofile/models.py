@@ -12,6 +12,10 @@ from utils.constants import (
 )
 
 class UserProfile(models.Model):
+
+    class Meta:
+        db_table = 'userprofile'
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     lesson_duration = models.DurationField(default=DEFAULT_LESSON_DURATION)
