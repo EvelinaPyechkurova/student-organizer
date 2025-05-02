@@ -2,13 +2,15 @@
 
 <form action="" method="get" class="filter-sidebar">
 
+    <h3>Filter By</h3>
+
     {% for field, settings in valid_filters.items %}
         <div class="filter-field">
             <label for="{{ field }}">{{ settings.label }}</label>
 
             {% if settings.type == "select" %}
                 <select name="{{ field }}" id="{{ field }}">
-                    <option value="">-- All --</option>
+                    <option value="">&nbsp;</option>
                     {% for option in settings.options %}
                         {% with option_value=option.0 option_label=option.1 %}
                             <option value="{{ option_value }}"
