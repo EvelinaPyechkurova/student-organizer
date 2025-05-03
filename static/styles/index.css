@@ -141,7 +141,8 @@ button:hover, .button-link:hover {
     background-color: #E0F7FA;
 }
 
-.content .pagination, .action-buttons, .current {
+.content .pagination, .action-buttons,
+.buttons, .current, form{
     background-color: #E0F7FA;
 }
 
@@ -176,6 +177,10 @@ button:hover, .button-link:hover {
     background: #E0F7FA;
 }
 
+.contextual-actions {
+    margin-top: 24px;
+}
+
 .metadata {
     position: absolute;
     top: 0px;
@@ -193,7 +198,7 @@ button:hover, .button-link:hover {
     font-style: italic;
 }
 
-.detail-content {
+.detail-content, .form-content {
     background-color: white;
     border: 2px solid #2A3335;
     border-radius: 12px;
@@ -210,7 +215,59 @@ button:hover, .button-link:hover {
 }
 
 .detail-content p, .detail-content strong,
-.detail-content a{
+.detail-content a, .form-content p{
     background-color: white;
 }
 
+/*form styles*/
+.buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+label {
+    background-color: white;
+    font-weight: 600;
+}
+
+.form-content input,
+.form-content select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.content ul.errorlist {
+    background-color: white;
+}
+
+.errorlist li, .warning-message {
+    background-color: #fff8f5;
+    color: #b02a2a;
+    border: 1px solid #f08080;
+    padding: 10px 12px;
+    margin: 10px 0px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    line-height: 1.4;
+    max-width: 100%;
+}
+
+form h2 {
+    background-color: #E0F7FA;
+}
+
+/*pagination styles*/
+.pagination span, .pagination a {
+    color:#0A5EB0;
+    background-color: #E0F7FA;
+}
+
+.pagination span.current {
+    text-decoration: underline;
+}

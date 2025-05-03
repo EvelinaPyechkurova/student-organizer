@@ -52,7 +52,7 @@ CANCEL_LINK = reverse_lazy('lesson_list')
 class LessonListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, ListView):
     model = Lesson
     context_object_name = 'user_lessons'
-    paginate_by = 20
+    paginate_by = 8
 
     def get_queryset(self):
         '''

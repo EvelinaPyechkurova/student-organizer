@@ -21,7 +21,7 @@
     
 {% block detail_header %}{{ lesson.subject }}{% endblock %}
 {% block detail_content %}
-    <div class="content-detail">
+    <div class="detail-content">
         <p><strong>Type:</strong> {{ lesson.get_type_display }}</p>
         <p><strong>Start time:</strong> {{ lesson.start_time|date:"l, F d, Y \\a\\t H:i" }}</p>
         <p><strong>Duration:</strong> {{ lesson.duration|get_human_duration }} </p>

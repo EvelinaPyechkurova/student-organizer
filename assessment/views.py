@@ -89,7 +89,7 @@ class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin
                          DerivedFieldsMixin, ListView):
     model = Assessment
     context_object_name = 'user_assessments'
-    paginate_by = 20
+    paginate_by = 7
 
     def get_queryset(self):
         '''
