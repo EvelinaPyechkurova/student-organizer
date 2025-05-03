@@ -5,11 +5,11 @@
 <p>Update Your Personal Information and Preferences</p>
 
 {% block form_content %}
-    <fieldset>
+    <fieldset class="profile-info">
         <legend>Personal Information</legend>
         {{ user_form.as_p }}
     </fieldset>
-    <fieldset>
+    <fieldset class="profile-info">
         <legend>Preferences</legend>
         {{ profile_form.as_p }}
     </fieldset>

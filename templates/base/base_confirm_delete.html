@@ -8,8 +8,8 @@
 
         <h2>Are you sure you want to delete 
             {% block delete_question %}
-                {{ object }}?
-            {% endblock %}
+                {{ object }}
+            {% endblock %}?
         </h2>
         
         <p class="warning-message">
@@ -22,10 +22,10 @@
             {% if related_objects %}
                 <div class="deletion-impact">
                     <p class="impact-message">
-                    This will also delete the following related objects
+                    This will also delete the following related objects:
                         <ul>
                             {% for type, count in related_objects.items %}
-                                <li>
+                                <li class="related-object">
                                     <a href="{% url type|add:'_list' %}?{{ model_name }}={{ object.pk }}">
                                         {% if type == "homework" %}
                                             {{ count }} homework task{{ count|pluralize }}

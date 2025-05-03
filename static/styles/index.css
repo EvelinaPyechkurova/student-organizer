@@ -45,7 +45,8 @@ button:hover, .button-link:hover {
 
 .navbar a:hover, .preview a:hover,
 .detail-header a:hover,
-.detail-content a:hover {
+.detail-content a:hover,
+.deletion-impact a:hover{
     color: #0A5EB0;
     text-decoration: underline;
 }
@@ -142,7 +143,7 @@ button:hover, .button-link:hover {
 }
 
 .content .pagination, .action-buttons,
-.buttons, .current, form{
+.buttons, .current, form, .info-text{
     background-color: #E0F7FA;
 }
 
@@ -198,7 +199,9 @@ button:hover, .button-link:hover {
     font-style: italic;
 }
 
-.detail-content, .form-content {
+.detail-content, .form-content,
+.profile-info, .profile-info legend,
+.deletion-impact {
     background-color: white;
     border: 2px solid #2A3335;
     border-radius: 12px;
@@ -215,7 +218,10 @@ button:hover, .button-link:hover {
 }
 
 .detail-content p, .detail-content strong,
-.detail-content a, .form-content p{
+.detail-content a, .form-content p,
+.profile-info p, .profile-info strong,
+.content ul.errorlist, .impact-message,
+.related-object, .related-object a {
     background-color: white;
 }
 
@@ -242,17 +248,13 @@ label {
     box-sizing: border-box;
 }
 
-.content ul.errorlist {
-    background-color: white;
-}
-
 .errorlist li, .warning-message {
     background-color: #fff8f5;
     color: #b02a2a;
     border: 1px solid #f08080;
     padding: 10px 12px;
     margin: 10px 0px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     border-radius: 8px;
     line-height: 1.4;
     max-width: 100%;
@@ -270,4 +272,49 @@ form h2 {
 
 .pagination span.current {
     text-decoration: underline;
+}
+
+/*userprofile styles*/
+.info-text {
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.profile-info {
+    border-radius: 20px;
+}
+
+.profile-info legend {
+    padding: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.helptext, .form-content ul {
+    background-color: #E0F7FB;
+    color: #0A5EB0; 
+    border: 1px solid #81D4FA;
+    padding: 3px 4px;
+    margin: 10px 0px;
+    border-radius: 4px;
+    max-width: 100%;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.form-content ul li {
+    background-color: #E0F7FB;
+    color: #0A5EB0; 
+}
+
+/*registration styles*/
+.registration-header {
+    background-color: transparent;
+}
+
+/*deletion styles*/
+.impact-message {
+    font-weight: 500;
 }

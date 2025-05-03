@@ -82,3 +82,9 @@ class ProfileDeleteView(LoginRequiredMixin, UserObjectMixin, DeleteView):
     model = User
     template_name = 'profile/profile_confirm_delete.html'
     success_url = reverse_lazy('user_login')
+    cancel_link = reverse_lazy('profile_detail')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_link'] = self.cancel_link
+        return context

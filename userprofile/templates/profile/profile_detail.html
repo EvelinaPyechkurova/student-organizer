@@ -9,11 +9,13 @@
     <a href="{% url model_name|add:'_delete' %}" class="button-link">Delete your account</a>
 {% endblock %}
 
+{% block metadata %}{% endblock metadata %}
+
 {% block detail_content %}
     <p class="info-text">
         Here you can view and update your personal information and reminder settings to customize your experience.
     </p>
-    <fieldset>
+    <fieldset class="profile-info">
         <legend>Profile Information</legend>
         <p><strong>Username:</strong> {{ user.username }}</p>
         <p><strong>First Name:</strong> {{ user.first_name }}</p>
@@ -28,7 +30,7 @@
         </p>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="profile-info">
         <legend>Default Durations</legend>
         {% with profile=user.userprofile %}
             <p><strong>Default lesson duration:</strong> {{ profile.lesson_duration }}</p>
@@ -37,7 +39,7 @@
     </fieldset>
 
     </fieldset>
-    <fieldset>
+    <fieldset class="profile-info">
         <legend>Reminder Preferences</legend>
         {% for reminder in reminders %}
             <p><strong>{{ reminder.label }}:</strong>
