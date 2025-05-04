@@ -11,7 +11,7 @@
     {% block navbar %}
         {% include "components/_navbar.html" %}
     {% endblock %}
-    <div class="content">
+    <div class="{% block content_wrapper %}content{% endblock content_wrapper %}">
         {% block content %}{% endblock %}
     </div>
 </body>

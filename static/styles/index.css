@@ -33,7 +33,9 @@ button:hover, .button-link:hover {
     padding: 20px 40px;
     display: flex;
     align-items: center;
-    max-width: 1000px;
+    min-width: 1000px;
+    max-width: 1150px;
+    width: fit-content;
     margin: 0 auto;
     border-bottom: 2px solid #0A5EB0;
     border-radius: 12px;
@@ -317,4 +319,46 @@ form h2 {
 /*deletion styles*/
 .impact-message {
     font-weight: 500;
+}
+
+#id_password1_helptext{
+    color: transparent;
+    border: none;
+    background-color: transparent;
+}
+
+/*calendar styles*/
+.calendar {
+    max-width: 1000px;
+    height: 750px;
+    margin: 40px auto;
+    padding: 24px;
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5em;
+    font-weight: 600;
+    padding: 16px;
+    border-radius: 12px 12px 0px 0px;
+    box-sizing: border-box;
+    background-color: #A3D0F5;
+}
+
+.calendar-header p {
+    color: #1C5D99;
+    background-color: #A3D0F5;
+}
+
+/* background-color: #228BE6; */
+
+.calendar-body {
+    width: 100%;
+    min-height: 100%;
+    background-color: white;
+    border-radius: 0px 0px 12px 12px;
+    box-sizing: border-box;
 }

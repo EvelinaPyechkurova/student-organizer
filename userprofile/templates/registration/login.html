@@ -8,7 +8,7 @@
 {% block form_action_buttons %}
     <input type="hidden" name="next" value="{{ next }}">
     <div class="buttons">
-        <input class="button-link" type="submit" value="login">
+        <input class="button-link" type="submit" value="Login">
         {% comment %} <a href="{% url 'password_reset' %}" class="button-link">Lost password?</a> {% endcomment %}
         <a href="{% url 'user_register' %}" class="button-link">Sign Up</a>
     </div>

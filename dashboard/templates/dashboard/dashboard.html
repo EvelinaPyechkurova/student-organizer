@@ -1,6 +1,16 @@
 {% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Calendar{% endblock title %}
+{% block content_wrapper %}calendar{% endblock %}
 
 {% block content %}
-    <h2>Hello, {{ first_name }}!</h2>
-    <h3>CALENDAR</h3>
-{% endblock %}
+    <div class="calendar-header">
+        <p>Calendar</p>
+        <p>{{ month }} {{ year }}</p>
+    </div>
+
+    <div class="calendar-body">
+
+    </div>
+{% endblock content %}
