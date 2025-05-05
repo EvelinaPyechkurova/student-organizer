@@ -353,12 +353,47 @@ form h2 {
     background-color: #A3D0F5;
 }
 
-/* background-color: #228BE6; */
-
 .calendar-body {
     width: 100%;
     min-height: 100%;
     background-color: white;
     border-radius: 0px 0px 12px 12px;
     box-sizing: border-box;
+}
+
+.calendar-content {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, auto);
+    gap: 4px;
+    padding: 15px;
+    text-align: center;
+    background-color: transparent;
+    box-sizing: border-box;
+    flex-grow: 1;
+    height: 100%;
+}
+
+
+.workweek, .weekend {
+    font-weight: bold;
+    background-color: transparent;
+    padding: 8px;
+}
+
+.weekend {
+    color:crimson;
+}
+
+.calendar-day {
+    text-align: start;
+    padding: 12px;
+    border-radius: 6px;
+    min-height: 100px;
+    background-color: #E0F1FF;
+}
+
+.invisible-day {
+    color: transparent;
+    background-color: transparent;
 }

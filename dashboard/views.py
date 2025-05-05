@@ -13,11 +13,14 @@ class DashboardView(LoginRequiredMixin, View):
         user = request.user
         today = date.today()
         year = today.year
-        month = calendar.month_name[today.month]
+        month = today.month
+        month_name = calendar.month_name[month]
+        month_calendar = calendar.monthcalendar(year, month)
 
         context = { 
             'year': year,
-            'month': month,
+            'month': month_name,
+            'calendar': month_calendar,
         }
 
         return render(request, self.template_name, context)

@@ -11,6 +11,24 @@
     </div>
 
     <div class="calendar-body">
-
+        <div class="calendar-content">
+            <div class="workweek">Mo</div>
+            <div class="workweek">Tu</div>
+            <div class="workweek">We</div>
+            <div class="workweek">Th</div>
+            <div class="workweek">Fr</div>
+            <div class="weekend">Sa</div>
+            <div class="weekend">Su</div>
+            
+            {% for week in calendar %}
+                {% for day in week %}
+                    {% if day != 0 %}
+                        <div class="calendar-day">{{ day }}</div>
+                    {% else %}
+                        <div class="invisible-day">{{ day }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock content %}
