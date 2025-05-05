@@ -21,6 +21,10 @@ def apply_sorting(get_request, queryset, valid_filters):
     return queryset
 
 
+def filter_by_day(queryset, date, date_field='start_time'):
+    return queryset.filter(**{f"{date_field}__date": date})
+
+
 def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
     '''
     Filters the provided queryset by timeframe conditions like 'today', 'this_week', etc.

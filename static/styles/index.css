@@ -332,7 +332,7 @@ form h2 {
     max-width: 1000px;
     height: 750px;
     margin: 40px auto;
-    padding: 24px;
+    padding: 0px 24px;
     border-radius: 16px;
     box-sizing: border-box;
 }
@@ -396,4 +396,43 @@ form h2 {
 .invisible-day {
     color: transparent;
     background-color: transparent;
+}
+
+.calendar-lesson,
+.calendar-assessment,
+.calendar-homework {
+    padding: 2px;
+    margin: 1px;
+    background-color: transparent;
+    font-size: 0.7rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+.calendar-lesson {
+    background-color: #A39AF5;
+    border: 1px solid #5F50C9;
+}
+
+.calendar-assessment {
+    background-color: #D7A3FF;
+    border: 1px solid #9B50D2;
+}
+
+.calendar-homework {
+    background-color: #F2B1F6;
+    border: 1px solid #BA60C5;
+}
+
+.calendar-lesson a,
+.calendar-assessment a,
+.calendar-homework a {
+    background-color: transparent;
+}
+
+.calendar-lesson a:hover,
+.calendar-assessment a:hover,
+.calendar-homework a:hover {
+    text-decoration: underline;
 }

@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}Calendar{% endblock title %}
 {% block content_wrapper %}calendar{% endblock %}
@@ -23,7 +24,15 @@
             {% for week in calendar %}
                 {% for day in week %}
                     {% if day != 0 %}
-                        <div class="calendar-day">{{ day }}</div>
+                        <div class="calendar-day">{{ day }}
+                            {% for type, pk, description in calendar_events|get_item:day %}
+                                <div class="calendar-{{ type }}">
+                                    {% with url_name=type|add:"_detail" %}
+                                        <a href="{% url url_name pk %}">{{ description }}</a>
+                                    {% endwith %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
                         <div class="invisible-day">{{ day }}</div>
                     {% endif %}
