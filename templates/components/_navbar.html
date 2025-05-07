@@ -2,8 +2,8 @@
 
     <h1>Student Organizer</h1>
     <div class="links">
-        {% if request.user.is_stuff %}
-            <a href="admin:index">Admin Panel</a>
+        {% if request.user.is_superuser %}
+            <a href="{% url "admin:index" %}">Admin Panel</a>
         {% endif %}
         <a href="{% url "dashboard" %}">Calendar</a>
         <a href="{% url "profile_detail" %}">Profile</a>
