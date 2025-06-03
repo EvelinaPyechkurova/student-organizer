@@ -1,0 +1,23 @@
+services:
+    db:
+        container_name: studentorg_db
+        image: postgres:17.5
+        restart: always
+        env_file:
+            - .env
+        environment:
+            - POSTGRES_DB: ${DATABASE_NAME}
+            - POSTGRES_USER: ${DATABASE_USER}
+            - POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+        ports:
+            - '5432:5432'
+    backend:
+        container_name: studentorg_backend
+        build: .
+        image: backend:organizer
+        depends_on:
+            - db
+        env_file:
+            - .env
+        ports:
+            - '8000:8000'
