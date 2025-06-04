@@ -24,12 +24,14 @@ VALID_FILTERS = {
     'subject': {
         'type': 'select',
         'label': 'Subject',
-        'options': generate_select_options(Subject, order_by='name'),
+        # 'options': generate_select_options(Subject, order_by='name'),
+        'options': Assessment.Type.choices,
     },
     'lesson': {
         'type': 'select',
         'label': 'Assessment Lesson',
-        'options': generate_select_options(Lesson, order_by='start_time'),
+        # 'options': generate_select_options(Lesson, order_by='start_time'),
+        'options': Assessment.Type.choices,
     },
     'type': {
         'type': 'select',

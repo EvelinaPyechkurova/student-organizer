@@ -146,4 +146,8 @@ class Assessment(models.Model):
 
 
     def __str__(self):
-        return f'{self.get_type_display()} — {self.derived_subject} on {localtime(self.derived_start_time).strftime('%A, %b %d, %Y at %H:%M')}'
+        source = self.lesson or self
+        subject = source.subject
+
+        start_time = self.start_time or self.lesson.start_time
+        return f'{self.get_type_display()} — {subject} on {localtime(start_time).strftime('%A, %b %d, %Y at %H:%M')}'

@@ -21,7 +21,8 @@ VALID_FILTERS = {
     'subject': {
         'type': 'select',
         'label': 'Subject',
-        'options': generate_select_options(Subject, order_by='name'),
+        # 'options': generate_select_options(Subject, order_by='name'),
+        'options': Lesson.Type.choices,
     },
     'type': {
         'type': 'select',
