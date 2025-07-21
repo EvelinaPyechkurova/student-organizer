@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import os
 import environ
 
 env = environ.Env()
@@ -8,6 +9,7 @@ environ.Env().read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -73,7 +75,7 @@ DATABASES = {
         'NAME': env('DATABASE_NAME'),
         'USER': env('DATABASE_USER'),
         'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': env('DATABASE_HOST'),
+        'HOST': env('DATABASE_HOST', default='localhost'),
         'PORT': env('DATABASE_PORT'),
     }
 }
