@@ -41,6 +41,7 @@
     </fieldset>
     <fieldset class="profile-info">
         <legend>Reminder Preferences</legend>
+        <p><strong>Notification type:</strong> {{ profile.get_notification_method_display }}</p>
         {% for reminder in reminders %}
             <p><strong>{{ reminder.label }}:</strong>
                 {% if reminder.enabled %}
