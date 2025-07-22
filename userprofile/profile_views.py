@@ -5,6 +5,8 @@ from django.views import View
 from django.views.generic import DetailView, DeleteView
 from django.urls import reverse_lazy
 
+from notifications.services.email_service import send_email
+
 from utils.mixins import UserObjectMixin
 
 from .forms import UserUpdateForm, ProfileUpdateForm
@@ -13,6 +15,7 @@ from .forms import UserUpdateForm, ProfileUpdateForm
 class ProfileDetailView(LoginRequiredMixin, UserObjectMixin, DetailView):
     model = User
     template_name = 'profile/profile_detail.html'
+    send_email()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,0 +1,6 @@
+Hi {{first_name}},
+This is a quick reminder from Student Organizer that your {{event_type}} "{{title}}" is scheduled for {{start_time}}.
+It starts in {{time_left}}.
+{{event_type_specific_message}}
+Good luck!
+– The Student Organizer Team

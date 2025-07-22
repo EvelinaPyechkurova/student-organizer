@@ -1,0 +1,28 @@
+<html>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+        <p>Hi, {{ first_name }}</p>
+        
+        <p>
+            This is a quick reminder from 
+            <strong>Student Organizer</strong>
+            that your 
+            <strong>{{ event_type }}</strong> 
+            "<em>{{ title }}</em>" 
+            is scheduled for 
+            <strong>{{ start_time }}</strong>.
+        </p>
+
+        <p>
+            It starts in <strong>{{ time_left }}</strong>.
+        </p>
+
+        <p>
+            {{ event_type_specific_message }}
+        </p>
+
+        <p style="margin-top: 24px;">
+            Good luck!<br>
+            — <strong>Student Organizer Team</strong>
+        </p>
+    </body>
+</html>
