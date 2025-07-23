@@ -15,7 +15,7 @@ from .forms import UserUpdateForm, ProfileUpdateForm
 class ProfileDetailView(LoginRequiredMixin, UserObjectMixin, DetailView):
     model = User
     template_name = 'profile/profile_detail.html'
-    send_email()
+    # send_email()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

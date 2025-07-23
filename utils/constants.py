@@ -41,7 +41,7 @@ DEFAULT_RECIEVE_HOMEWORK_REMINDERS = True
 DEFAULT_HOMEWORK_REMINDER_TIMING = timedelta(days=2)
 
 # -- Event Type Specific Messages --
-EVENT_TYPE_SPECIFIC_MESSAGES = {
+EVENT_TYPE_SPECIFIC_EMAIL_MESSAGES = {
     'Lesson': 'Make sure to attend on time and be prepared.',
     'Assessment': 'Make sure to revise the material and prepare well.',
     'Homework': 'Don\'t forget to finish and submit your assignment.',
