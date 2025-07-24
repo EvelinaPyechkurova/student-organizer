@@ -56,6 +56,10 @@ class Homework(models.Model):
         if hasattr(self, 'derived_subject_id'):
             return Subject.objects.get(id=self.derived_subject_id)
         return self.subject or (self.lesson_given and self.lesson_given.subject) or (self.lesson_due and self.lesson_due.subject)
+    
+    @property
+    def derived_due_at_prop(self):
+        return self.due_at or (self.lesson_due.start_time if self.lesson_due else None)
 
 
     def clean(self):

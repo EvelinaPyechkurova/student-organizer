@@ -35,13 +35,15 @@ def calculate_scheduled_reminder_time(instance, userprofile, event_type: str):
     Calculates the exact datetime when the reminder should be sent,
     based on user preferences and the event's start or due time.
     '''
+    event_trigger_times = {
+        'lesson': lambda instance: instance.start_time,
+        'assessment': lambda instance: instance.derived_start_time_prop,
+        'homework': lambda instance: instance.derived_due_at_prop,
+    }
+
     reminder_timing = get_reminder_timing_from_user_profile(userprofile, event_type)
 
-    if event_type == 'lesson':
-        return instance.start_time - reminder_timing
-    elif event_type == 'assessment':
-        return instance.derived_start_time_prop - reminder_timing
-    elif event_type == 'homework':
-        return instance.derived_due_at - reminder_timing
-    else:
+    try:
+        return event_trigger_times[event_type](instance) - reminder_timing
+    except KeyError:
         raise ValueError(f"Unknown event type: '{event_type}'. Expected 'lesson', 'assessment', or 'homework'.")
