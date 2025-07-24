@@ -80,10 +80,11 @@ class Lesson(models.Model):
         self.full_clean()
         set_dafault_if_none(self, 'duration', self.subject.user.userprofile.lesson_duration)
         
-        if should_schedule_reminder:
+        userprofile=self.subject.user.userprofile
+        if should_schedule_reminder(self, userprofile, 'lesson'):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
-                userprofile=self.subject.user.userprofile,
+                userprofile=userprofile,
                 event_type='lesson'
             )
 

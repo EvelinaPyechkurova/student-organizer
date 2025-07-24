@@ -149,10 +149,12 @@ class Assessment(models.Model):
             self.subject = None
             self.start_time = None
 
-        if should_schedule_reminder:
+        userprofile = self.derived_subject.user.userprofile
+
+        if should_schedule_reminder(self, userprofile, 'assessment'):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
-                userprofile=self.derived_subject.user.userprofile,
+                userprofile=userprofile,
                 event_type='assessment'
             )
 

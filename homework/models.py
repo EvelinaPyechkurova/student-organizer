@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db import models
 from django.db.models.functions import Coalesce
 from django.utils.timezone import localtime, now
@@ -9,6 +7,7 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
+from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 
 class HomeworkManager(models.Manager):
 
@@ -282,6 +281,14 @@ class Homework(models.Model):
             
         if self.due_at and self.lesson_due and self.due_at == self.lesson_due.start_time:
             self.due_at = None
+
+        userprofile = self.derived_subject.user.userprofile
+        if should_schedule_reminder(self, userprofile, 'homework'):
+            self.scheduled_reminder_time = calculate_scheduled_reminder_time(
+                instance=self,
+                userprofile=userprofile,
+                event_type='homework'
+            )
 
         super().save(*args, **kwargs)
 
