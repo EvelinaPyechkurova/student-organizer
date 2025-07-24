@@ -6,6 +6,7 @@ from subject.models import Subject
 
 from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
 from utils.default import set_dafault_if_none
+from utils.reminder_time import calculate_scheduled_reminder_time
 
 class LessonManager(models.Manager):
 
@@ -41,6 +42,8 @@ class Lesson(models.Model):
     type = models.CharField(max_length=1, choices=Type, default=Type.LECTURE)
     start_time = models.DateTimeField()
     duration = models.DurationField(blank=True, null=True)
+    scheduled_reminder_time = models.DateTimeField(null=True, blank=True)
+    reminder_sent = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
@@ -76,6 +79,14 @@ class Lesson(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         set_dafault_if_none(self, 'duration', self.subject.user.userprofile.lesson_duration)
+        
+        if self.scheduled_reminder_time is None:
+            self.scheduled_reminder_time = calculate_scheduled_reminder_time(
+                instance=self,
+                userprofile=self.subject.user.userprofile,
+                event_type='lesson'
+            )
+
         super().save(*args, **kwargs)
 
 

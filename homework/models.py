@@ -45,6 +45,8 @@ class Homework(models.Model):
     task = models.CharField(max_length=MAX_TASK_LENGTH)
     completion_percent = models.IntegerField(default=0)
     has_subtasks = models.BooleanField(default=False)
+    scheduled_reminder_time = models.DateTimeField(null=True, blank=True)
+    reminder_sent = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 

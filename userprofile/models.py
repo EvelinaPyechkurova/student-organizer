@@ -26,9 +26,11 @@ class UserProfile(models.Model):
     lesson_duration = models.DurationField(default=DEFAULT_LESSON_DURATION)
     assessment_duration = models.DurationField(default=DEFAULT_LESSON_DURATION)
 
-    notification_method = models.CharField(max_length=1,
-                                           choices=NotificationMethod,
-                                           default=NotificationMethod.PUSH)
+    notification_method = models.CharField(
+        max_length=1,
+        choices=NotificationMethod,
+        default=NotificationMethod.PUSH
+    )
     
     recieve_lesson_reminders = models.BooleanField(default=DEFAULT_RECIEVE_LESSON_REMINDERS)
     lesson_reminder_timing = models.DurationField(default=DEFAULT_LESSON_REMINDER_TIMING)

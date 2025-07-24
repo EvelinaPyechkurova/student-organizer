@@ -53,6 +53,8 @@ class Assessment(models.Model):
     start_time = models.DateTimeField(blank=True, null=True)
     duration = models.DurationField(blank=True, null=True)
     description = models.CharField(max_length=500, blank=True, null=True)
+    scheduled_reminder_time = models.DateTimeField(null=True, blank=True)
+    reminder_sent = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
