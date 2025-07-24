@@ -25,17 +25,17 @@ class ProfileDetailView(LoginRequiredMixin, UserObjectMixin, DetailView):
         context['reminders'] = [
             {
                 'label': 'Lesson reminders',
-                'enabled': profile.recieve_lesson_reminders,
+                'enabled': profile.receive_lesson_reminders,
                 'timing': profile.lesson_reminder_timing,
             },
             {
                 'label': 'Assessment reminders',
-                'enabled': profile.recieve_assessment_reminders,
+                'enabled': profile.receive_assessment_reminders,
                 'timing': profile.assessment_reminder_timing,
             },
             {
                 'label': 'Homework reminders',
-                'enabled': profile.recieve_homework_reminders,
+                'enabled': profile.receive_homework_reminders,
                 'timing': profile.homework_reminder_timing,
             },
         ]

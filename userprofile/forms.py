@@ -29,9 +29,9 @@ class ProfileUpdateForm(ModelForm):
         model = UserProfile
         fields = [
             'lesson_duration', 'assessment_duration', 'notification_method',
-            'recieve_lesson_reminders', 'lesson_reminder_timing',
-            'recieve_assessment_reminders', 'assessment_reminder_timing',
-            'recieve_homework_reminders', 'homework_reminder_timing'
+            'receive_lesson_reminders', 'lesson_reminder_timing',
+            'receive_lesson_reminders', 'assessment_reminder_timing',
+            'receive_homework_reminders', 'homework_reminder_timing'
         ]
         widgets = {
             'notification_method': RadioSelect

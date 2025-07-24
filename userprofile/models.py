@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 
 from utils.constants import (
     DEFAULT_LESSON_DURATION,
-    DEFAULT_RECIEVE_LESSON_REMINDERS,
+    DEFAULT_RECEIVE_LESSON_REMINDERS,
     DEFAULT_LESSON_REMINDER_TIMING,
-    DEFAULT_RECIEVE_ASSESSMENT_REMINDERS,
+    DEFAULT_RECEIVE_ASSESSMENT_REMINDERS,
     DEFAULT_ASSESSMENT_REMINDER_TIMING,
-    DEFAULT_RECIEVE_HOMEWORK_REMINDERS,
+    DEFAULT_RECEIVE_HOMEWORK_REMINDERS,
     DEFAULT_HOMEWORK_REMINDER_TIMING,
 )
 
@@ -32,13 +32,13 @@ class UserProfile(models.Model):
         default=NotificationMethod.PUSH
     )
     
-    recieve_lesson_reminders = models.BooleanField(default=DEFAULT_RECIEVE_LESSON_REMINDERS)
+    receive_lesson_reminders = models.BooleanField(default=DEFAULT_RECEIVE_LESSON_REMINDERS)
     lesson_reminder_timing = models.DurationField(default=DEFAULT_LESSON_REMINDER_TIMING)
 
-    recieve_assessment_reminders = models.BooleanField(default=DEFAULT_RECIEVE_ASSESSMENT_REMINDERS)
+    receive_assessment_reminders = models.BooleanField(default=DEFAULT_RECEIVE_ASSESSMENT_REMINDERS)
     assessment_reminder_timing = models.DurationField(default=DEFAULT_ASSESSMENT_REMINDER_TIMING)
-
-    recieve_homework_reminders = models.BooleanField(default=DEFAULT_RECIEVE_HOMEWORK_REMINDERS)
+    
+    receive_homework_reminders = models.BooleanField(default=DEFAULT_RECEIVE_HOMEWORK_REMINDERS)
     homework_reminder_timing = models.DurationField(default=DEFAULT_HOMEWORK_REMINDER_TIMING)
 
     def __str__(self):
