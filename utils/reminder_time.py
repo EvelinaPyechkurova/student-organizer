@@ -37,9 +37,11 @@ def calculate_scheduled_reminder_time(instance, userprofile, event_type: str):
     '''
     reminder_timing = get_reminder_timing_from_user_profile(userprofile, event_type)
 
-    if event_type in ('lesson', 'assessment'):
+    if event_type == 'lesson':
         return instance.start_time - reminder_timing
+    elif event_type == 'assessment':
+        return instance.derived_start_time_prop - reminder_timing
     elif event_type == 'homework':
-        return instance.due_at - reminder_timing
+        return instance.derived_due_at - reminder_timing
     else:
         raise ValueError(f"Unknown event type: '{event_type}'. Expected 'lesson', 'assessment', or 'homework'.")

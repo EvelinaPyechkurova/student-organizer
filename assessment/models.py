@@ -9,6 +9,7 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
+from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 
 class AssessmentManager(models.Manager):
     
@@ -64,7 +65,11 @@ class Assessment(models.Model):
     def derived_subject(self):
         if hasattr(self, 'derived_subject_id'):
             return Subject.objects.get(id=self.derived_subject_id)
-        return self.subject or (self.lesson and self.lesson.subject)
+        return self.subject or (self.lesson.subject if self.lesson else None)
+    
+    @property
+    def derived_start_time_prop(self):
+        return self.start_time or (self.lesson.start_time if self.lesson else None)
     
 
     def clean(self):
@@ -143,6 +148,13 @@ class Assessment(models.Model):
         if self.lesson:
             self.subject = None
             self.start_time = None
+
+        if should_schedule_reminder:
+            self.scheduled_reminder_time = calculate_scheduled_reminder_time(
+                instance=self,
+                userprofile=self.derived_subject.user.userprofile,
+                event_type='assessment'
+            )
 
         super().save(*args, **kwargs)
 
