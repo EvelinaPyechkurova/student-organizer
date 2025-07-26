@@ -10,6 +10,7 @@ from lesson.models import Lesson
 
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
+from utils.userprofile import get_userprofile
 
 class AssessmentManager(models.Manager):
     
@@ -149,7 +150,7 @@ class Assessment(models.Model):
             self.subject = None
             self.start_time = None
 
-        userprofile = self.derived_subject.user.userprofile
+        userprofile = get_userprofile(self)
 
         if should_schedule_reminder(self, userprofile, 'assessment'):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(

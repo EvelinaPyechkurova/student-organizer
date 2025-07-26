@@ -26,7 +26,7 @@ def get_reminder_timing_from_user_profile(userprofile, event_type: str):
     '''
     try:
         return getattr(userprofile, USER_REMINDER_TIMING_FIELD.format(event_type=event_type))
-    except AttributeError as e:
+    except AttributeError:
         raise AttributeError(f'UserProfile has no reminder timing for event type "{event_type}".')
 
 

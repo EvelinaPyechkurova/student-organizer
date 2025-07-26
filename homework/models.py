@@ -8,6 +8,7 @@ from lesson.models import Lesson
 
 from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
+from utils.userprofile import get_userprofile
 
 class HomeworkManager(models.Manager):
 
@@ -286,7 +287,7 @@ class Homework(models.Model):
         if self.due_at and self.lesson_due and self.due_at == self.lesson_due.start_time:
             self.due_at = None
 
-        userprofile = self.derived_subject.user.userprofile
+        userprofile = get_userprofile(self)
         if should_schedule_reminder(self, userprofile, 'homework'):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
