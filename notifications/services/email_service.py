@@ -20,8 +20,8 @@ def build_email_message(context, text_content, html_content):
     msg = EmailMultiAlternatives(
         f'{context['title']} Reminder',
         text_content,
-        'address@gmail.com',
-        ['address.com'],
+        'evelina.pyechkurova@gmail.com',
+        [context['email']],
     )
     msg.attach_alternative(html_content, "text/html")
     return msg

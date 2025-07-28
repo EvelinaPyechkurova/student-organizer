@@ -1,4 +1,4 @@
-from django.utils.timezone import now
+from django.utils.timezone import now, localtime
 
 from utils.userprofile import get_user
 
@@ -33,9 +33,10 @@ def create_email_context(event, user):
     time_left = scheduled_time - now()
     return {
         'first_name': user.first_name,
+        'email': user.email, 
         'event_type': event_type,
         'title': str(event),
-        'scheduled_time': scheduled_time,
+        'scheduled_time': localtime(scheduled_time).strftime('%d.%m.%Y %H:%M'),
         'time_left': get_human_duration(time_left)
     }
 

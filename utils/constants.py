@@ -44,5 +44,5 @@ DEFAULT_HOMEWORK_REMINDER_TIMING = timedelta(days=2)
 EVENT_TYPE_SPECIFIC_EMAIL_MESSAGES = {
     'lesson': 'Make sure to attend on time and be prepared.',
     'assessment': 'Make sure to revise the material and prepare well.',
-    'homework': 'Don\'t forget to finish and submit your assignment.',
+    'homework': "Don't forget to finish and submit your assignment.",
 }
