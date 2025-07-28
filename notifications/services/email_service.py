@@ -7,7 +7,8 @@ HTML_TEMPLATE_PATH = 'notifications/email.html'
 
 def build_email_context(base_context):
     context = base_context.copy()
-    context['event_type_specific_message'] = EVENT_TYPE_SPECIFIC_EMAIL_MESSAGES[context.get['event_type']]
+    print(context)
+    context['event_type_specific_message'] = EVENT_TYPE_SPECIFIC_EMAIL_MESSAGES[context['event_type']]
     return context
 
 def render_email_templates(context):
@@ -30,3 +31,4 @@ def send_email(context):
     text_content, html_content = render_email_templates(context)
     msg = build_email_message(context, text_content, html_content)
     msg.send()
+    print(f'Sending email: {text_content}')

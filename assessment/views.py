@@ -99,7 +99,6 @@ class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
-        print(self.request.user.id)
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
