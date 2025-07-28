@@ -18,7 +18,7 @@ def render_email_templates(context):
 
 def build_email_message(context, text_content, html_content):
     msg = EmailMultiAlternatives(
-        f'{context['title']} Reminder',
+        f'{context['event_subject']} {context['event_type']} Reminder',
         text_content,
         'evelina.pyechkurova@gmail.com',
         [context['email']],

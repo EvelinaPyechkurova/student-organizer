@@ -5,9 +5,13 @@
         <p>
             This is a quick reminder from 
             <strong>Student Organizer</strong>
-            that your 
-            <strong>{{ event_type }}</strong> 
-            "<em>{{ title }}</em>" 
+            that your
+            <strong>
+                <a href="{{event_type}}s/{{event_id}}">
+                    <em>{{ event_subject }}</em>
+                    {{ event_type|capfirst }}
+                </a>
+            </strong>
             is scheduled for 
             <strong>{{ scheduled_time }}</strong>.
         </p>

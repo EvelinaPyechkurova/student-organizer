@@ -1,5 +1,5 @@
 Hi {{first_name}},
-This is a quick reminder from Student Organizer that your {{event_type}} "{{title}}" is scheduled for {{scheduled_time}}.
+This is a quick reminder from Student Organizer that your {{event_subject}} {{event_type}} is scheduled for {{scheduled_time}}.
 It starts in {{time_left}}.
 {{event_type_specific_message}}
 Good luck!
