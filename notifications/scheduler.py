@@ -10,6 +10,31 @@ from homework.models import Homework
 
 from .services.email_service import send_email
 
+MODEL_CONFIGS = [
+    {
+        'model': Lesson,
+        'select_related': ['subject__user__userprofile'],
+        'use_with_derived_fields': False,
+    },
+    {
+        'model': Assessment,
+        'select_related': [
+            'subject__user__userprofile',
+            'lesson__subject__user__userprofile',
+        ],
+        'use_with_derived_fields': False,
+    },
+    {
+        'model': Homework,
+        'select_related': [
+            'subject__user__userprofile',
+            'lesson_given__subject__user__userprofile',
+            'lesson_due__subject__user__userprofile',
+        ],
+        'use_with_derived_fields': False,
+    },
+]
+
 def get_scheduled_time(event_type, event):
     '''
     Returns value responsible of event sheduled time
@@ -17,8 +42,8 @@ def get_scheduled_time(event_type, event):
     '''
     scheduled_time_path = {
         'lesson': lambda event: event.start_time,
-        'assessment': lambda event: event.derived_start_time_prop,
-        'homework': lambda event: event.derived_due_at_prop,
+        'assessment': lambda event: event.derived_start_time,
+        'homework': lambda event: event.derived_due_at,
     }
 
     return scheduled_time_path[event_type](event)
@@ -46,33 +71,18 @@ def send_notifications():
     Finds and sends all due scheduled notifications for Lesson, Assessment, and Homework.
     '''
     events = []
-    events.extend(
-        Lesson.objects.filter(
-            scheduled_reminder_time__lte=now(),
-            reminder_sent=False
-        ).select_related(
-            'subject__user__userprofile',
+
+    for config in MODEL_CONFIGS:
+        query_set = (
+            config['model'].objects.with_derived_fields()
+            if config['use_with_derived_fields']
+            else config['model'].objects
         )
-    )
-    events.extend(
-        Assessment.objects.filter(
+
+        query_set = query_set.filter(
             scheduled_reminder_time__lte=now(),
-            reminder_sent=False
-        ).select_related(
-            'subject__user__userprofile',
-            'lesson__subject__user__userprofile',
-        )
-    )
-    events.extend(
-        Homework.objects.filter(
-            scheduled_reminder_time__lte=now(),
-            reminder_sent=False
-        ).select_related(
-            'subject__user__userprofile',
-            'lesson_given__subject__user__userprofile',
-            'lesson_due__subject__user__userprofile',
-        )
-    )
+            reminder_sent=False,
+        ).select_related(*config['select_related'])
 
     for event in events:
         user = get_user(event)
