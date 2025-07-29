@@ -7,7 +7,7 @@ from subject.models import Subject
 from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
 from utils.default import set_dafault_if_none
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
-from utils.userprofile import get_userprofile
+from utils.accessors import get_userprofile
 
 class LessonManager(models.Manager):
 

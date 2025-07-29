@@ -20,4 +20,4 @@ class HomeworkUpdateForm(HomeworkBaseForm):
     class Meta():
         model = Homework
         fields = ['lesson_due', 'due_at', 'task',
-                  'completion_percent', 'has_subtasks']
+                  'completion_percent', 'has_subtasks', 'reminder_sent']

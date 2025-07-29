@@ -1,11 +1,13 @@
+import time
 from django.utils.timezone import now, localtime
 
 from lesson.models import Lesson
 from assessment.models import Assessment
 from homework.models import Homework
+from userprofile.models import UserProfile
 
 from subject.templatetags.custom_tags import get_human_duration
-from utils.userprofile import get_user, get_subject
+from utils.accessors import get_subject, get_user, get_userprofile
 from .services.email_service import send_email
 
 MODEL_CONFIGS = [
@@ -89,8 +91,21 @@ def send_notifications():
 
     for event in events:
         user = get_user(event)
-        context = create_email_context(event, user)
+        userprofile = get_userprofile(event)
 
-        send_email(context)
+        if userprofile.NotificationMethod in (
+            UserProfile.NotificationMethod.EMAIL,
+            UserProfile.NotificationMethod.BOTH,
+        ):
+            context = create_email_context(event, user)
+            send_email(context)
+
+        if userprofile.NotificationMethod in (
+            UserProfile.NotificationMethod.PUSH,
+            UserProfile.NotificationMethod.BOTH,
+        ):
+            pass
+
         event.reminder_sent = True
         event.save(update_fields=['reminder_sent'])
+        

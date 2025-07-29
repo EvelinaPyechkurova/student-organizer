@@ -18,4 +18,4 @@ class AssessmentCreateForm(AssessmentBaseForm):
 class AssessmentUpdateForm(AssessmentBaseForm):
     class Meta(AssessmentBaseForm.Meta):
         model = Assessment
-        fields = ['lesson', 'type', 'start_time', 'duration', 'description']
+        fields = ['lesson', 'type', 'start_time', 'duration', 'description', 'reminder_sent']

@@ -12,4 +12,4 @@ class LessonCreateForm(DateTimeWidgetMixin, ModelForm):
 class LessonUpdateForm(DateTimeWidgetMixin, ModelForm):
     class Meta:
         model = Lesson
-        fields = ['type', 'start_time', 'duration']
+        fields = ['type', 'start_time', 'duration', 'reminder_sent']

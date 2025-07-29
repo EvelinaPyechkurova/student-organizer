@@ -16,9 +16,6 @@ from subject.models import Subject
 from .models import Lesson
 from .forms import LessonCreateForm, LessonUpdateForm
 
-from utils.userprofile import get_user
-from notifications.scheduler import send_notifications
-
 
 VALID_FILTERS = {
     'subject': {
@@ -88,8 +85,6 @@ class LessonDetailView(LoginRequiredMixin, DerivedFieldsMixin, OwnershipRequired
         context = super().get_context_data(**kwargs)
         now_time = now()
         start_time = context['lesson'].start_time
-
-        send_notifications()
 
         context['can_add_assessment'] = start_time > now_time
         context['can_add_lesson_given'] = start_time < now_time and start_time > now_time - MAX_TIMEFRAME

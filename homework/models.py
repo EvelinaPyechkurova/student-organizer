@@ -8,7 +8,7 @@ from lesson.models import Lesson
 
 from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
-from utils.userprofile import get_userprofile
+from utils.accessors import get_userprofile
 
 class HomeworkManager(models.Manager):
 
