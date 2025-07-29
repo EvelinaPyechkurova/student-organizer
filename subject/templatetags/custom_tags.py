@@ -1,7 +1,9 @@
+import math
 from django import template
 
 register = template.Library()
 
+SECONDS_IN_MINUTE = 60
 MINUTES_IN_HOUR = 60
 MINUTES_IN_DAY = 1440
 
@@ -27,12 +29,13 @@ def get_human_duration(timedelta):
     '''
     Converts a timedelta into a user-friendly format (e.g. "2 days, 3 hours, 5 minutes").
     Handles pluralization and ignores zero values.
+    Rounds minutes UP, but leaves days/hours logic untouched.
     '''
 
-    total_minutes = int(timedelta.total_seconds() // 60)
+    total_minutes = math.ceil(timedelta.total_seconds() / SECONDS_IN_MINUTE)
 
     days, minutes = divmod(total_minutes, MINUTES_IN_DAY)
-    hours, minutes = divmod(minutes, 60)
+    hours, minutes = divmod(minutes, MINUTES_IN_HOUR)
 
     parts = []
     if days:

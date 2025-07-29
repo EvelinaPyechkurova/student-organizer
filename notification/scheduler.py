@@ -57,6 +57,9 @@ def create_email_context(event, user):
     event_subject = get_subject(event)
     scheduled_time = get_scheduled_time(event_type, event)
     time_left = scheduled_time - now()
+    print(f'TIMELEFT TYPE: {type(time_left)}')
+    print(f'TIMELEFT: {time_left}')
+    print(f'TIMELEFT HUMAN: {get_human_duration(time_left)}')
     return {
         'first_name': user.first_name,
         'email': user.email,
