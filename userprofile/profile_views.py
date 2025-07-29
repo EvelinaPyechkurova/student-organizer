@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import DetailView, DeleteView
 from django.urls import reverse_lazy
 
-from notifications.services.email_service import send_email
+from notification.services.email_service import send_email
 
 from utils.mixins import UserObjectMixin
 

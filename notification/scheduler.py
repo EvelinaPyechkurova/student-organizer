@@ -8,7 +8,7 @@ from userprofile.models import UserProfile
 
 from subject.templatetags.custom_tags import get_human_duration
 from utils.accessors import get_subject, get_user, get_userprofile
-from .services.email_service import send_email
+from notification.services.email_service import send_email
 
 MODEL_CONFIGS = [
     {
@@ -67,6 +67,9 @@ def create_email_context(event, user):
         'time_left': get_human_duration(time_left)
     }
 
+def update_event_reminder_status(event):
+    event.reminder_sent = True
+    event.save(update_fields=['reminder_sent'])
 
 def send_notifications():
     '''
@@ -74,6 +77,7 @@ def send_notifications():
     '''
 
     events = []
+    print('PREPARING QUERYSET')
 
     for config in MODEL_CONFIGS:
         query_set = (
@@ -89,23 +93,26 @@ def send_notifications():
 
         events.extend(query_set)
 
+    print('FINISHED PREPARING QUERYSET')
+    print(events)
+
     for event in events:
         user = get_user(event)
         userprofile = get_userprofile(event)
 
-        if userprofile.NotificationMethod in (
+        if userprofile.notification_method in (
             UserProfile.NotificationMethod.EMAIL,
             UserProfile.NotificationMethod.BOTH,
         ):
             context = create_email_context(event, user)
             send_email(context)
+            update_event_reminder_status(event)
 
-        if userprofile.NotificationMethod in (
+        if userprofile.notification_method in (
             UserProfile.NotificationMethod.PUSH,
             UserProfile.NotificationMethod.BOTH,
         ):
             pass
 
-        event.reminder_sent = True
-        event.save(update_fields=['reminder_sent'])
+
         

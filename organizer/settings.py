@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'homework.apps.HomeworkConfig',
     'userprofile.apps.UserprofileConfig',
     'dashboard.apps.DashboardConfig',
+    'notification.apps.NotificationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
