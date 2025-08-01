@@ -1,13 +1,14 @@
 from django.db import models
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 
 from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
+from utils.accessors import get_userprofile
 from utils.default import set_dafault_if_none
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
-from utils.accessors import get_userprofile
+from utils.time_format import format_time
 
 class LessonManager(models.Manager):
 
@@ -94,4 +95,4 @@ class Lesson(models.Model):
 
 
     def __str__(self):
-        return f'{self.get_type_display()} — {self.subject} on {localtime(self.start_time).strftime('%A, %b %d, %Y at %H:%M')}'
+        return f'{self.get_type_display()} — {self.subject} on {format_time(self.start_time)}'

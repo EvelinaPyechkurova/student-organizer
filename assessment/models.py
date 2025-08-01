@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db import models
 from django.db.models.functions import Coalesce
 from django.utils.timezone import localtime, now
@@ -8,9 +6,10 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
+from utils.accessors import get_subject, get_userprofile
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
-from utils.accessors import get_userprofile
+from utils.time_format import format_time
 
 class AssessmentManager(models.Manager):
     
@@ -163,8 +162,11 @@ class Assessment(models.Model):
 
 
     def __str__(self):
-        source = self.lesson or self
-        subject = source.subject
+        subject = get_subject(self)
 
-        start_time = self.start_time or self.lesson.start_time
-        return f'{self.get_type_display()} — {subject} on {localtime(start_time).strftime('%A, %b %d, %Y at %H:%M')}'
+        if hasattr(self, 'derived_start_time'):
+            start_time = self.derived_start_time
+        else:
+            start_time = self.derived_start_time_prop
+
+        return f'{self.get_type_display()} — {subject} on {format_time(start_time)}'

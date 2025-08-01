@@ -1,14 +1,15 @@
 from django.db import models
 from django.db.models.functions import Coalesce
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 from subject.models import Subject
 from lesson.models import Lesson
 
+from utils.accessors import get_subject, get_userprofile
 from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
-from utils.accessors import get_userprofile
+from utils.time_format import format_time
 
 class HomeworkManager(models.Manager):
 
@@ -299,9 +300,11 @@ class Homework(models.Model):
 
 
     def __str__(self):
-        source = self.lesson_given or self.lesson_due or self
-        subject = source.subject
+        subject = get_subject(self)
 
-        date = self.due_at or self.lesson_due.start_time
+        if hasattr(self, 'derived_due_at'):
+            date = self.derived_due_at
+        else:
+            date = self.derived_due_at_prop
  
-        return f'{subject} homework: {self.task[0].lower()}{self.task[1:50]}... (Due: {localtime(date).strftime('%a, %b %d %Y at %H:%M')})'
+        return f'{subject} homework: {self.task[0].lower()}{self.task[1:50]}... (Due: {format_time(date)}'

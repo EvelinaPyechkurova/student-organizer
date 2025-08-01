@@ -31,9 +31,11 @@ class ProfileUpdateForm(ModelForm):
             'lesson_duration', 'assessment_duration', 'notification_method',
             'receive_lesson_reminders', 'lesson_reminder_timing',
             'receive_lesson_reminders', 'assessment_reminder_timing',
-            'receive_homework_reminders', 'homework_reminder_timing'
+            'receive_homework_reminders', 'homework_reminder_timing',
+            'time_display_format'
         ]
         widgets = {
-            'notification_method': RadioSelect
+            'notification_method': RadioSelect,
+            'time_display_format': RadioSelect
         }
         

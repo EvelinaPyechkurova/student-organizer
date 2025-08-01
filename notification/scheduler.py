@@ -1,4 +1,3 @@
-import time
 from django.utils.timezone import now, localtime
 
 from lesson.models import Lesson
