@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 
 from utils.constants import MAX_LESSON_DURATION as MAX_DURATION, MIN_LESSON_DURATION as MIN_DURATION
-from utils.accessors import get_userprofile
+from utils.accessors import get_userprofile, get_time_display_format
 from utils.default import set_dafault_if_none
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
@@ -95,4 +95,4 @@ class Lesson(models.Model):
 
 
     def __str__(self):
-        return f'{self.get_type_display()} — {self.subject} on {format_time(self.start_time)}'
+        return f'{self.get_type_display()} — {self.subject} on {format_time(self.start_time, get_time_display_format(self))}'

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
-from utils.accessors import get_subject, get_userprofile
+from utils.accessors import get_subject, get_userprofile, get_time_display_format
 from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSMENT_DURATION as MAX_DURATION
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
@@ -169,4 +169,4 @@ class Assessment(models.Model):
         else:
             start_time = self.derived_start_time_prop
 
-        return f'{self.get_type_display()} — {subject} on {format_time(start_time)}'
+        return f'{self.get_type_display()} — {subject} on {format_time(start_time, get_time_display_format(self))}'

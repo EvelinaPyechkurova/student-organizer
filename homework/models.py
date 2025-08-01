@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from subject.models import Subject
 from lesson.models import Lesson
 
-from utils.accessors import get_subject, get_userprofile
+from utils.accessors import get_subject, get_userprofile, get_time_display_format
 from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
@@ -307,4 +307,4 @@ class Homework(models.Model):
         else:
             date = self.derived_due_at_prop
  
-        return f'{subject} homework: {self.task[0].lower()}{self.task[1:50]}... (Due: {format_time(date)}'
+        return f'{subject} homework: {self.task[0].lower()}{self.task[1:50]}... (Due: {format_time(date, get_time_display_format(self))}'

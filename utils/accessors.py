@@ -25,3 +25,9 @@ def get_userprofile(obj):
     '''
     user = get_user(obj)
     return user.userprofile
+
+def get_time_display_format(obj):
+    '''
+    '''
+    userprofile = (get_userprofile(obj))
+    return userprofile.time_display_format

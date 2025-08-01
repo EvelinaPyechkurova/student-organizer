@@ -52,4 +52,10 @@
                 {% endif %}
         {% endfor %}
     </fieldset>
+
+    <fieldset class="profile-info">
+        <legend>Display Preferences</legend>
+        <p><strong>Color theme:</strong> Default</p>
+        <p><strong>Time display format:</strong> {{ profile.get_time_display_format_display }}</p>
+    </fieldset>
 {% endblock %}
