@@ -8,13 +8,16 @@ def is_reminder_enabled(userprofile, event_type: str):
     return getattr(userprofile, USER_REMINDER_ENABLED_FIELD.format(event_type=event_type))
 
 
-def should_schedule_reminder(instance, userprofile, event_type: str):
+def should_schedule_reminder(instance, userprofile, event_type: str, trigger_field_name: str):
     '''
     Determines whether a reminder should be scheduled for the given instance.
     Checks that it has not already been scheduled, and that the user has enabled reminders.
     '''
     return (
-        instance.scheduled_reminder_time is None
+        (
+            instance.scheduled_reminder_time is None
+            or instance._original_reminder_trigger_time != getattr(instance, trigger_field_name)
+        )
         and is_reminder_enabled(userprofile, event_type)
     )
 

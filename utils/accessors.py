@@ -28,6 +28,8 @@ def get_userprofile(obj):
 
 def get_time_display_format(obj):
     '''
+    Returns the time display format preference
+    from the user's profile
     '''
     userprofile = (get_userprofile(obj))
     return userprofile.time_display_format

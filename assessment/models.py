@@ -11,6 +11,8 @@ from utils.constants import MIN_ASSESSMENT_DURATION as MIN_DURATION, MAX_ASSESSM
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
 
+REMINDER_TRIGGER_FIELD = 'derived_start_time_prop'
+
 class AssessmentManager(models.Manager):
     
     def create(self, **kwargs):
@@ -71,6 +73,11 @@ class Assessment(models.Model):
     def derived_start_time_prop(self):
         return self.start_time or (self.lesson.start_time if self.lesson else None)
     
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
+
 
     def clean(self):
         super().clean()
@@ -151,7 +158,7 @@ class Assessment(models.Model):
 
         userprofile = get_userprofile(self)
 
-        if should_schedule_reminder(self, userprofile, 'assessment'):
+        if should_schedule_reminder(self, userprofile, 'assessment', REMINDER_TRIGGER_FIELD):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
                 userprofile=userprofile,
@@ -159,6 +166,7 @@ class Assessment(models.Model):
             )
 
         super().save(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
 
 
     def __str__(self):

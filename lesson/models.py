@@ -10,6 +10,8 @@ from utils.default import set_dafault_if_none
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
 
+REMINDER_TRIGGER_FIELD = 'start_time'
+
 class LessonManager(models.Manager):
 
     def create(self, **kwargs):
@@ -51,6 +53,11 @@ class Lesson(models.Model):
 
     objects = LessonManager()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
+        
+
     def clean(self):
         super().clean()
 
@@ -84,7 +91,7 @@ class Lesson(models.Model):
         
         
         userprofile=get_userprofile(self)
-        if should_schedule_reminder(self, userprofile, 'lesson'):
+        if should_schedule_reminder(self, userprofile, 'lesson', REMINDER_TRIGGER_FIELD):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
                 userprofile=userprofile,
@@ -92,6 +99,7 @@ class Lesson(models.Model):
             )
 
         super().save(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
 
 
     def __str__(self):

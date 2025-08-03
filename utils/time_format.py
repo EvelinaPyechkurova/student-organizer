@@ -1,10 +1,8 @@
 from django.utils.timezone import localtime
 
-from utils.accessors import get_time_display_format
-
 def format_time(dt, time_display_format):
     '''
-    
+    Formats a datetime object using either 12-hour or 24-hour clock format
     '''
 
     if time_display_format == '24':

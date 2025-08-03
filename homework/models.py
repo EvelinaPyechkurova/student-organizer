@@ -11,6 +11,8 @@ from utils.constants import MAX_TASK_LENGTH, MAX_TIMEFRAME, RECENT_PAST_TIMEFRAM
 from utils.reminder_time import should_schedule_reminder, calculate_scheduled_reminder_time
 from utils.time_format import format_time
 
+REMINDER_TRIGGER_FIELD = 'derived_due_at_prop'
+
 class HomeworkManager(models.Manager):
 
     def create(self, **kwargs):
@@ -62,6 +64,11 @@ class Homework(models.Model):
     @property
     def derived_due_at_prop(self):
         return self.due_at or (self.lesson_due.start_time if self.lesson_due else None)
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
 
 
     def clean(self):
@@ -289,7 +296,7 @@ class Homework(models.Model):
             self.due_at = None
 
         userprofile = get_userprofile(self)
-        if should_schedule_reminder(self, userprofile, 'homework'):
+        if should_schedule_reminder(self, userprofile, 'homework', REMINDER_TRIGGER_FIELD):
             self.scheduled_reminder_time = calculate_scheduled_reminder_time(
                 instance=self,
                 userprofile=userprofile,
@@ -297,6 +304,7 @@ class Homework(models.Model):
             )
 
         super().save(*args, **kwargs)
+        self._original_reminder_trigger_time = getattr(self, REMINDER_TRIGGER_FIELD)
 
 
     def __str__(self):
