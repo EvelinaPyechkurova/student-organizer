@@ -56,9 +56,6 @@ def create_email_context(event, user):
     event_subject = get_subject(event)
     scheduled_time = get_scheduled_time(event_type, event)
     time_left = scheduled_time - now()
-    print(f'TIMELEFT TYPE: {type(time_left)}')
-    print(f'TIMELEFT: {time_left}')
-    print(f'TIMELEFT HUMAN: {get_human_duration(time_left)}')
     return {
         'first_name': user.first_name,
         'email': user.email,
@@ -69,9 +66,11 @@ def create_email_context(event, user):
         'time_left': get_human_duration(time_left)
     }
 
+
 def update_event_reminder_status(event):
     event.reminder_sent = True
     event.save(update_fields=['reminder_sent'])
+
 
 def send_notifications():
     '''
@@ -79,8 +78,7 @@ def send_notifications():
     '''
 
     events = []
-    print('PREPARING QUERYSET')
-
+   
     for config in MODEL_CONFIGS:
         query_set = (
             config['model'].objects.with_derived_fields()
@@ -95,8 +93,6 @@ def send_notifications():
 
         events.extend(query_set)
 
-    print('FINISHED PREPARING QUERYSET')
-    print(events)
 
     for event in events:
         user = get_user(event)

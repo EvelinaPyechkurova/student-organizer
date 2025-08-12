@@ -24,6 +24,11 @@ class DerivedFieldsMixin:
     
 
 class ConstantContextMixin:
+    '''
+    Adds constant defined on module level as 'constant_name'
+    to context data as 'context_key'.
+    Safe for values defined at import time.
+    '''
     constant_name = None
     context_key = None
 
@@ -32,7 +37,7 @@ class ConstantContextMixin:
 
         if not self.constant_name or not self.context_key:
             raise NotImplementedError(
-                f"{self.__class__.__name__} must define 'constant_name' and 'context_key'"
+                f"{self.__class__.__name__} must define 'constant_name' and 'context_key'."
             )
         
         module = __import__(self.__module__, fromlist=[self.constant_name])
@@ -46,35 +51,52 @@ class ConstantContextMixin:
             )
         
         return context
-    
+
 
 class CancelLinkMixin(ConstantContextMixin):
+    '''Adds "cancel_link" constant to context data'''
     constant_name = 'CANCEL_LINK'
     context_key = 'cancel_link'
       
 
-class FilterConfigMixin(ConstantContextMixin):
-    constant_name = 'VALID_FILTERS'
+class FilterConfigMixin():
+    '''Adds "valid_filters" constant to context data'''
     context_key = 'valid_filters'
-    
 
-class FilterStateMixin:
+    def get_valid_filters(self):
+        raise NotImplementedError('Implement get_valid_filters().')
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        module = __import__(self.__module__, fromlist=['VALID_FILTERS'])
+        context[self.context_key] = self.get_valid_filters()
+
+        return context
+
+
+class FilterStateMixin:
+    '''
+    Adds filters state to context for further display
+    by collecting either selected or default value of each filter field.
+    Relies on valid_filters already being added to view's context.
+    '''
+    context_key = 'valid_filters'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         try:
             get_request = self.request.GET
-            VALID_FILTERS = getattr(module, 'VALID_FILTERS')
+            VALID_FILTERS = context[self.context_key]
 
             context['selected_values'] = {
                 field: get_request.get(field, VALID_FILTERS[field].get('default', ''))
                 for field in VALID_FILTERS
             }
+
             return context
         except AttributeError:
             raise AttributeError(
-                f'{self.__class__.__name__} requires a VALID_FILTERS and self.request.GET constant '
-                f'defined in its module {module.__name__}.'
+                f"{self.__class__.__name__} requires a  and self.request.GET constant "
+                f"defined in its module {self.__class__.__name__}."
             )
 
 

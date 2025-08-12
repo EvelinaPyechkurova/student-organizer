@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-# -- -- General ----
+# ---- Filtering and sorting ----
 VALID_TIMEFRAME_OPTIONS = [
     ('today', 'Today'),
     ('tomorrow', 'Tomorrow'),
@@ -9,6 +9,11 @@ VALID_TIMEFRAME_OPTIONS = [
     ('next_week', 'Next Week'),
     ('this_month', 'This Month'),
     ('next_month', 'Next Month'),
+]
+
+DEFAULT_SORTING_OPTIONS = [
+    ('created_at', 'Created At ⭡'),
+    ('-created_at', 'Created At ⭣'),
 ]
 
 # ----- Subject ----

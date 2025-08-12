@@ -23,27 +23,27 @@ VALID_FILTERS = {
     'subject': {
         'type': 'select',
         'label': 'Subject',
-        # 'options': generate_select_options(Subject, order_by='name'),
-        'options': VALID_TIMEFRAME_OPTIONS,
+        'options': generate_select_options(Subject, order_by='name'),
+        # 'options': VALID_TIMEFRAME_OPTIONS,
     },
     'lesson_given': {
         'type': 'select',
         'label': 'Lesson When Given',
-        # 'options': generate_select_options(Lesson, order_by='start_time'),
-        'options': VALID_TIMEFRAME_OPTIONS,
+        'options': generate_select_options(Lesson, order_by='start_time'),
+        # 'options': VALID_TIMEFRAME_OPTIONS,
 
     },
     'lesson_due': {
         'type': 'select',
         'label': 'Lesson Due For',
-        # 'options': generate_select_options(Lesson, order_by='start_time'),
-        'options': VALID_TIMEFRAME_OPTIONS,
+        'options': generate_select_options(Lesson, order_by='start_time'),
+        # 'options': VALID_TIMEFRAME_OPTIONS,
     },
     'lesson': {
         'type': 'select',
         'label': 'Lesson (Given or Due)',
-        # 'options': generate_select_options(Lesson, order_by='start_time'),
-        'options': VALID_TIMEFRAME_OPTIONS,
+        'options': generate_select_options(Lesson, order_by='start_time'),
+        # 'options': VALID_TIMEFRAME_OPTIONS,
     },
     'completion': {
         'type': 'select',

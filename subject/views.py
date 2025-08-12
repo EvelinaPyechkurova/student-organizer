@@ -3,6 +3,8 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
+from subject.filters import build_subject_filters
+
 from utils.filters import apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
@@ -55,6 +57,9 @@ class SubjectListView(LoginRequiredMixin, FilterStateMixin,
         queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
 
         return queryset
+    
+    def get_valid_filters(self):
+        return build_subject_filters()
     
 
 class SubjectDetailView(LoginRequiredMixin, OwnershipRequiredMixin, ModelNameMixin,
