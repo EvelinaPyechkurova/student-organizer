@@ -54,50 +54,82 @@ class ConstantContextMixin:
 
 
 class CancelLinkMixin(ConstantContextMixin):
-    '''Adds "cancel_link" constant to context data'''
+    '''Adds CANCEL_LINK constant to context as "cancel_link".'''
     constant_name = 'CANCEL_LINK'
     context_key = 'cancel_link'
-      
 
-class FilterConfigMixin():
-    '''Adds "valid_filters" constant to context data'''
-    context_key = 'valid_filters'
 
-    def get_valid_filters(self):
-        raise NotImplementedError('Implement get_valid_filters().')
+class FilterConfigMixin:
+    '''Adds filter_config to context from build_filter_config()'''
+    filter_context_key = 'filter_config'
+
+    def build_filter_config(self):
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must define build_filter_config() method'."
+        )
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[self.context_key] = self.get_valid_filters()
+        context[self.filter_context_key] = self.build_filter_config()
+        print(f'INSIDE FilterConfigMixin\nCONTEXT: {context}\n\n')
 
+        return context
+    
+
+class SortConfigMixin:
+    '''Adds sort_config to context from build_sort_config().'''
+    sort_context_key = 'sort_config'
+
+    def build_sort_config(self):
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must define build_sort_config() method'."
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[self.sort_context_key] = self.build_sort_config()
+        print(f'INSIDE SortConfigMixin\nCONTEXT: {context}\n\n')
         return context
 
 
-class FilterStateMixin:
+class GeneralStateMixin:
     '''
-    Adds filters state to context for further display
-    by collecting either selected or default value of each filter field.
-    Relies on valid_filters already being added to view's context.
+    Adds selected state for filters/sorting based on GET params.
+    Falls back to defaults. Requires state_sources mapping.
     '''
-    context_key = 'valid_filters'
+
+    state_sources = {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            get_request = self.request.GET
-            VALID_FILTERS = context[self.context_key]
 
-            context['selected_values'] = {
-                field: get_request.get(field, VALID_FILTERS[field].get('default', ''))
-                for field in VALID_FILTERS
+        if not self.state_sources:
+            raise NotImplementedError(
+                f"{self.__class__.__name__} must define 'state_sources' mapping."
+            )
+        
+        get_request = self.request.GET
+
+        for config_context_key, state_context_key in self.state_sources.items():
+            try:
+                config_dict = context[config_context_key]
+            except KeyError:
+                raise KeyError(
+                f"{self.__class__.__name__} requires '{config_context_key}' "
+                f"in context, but it was not found."
+            )
+
+            state_dict = {
+                field_name: get_request.get(
+                    field_name, 
+                    config.get('default', ''))
+                for field_name, config in config_dict.items()
             }
 
-            return context
-        except AttributeError:
-            raise AttributeError(
-                f"{self.__class__.__name__} requires a  and self.request.GET constant "
-                f"defined in its module {self.__class__.__name__}."
-            )
+            context[state_context_key] = state_dict
+
+        print(f'INSIDE GeneralStateMixin\nCONTEXT: {context}\n\n')
+        return context
 
 
 class OwnershipRequiredMixin(UserPassesTestMixin):

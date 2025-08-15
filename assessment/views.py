@@ -10,7 +10,7 @@ from utils.duration import parse_duration
 from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin, FilterStateMixin,
+    FilterConfigMixin,
     OwnershipRequiredMixin, DerivedFieldsMixin
 )
 
@@ -87,7 +87,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('assessment_list')
 
 
-class AssessmentListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin,
+class AssessmentListView(LoginRequiredMixin, FilterConfigMixin,
                          DerivedFieldsMixin, ListView):
     model = Assessment
     context_object_name = 'user_assessments'

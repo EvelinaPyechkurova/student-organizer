@@ -4,56 +4,41 @@ from django.utils.timezone import now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAME_OPTIONS
+from lesson.filters import build_lesson_filters
+from lesson.sorting import build_lesson_sorting
+
+from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
 from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin, FilterStateMixin,
-    OwnershipRequiredMixin, DerivedFieldsMixin
+    GeneralStateMixin, FilterConfigMixin,
+    SortConfigMixin, OwnershipRequiredMixin,
+    DerivedFieldsMixin
 )
 
 from subject.models import Subject
 from .models import Lesson
 from .forms import LessonCreateForm, LessonUpdateForm
 
-
-VALID_FILTERS = {
-    'subject': {
-        'type': 'select',
-        'label': 'Subject',
-        # 'options': generate_select_options(Subject, order_by='name'),
-        'options': Lesson.Type.choices,
-    },
-    'type': {
-        'type': 'select',
-        'label': 'Lesson Type',
-        'options': Lesson.Type.choices,
-    },
-    'start_time': {
-        'type': 'select',
-        'label': 'Start Time',
-        'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'sort_by': {
-        'type': 'select',
-        'label': 'Sort By',
-        'default': 'start_time',
-        'options': [
-            ('start_time', 'Start Time ⭡'),
-            ('-start_time', 'Start Time ⭣'),
-            ('created_at', 'Created At ⭡'),
-            ('-created_at', 'Created At ⭣')
-        ]
-    }
-}
-
 CANCEL_LINK = reverse_lazy('lesson_list')
 
 
-class LessonListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, ListView):
+class LessonListView(LoginRequiredMixin, GeneralStateMixin, 
+                     SortConfigMixin, FilterConfigMixin, ListView):
     model = Lesson
     context_object_name = 'user_lessons'
     paginate_by = 8
+
+    state_sources = {
+        'filter_config': 'selected_filter_values',
+        'sort_config': 'selected_sort_values',
+    }
+
+    def build_filter_config(self):
+        return build_lesson_filters(user=self.request.GET.get('user'))
+    
+    def build_sort_config(self):
+        return build_lesson_sorting()
 
     def get_queryset(self):
         '''
@@ -69,9 +54,9 @@ class LessonListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin, Li
         if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS)
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', self.build_filter_config())
 
-        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
+        queryset = apply_sorting(get_request, queryset, self.build_sort_config())
 
         return queryset
 

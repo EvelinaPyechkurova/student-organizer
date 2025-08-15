@@ -4,44 +4,38 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 from subject.filters import build_subject_filters
+from subject.sorting import build_subject_sorting
 
 from utils.filters import apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin, FilterStateMixin,
-    OwnershipRequiredMixin,
+    GeneralStateMixin, FilterConfigMixin,
+    SortConfigMixin, OwnershipRequiredMixin,
 )
 
 from .models import Subject
 from .forms import SubjectForm
 
 
-VALID_FILTERS = {
-    'name': {
-        'type': 'text',
-        'label': 'Name Contains'
-    },
-    'sort_by': {
-        'type': 'select',
-        'label': 'Sort By',
-        'default': 'name',
-        'options': [
-            ('name', 'Name ⭡'),
-            ('-name', 'Name ⭣'),
-            ('created_at', 'Created At ⭡'),
-            ('-created_at', 'Created At ⭣')
-        ]
-    }
-}
-
 CANCEL_LINK = reverse_lazy('subject_list')
 
 
-class SubjectListView(LoginRequiredMixin, FilterStateMixin,
-                      FilterConfigMixin, ListView):
+class SubjectListView(LoginRequiredMixin, GeneralStateMixin,
+                    SortConfigMixin, FilterConfigMixin, ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 20
+
+    state_sources = {
+        'filter_config': 'selected_filter_values',
+        'sort_config': 'selected_sort_values',
+    }
+
+    def build_filter_config(self):
+        return build_subject_filters()
+    
+    def build_sort_config(self):
+        return build_subject_sorting()
 
     def get_queryset(self):
         '''
@@ -54,12 +48,9 @@ class SubjectListView(LoginRequiredMixin, FilterStateMixin,
         if name_filter := get_request.get('name'):
             queryset = queryset.filter(name__icontains=name_filter)
 
-        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
+        queryset = apply_sorting(get_request, queryset, self.build_sort_config())
 
         return queryset
-    
-    def get_valid_filters(self):
-        return build_subject_filters()
     
 
 class SubjectDetailView(LoginRequiredMixin, OwnershipRequiredMixin, ModelNameMixin,

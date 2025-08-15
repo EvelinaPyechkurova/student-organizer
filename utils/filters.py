@@ -2,22 +2,24 @@ from django.utils.timezone import now, localtime
 from datetime import timedelta
 
 
-def apply_sorting(get_request, queryset, valid_filters):
+def apply_sorting(get_request, queryset, sort_options):
     '''
-    Sorts the provided queryset by parameters, provided in valid filters.
-    Either recieves correct param from GET request, or uses default one.
+    Sorts the provided queryset by parameters, provided in sort_config.
+    Either recieves valid param from GET request, or uses a default one.
+    Excepts that sort_options has the following structure:
+    {type: ..., label: ..., default: some_value, options: [(value, value, <value>), ...]}
     '''
     sort_param = get_request.get('sort_by')
     if sort_param:
-        valid_sort_options = [option[0] for option in valid_filters['sort_by']['options']]
+        valid_sort_options = [option[0] for option in sort_options['sort_by']['options']]
         if sort_param in valid_sort_options:
-            for option in valid_filters['sort_by']['options']:
+            for option in sort_options['sort_by']['options']:
                 if option[0] == sort_param:
                     sort_field = option[2] if len(option) > 2 else option[0]
                     queryset = queryset.order_by(sort_field)
                     break
         else:
-            queryset = queryset.order_by(valid_filters['sort_by']['default'])
+            queryset = queryset.order_by(sort_options['sort_by']['default'])
     return queryset
 
 
@@ -30,10 +32,6 @@ def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
     Filters the provided queryset by timeframe conditions like 'today', 'this_week', etc.
     Assumes queryset uses 'start_time' or specified 'date_field' for filtering.
     '''
-
-    print("QUERYSET", queryset)
-    print("FILTER PARAM", filter_param)
-    print("DATE FIELD", date_field)
 
     DAYS_IN_WEEK = 7
     DAYS_IN_MONTH = 32
@@ -79,11 +77,8 @@ def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_fil
     if filter_value := get_request.get(param_name):
         if model_field_name is None:
             model_field_name = param_name
-        print("FILTER VALUE", filter_value)
         valid_timeframe_options = [option[0] for option in valid_filters[param_name]['options']]
-        print("VALID OPTIONS", valid_timeframe_options)
         if filter_value in valid_timeframe_options:
-            print("YES, IT IS")
             queryset = filter_by_timeframe(queryset, filter_value, model_field_name)
     return queryset
 

@@ -21,11 +21,13 @@ def timeframe_filter(label):
 
 def sort_by(default, options):
     return {
-        'type': 'select',
-        'label': 'Sort By',
-        'default': default,
-        'options': [
-            *DEFAULT_SORTING_OPTIONS,
-            *options
-        ]
+        'sort_by': {
+            'type': 'select',
+            'label': 'Sort By',
+            'default': default,
+            'options': [
+                *options,
+                *DEFAULT_SORTING_OPTIONS,
+            ]
+        }
     }

@@ -9,7 +9,7 @@ from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAM
 from utils.filters import generate_select_options, apply_timeframe_filter_if_valid, apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin, FilterStateMixin,
+    FilterConfigMixin,
     OwnershipRequiredMixin, DerivedFieldsMixin
 )
 
@@ -104,7 +104,7 @@ VALID_FILTERS = {
 CANCEL_LINK = reverse_lazy('homework_list')
 
 
-class HomeworkListView(LoginRequiredMixin, FilterStateMixin, FilterConfigMixin,
+class HomeworkListView(LoginRequiredMixin, FilterConfigMixin,
                        DerivedFieldsMixin, ListView):
     model = Homework
     context_object_name = 'user_homework'
