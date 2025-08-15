@@ -5,7 +5,7 @@ from utils.filter_building_blocks import subject_filter, timeframe_filter
 
 def build_lesson_filters(user):
     return {
-        'subject': subject_filter(SubjectModel=Subject),
+        'subject': subject_filter(subject_model=Subject),
         'type': {
             'type': 'select',
             'label': 'Lesson Type',

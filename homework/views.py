@@ -5,110 +5,44 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 
-from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME, VALID_TIMEFRAME_OPTIONS
-from utils.filters import generate_select_options, apply_timeframe_filter_if_valid, apply_sorting
+from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
+from utils.filters import apply_timeframe_filter_if_valid, apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin,
-    OwnershipRequiredMixin, DerivedFieldsMixin
+    GeneralStateMixin, FilterConfigMixin,
+    SortConfigMixin, OwnershipRequiredMixin,
+    DerivedFieldsMixin
 )
 
 from subject.models import Subject
 from lesson.models import Lesson
+
 from .forms import HomeworkCreateForm, HomeworkUpdateForm
 from .models import Homework
 
-
-VALID_FILTERS = {
-    'subject': {
-        'type': 'select',
-        'label': 'Subject',
-        'options': generate_select_options(Subject, order_by='name'),
-        # 'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'lesson_given': {
-        'type': 'select',
-        'label': 'Lesson When Given',
-        'options': generate_select_options(Lesson, order_by='start_time'),
-        # 'options': VALID_TIMEFRAME_OPTIONS,
-
-    },
-    'lesson_due': {
-        'type': 'select',
-        'label': 'Lesson Due For',
-        'options': generate_select_options(Lesson, order_by='start_time'),
-        # 'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'lesson': {
-        'type': 'select',
-        'label': 'Lesson (Given or Due)',
-        'options': generate_select_options(Lesson, order_by='start_time'),
-        # 'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'completion': {
-        'type': 'select',
-        'label': 'Completion Percent',
-        'options': [
-            ('0', '0% (Not Started)'), 
-            ('25', '25% (Started)'), 
-            ('50', '50% (Halfway Done)'),
-            ('75', '75% (Almost Finished)'), 
-            ('100', '100% (Completed)'),
-        ],
-    },
-    'min_completion': {
-        'type': 'number',
-        'label': 'Minimum Completion Percent',
-        'attributes': [
-            ('min', '0'),
-            ('max', '100'),
-            ('step', '1'),
-            ('placeholder', 'Enter minimum %'),
-        ],
-    },
-    'max_completion': {
-        'type': 'number',
-        'label': 'Maximum Completion Percent',
-        'attributes': [
-            ('min', '0'),
-            ('max', '100'),
-            ('step', '1'),
-            ('placeholder', 'Enter maximum %'),
-        ],
-    },
-    'start_time': {
-        'type': 'select',
-        'label': 'Start Time',
-        'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'due_at': {
-        'type': 'select',
-        'label': 'Due At',
-        'options': VALID_TIMEFRAME_OPTIONS
-    },
-    'sort_by': {
-        'type': 'select',
-        'label': 'Sort By',
-        'default': 'start_time',
-        'options': [
-            ('start_time', 'Start Time ⭡', 'derived_start_time'),
-            ('-start_time', 'Start Time ⭣', '-derived_start_time'),
-            ('completion', 'Completion Percent ⭡', 'completion_percent'),
-            ('-completion', 'Completion Percent ⭣', '-completion_percent'),
-            ('created_at', 'Created At ⭡'),
-            ('-created_at', 'Created At ⭣'),
-        ]
-    },
-}
+from .filters import build_homework_filters
+from .sorting import build_homework_sorting
 
 CANCEL_LINK = reverse_lazy('homework_list')
 
 
-class HomeworkListView(LoginRequiredMixin, FilterConfigMixin,
+class HomeworkListView(LoginRequiredMixin, GeneralStateMixin, 
+                       SortConfigMixin, FilterConfigMixin,
                        DerivedFieldsMixin, ListView):
     model = Homework
     context_object_name = 'user_homework'
     paginate_by = 10
+
+    state_sources = {
+        'filter_config': 'selected_filter_values',
+        'sort_config': 'selected_sort_values',
+    }
+
+    def build_filter_config(self):
+        return build_homework_filters(self.request.GET.get('user'))
+    
+    def build_sort_config(self):
+        return build_homework_sorting()
 
     def get_queryset(self):
         '''
@@ -116,6 +50,8 @@ class HomeworkListView(LoginRequiredMixin, FilterConfigMixin,
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
+        filter_config = self.build_filter_config()
+        sort_config = self.build_sort_config()
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
@@ -132,7 +68,7 @@ class HomeworkListView(LoginRequiredMixin, FilterConfigMixin,
             )
 
         if completion_filter := get_request.get('completion'):
-            valid_completion_percents = [option[0] for option in VALID_FILTERS['completion']['options']]
+            valid_completion_percents = [option[0] for option in filter_config['completion']['options']]
             if completion_filter in valid_completion_percents:
                 queryset = queryset.filter(completion_percent=completion_filter)
         else:
@@ -141,11 +77,10 @@ class HomeworkListView(LoginRequiredMixin, FilterConfigMixin,
             if max_completion_filter := get_request.get('max_completion'):
                 queryset = queryset.filter(completion_percent__lte=max_completion_filter)
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS, model_field_name='derived_start_time')
+        for param_name, model_field_name in [('start_time', 'derived_start_time'), ('due_at', 'derived_due_at')]:
+            queryset = apply_timeframe_filter_if_valid(get_request, queryset, param_name, filter_config, model_field_name)
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'due_at', VALID_FILTERS, model_field_name='derived_due_at')
-
-        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
+        queryset = apply_sorting(get_request, queryset, sort_config)
 
         return queryset
     

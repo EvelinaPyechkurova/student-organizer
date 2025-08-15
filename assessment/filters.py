@@ -2,17 +2,13 @@ from .models import Assessment
 from subject.models import Subject
 from lesson.models import Lesson
 
+from utils.filter_building_blocks import subject_filter, lesson_filter, timeframe_filter
 from utils.filters import generate_select_options
-from utils.filter_building_blocks import subject_filter, timeframe_filter
 
 def build_assessment_filters(user): 
     return {
-        'subject': subject_filter(SubjectModel=Subject),
-        'lesson': {
-            'type': 'select',
-            'label': 'Assessment Lesson',
-            'options': generate_select_options(Lesson, order_by='start_time'),
-        },
+        'subject': subject_filter(subject_model=Subject),
+        'lesson': lesson_filter(lesson_model=Lesson, label='Assessment Lesson'),
         'type': {
             'type': 'select',
             'label': 'Assessment Type',

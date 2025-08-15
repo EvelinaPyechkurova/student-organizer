@@ -5,11 +5,18 @@ from utils.filters import generate_select_options
 Returns context of common filters, that must be used as value in key-value pairs in <app>/filters.py
 '''
 
-def subject_filter(SubjectModel):
+def subject_filter(subject_model):
     return {
         'type': 'select',
         'label': 'Subject',
-        'options': generate_select_options(SubjectModel, order_by='name'),
+        'options': generate_select_options(subject_model, order_by='name'),
+    }
+
+def lesson_filter(lesson_model, label):
+    return {
+        'type': 'select',
+        'label': label,
+        'options': generate_select_options(lesson_model, order_by='start_time'),
     }
 
 def timeframe_filter(label):

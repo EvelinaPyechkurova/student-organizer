@@ -3,9 +3,6 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from subject.filters import build_subject_filters
-from subject.sorting import build_subject_sorting
-
 from utils.filters import apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
@@ -15,6 +12,9 @@ from utils.mixins import (
 
 from .models import Subject
 from .forms import SubjectForm
+
+from .filters import build_subject_filters
+from .sorting import build_subject_sorting
 
 
 CANCEL_LINK = reverse_lazy('subject_list')
