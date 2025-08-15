@@ -5,13 +5,16 @@ from django.utils.timezone import now
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
-from utils.constants import VALID_TIMEFRAME_OPTIONS
+from assessment.filters import build_assessment_filters
+from assessment.sorting import build_assessment_sorting
+
 from utils.duration import parse_duration
-from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
+from utils.filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    FilterConfigMixin,
-    OwnershipRequiredMixin, DerivedFieldsMixin
+    GeneralStateMixin, FilterConfigMixin,
+    SortConfigMixin, OwnershipRequiredMixin,
+    DerivedFieldsMixin
 )
 
 from subject.models import Subject
@@ -19,79 +22,27 @@ from lesson.models import Lesson
 from .forms import AssessmentCreateForm, AssessmentUpdateForm
 from .models import Assessment
 
-
-VALID_FILTERS = {
-    'subject': {
-        'type': 'select',
-        'label': 'Subject',
-        # 'options': generate_select_options(Subject, order_by='name'),
-        'options': Assessment.Type.choices,
-    },
-    'lesson': {
-        'type': 'select',
-        'label': 'Assessment Lesson',
-        # 'options': generate_select_options(Lesson, order_by='start_time'),
-        'options': Assessment.Type.choices,
-    },
-    'type': {
-        'type': 'select',
-        'label': 'Assessment Type',
-        'options': Assessment.Type.choices,
-    },
-    'duration': {
-        'type': 'select',
-        'label': 'Duration',
-        'options': [
-            ('15', '15 Minutes'),
-            ('30', '30 Minutes'),
-            ('45', '45 Minutes'),
-            ('60', '1 Hour'),
-            ('90', '1 Hour 30 Minutes'),
-            ('120', '2 Hours'),
-        ],
-    },
-    'min_duration': {
-        'type': 'number',
-        'label': 'Minimum Duration',
-        'attributes': [
-            ('min', '1'),
-            ('placeholder', 'Minutes (e.g., 15)'),
-        ],
-    },
-    'max_duration': {
-        'type': 'number',
-        'label': 'Maximum Duration',
-        'attributes': [
-            ('min', '1'),
-            ('placeholder', 'Minutes (e.g., 90)'),
-        ],
-    },
-    'start_time': {
-        'type': 'select',
-        'label': 'Start Time',
-        'options': VALID_TIMEFRAME_OPTIONS,
-    },
-    'sort_by': {
-        'type': 'select',
-        'label': 'Sort By',
-        'default': 'start_time',
-        'options': [
-            ('start_time', 'Start Time ⭡', 'derived_start_time'),
-            ('-start_time', 'Start Time ⭣', '-derived_start_time'),
-            ('created_at', 'Created At ⭡'),
-            ('-created_at', 'Created At ⭣')
-        ]
-    }
-}
-
 CANCEL_LINK = reverse_lazy('assessment_list')
 
 
-class AssessmentListView(LoginRequiredMixin, FilterConfigMixin,
+class AssessmentListView(LoginRequiredMixin, GeneralStateMixin, 
+                         SortConfigMixin, FilterConfigMixin,
                          DerivedFieldsMixin, ListView):
     model = Assessment
     context_object_name = 'user_assessments'
     paginate_by = 7
+
+    state_sources = {
+        'filter_config': 'selected_filter_values',
+        'sort_config': 'selected_sort_values',
+    }
+
+    def build_filter_config(self):
+        print(self.request.GET.get('user'))
+        return build_assessment_filters(self.request.GET.get('user'))
+    
+    def build_sort_config(self):
+        return build_assessment_sorting()
 
     def get_queryset(self):
         '''
@@ -99,6 +50,8 @@ class AssessmentListView(LoginRequiredMixin, FilterConfigMixin,
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
+        filter_config = self.build_filter_config()
+        sort_config = self.build_sort_config()
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
@@ -111,7 +64,7 @@ class AssessmentListView(LoginRequiredMixin, FilterConfigMixin,
 
         
         if duration_filter := get_request.get('duration'):
-            valid_duration_options = [option[0] for option in VALID_FILTERS['duration']['options']]
+            valid_duration_options = [option[0] for option in filter_config['duration']['options']]
             if duration_filter in valid_duration_options:
                 if duration_filter := parse_duration(duration_filter):
                     queryset = queryset.filter(derived_duration=duration_filter)
@@ -124,9 +77,15 @@ class AssessmentListView(LoginRequiredMixin, FilterConfigMixin,
                 queryset = queryset.filter(derived_duration__lte=max_duration_filter)
 
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', VALID_FILTERS, model_field_name='derived_start_time')
+        queryset = apply_timeframe_filter_if_valid(
+            get_request=get_request,
+            queryset=queryset,
+            param_name='start_time',
+            valid_filters=filter_config,
+            model_field_name='derived_start_time',
+        )
 
-        queryset = apply_sorting(get_request, queryset, VALID_FILTERS)
+        queryset = apply_sorting(get_request, queryset, sort_config)
 
         return queryset
 

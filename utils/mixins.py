@@ -71,7 +71,6 @@ class FilterConfigMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context[self.filter_context_key] = self.build_filter_config()
-        print(f'INSIDE FilterConfigMixin\nCONTEXT: {context}\n\n')
 
         return context
     
@@ -88,7 +87,6 @@ class SortConfigMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context[self.sort_context_key] = self.build_sort_config()
-        print(f'INSIDE SortConfigMixin\nCONTEXT: {context}\n\n')
         return context
 
 
@@ -128,7 +126,6 @@ class GeneralStateMixin:
 
             context[state_context_key] = state_dict
 
-        print(f'INSIDE GeneralStateMixin\nCONTEXT: {context}\n\n')
         return context
 
 

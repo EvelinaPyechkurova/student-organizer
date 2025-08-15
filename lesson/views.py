@@ -8,7 +8,7 @@ from lesson.filters import build_lesson_filters
 from lesson.sorting import build_lesson_sorting
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
-from utils.filters import apply_sorting, apply_timeframe_filter_if_valid, generate_select_options
+from utils.filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     GeneralStateMixin, FilterConfigMixin,
@@ -47,6 +47,8 @@ class LessonListView(LoginRequiredMixin, GeneralStateMixin,
         '''
         queryset = Lesson.objects.filter(subject__user=self.request.user)
         get_request = self.request.GET
+        filter_config = self.build_filter_config()
+        sort_config = self.build_sort_config
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(subject=subject_filter)
@@ -54,9 +56,9 @@ class LessonListView(LoginRequiredMixin, GeneralStateMixin,
         if type_filter := get_request.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', self.build_filter_config())
+        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', filter_config)
 
-        queryset = apply_sorting(get_request, queryset, self.build_sort_config())
+        queryset = apply_sorting(get_request, queryset, sort_config)
 
         return queryset
 
