@@ -2,65 +2,9 @@
 
 <form action="" method="get" class="filter-sidebar">
 
-    <h3>Filter By</h3>
+    {% include "partials/_sidebar_field_group.html" with heading="Filter By" config_values=filter_config selected_values=selected_filter_values %}
 
-    {% for field, config in filter_config.items %}
-        <div class="filter-field">
-            <label for="{{ field }}">{{ config.label }}</label>
-
-            {% if config.type == "select" %}
-                <select name="{{ field }}" id="{{ field }}">
-                    <option value="">&nbsp;</option>
-                    {% for option in config.options %}
-                        {% with option_value=option.0 option_label=option.1 %}
-                            <option value="{{ option_value }}"
-                                {% if selected_filter_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
-                                {{ option_label }}
-                            </option>
-                        {% endwith %}
-                    {% endfor %}
-                </select>
-            {% else %}
-                <input type="{{ config.type }}" name="{{ field }}" id="{{ field }}" value="{{ selected_filter_values|get_item:field }}"
-                    {% if config.attributes %}
-                        {% for attribute, attr_value in config.attributes %}
-                            {{ attribute }}="{{ attr_value }}"
-                        {% endfor %}
-                    {% endif %}
-                >
-            {% endif %}
-        </div>
-    {% endfor %}
-
-    <h3>Sort by</h3>
-
-    {% for field, config in sort_config.items %}
-        <div class="filter-field">
-            <label for="{{ field }}">{{ config.label }}</label>
-
-            {% if config.type == "select" %}
-                <select name="{{ field }}" id="{{ field }}">
-                    <option value="">&nbsp;</option>
-                    {% for option in config.options %}
-                        {% with option_value=option.0 option_label=option.1 %}
-                            <option value="{{ option_value }}"
-                                {% if selected_sort_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
-                                {{ option_label }}
-                            </option>
-                        {% endwith %}
-                    {% endfor %}
-                </select>
-            {% else %}
-                <input type="{{ config.type }}" name="{{ field }}" id="{{ field }}" value="{{ selected_sort_values|get_item:field }}"
-                    {% if config.attributes %}
-                        {% for attribute, attr_value in config.attributes %}
-                            {{ attribute }}="{{ attr_value }}"
-                        {% endfor %}
-                    {% endif %}
-                >
-            {% endif %}
-        </div>
-    {% endfor %}
+    {% include "partials/_sidebar_field_group.html" with heading="Sort By" config_values=sort_config selected_values=selected_sort_values %}
 
     <button type="submit">Apply Filters</button>
 </form>

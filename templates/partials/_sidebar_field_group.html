@@ -1,0 +1,32 @@
+{# excepts: heading, config_values, selected_values #}
+{% load custom_tags %}
+
+<h3>{{ heading }}</h3>
+
+{% for field, config in config_values.items %}
+    <div class="sidebar-field">
+        <label for="{{ field }}">{{ config.label }}</label>
+
+        {% if config.type == "select" %}
+            <select name="{{ field }}" id="{{ field }}">
+                <option value="">&nbsp;</option>
+                {% for option in config.options %}
+                    {% with option_value=option.0 option_label=option.1 %}
+                        <option value="{{ option_value }}">
+                            {% if selected_filter_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
+                            {{ option_label }}
+                        </option>
+                    {% endwith %}
+                {% endfor %}
+            </select>
+        {% else %}
+            <input type="{{ config.type }}" name="{{ field }}" id="{{ field }}" value="{{ selected_values|get_item:field }}"
+                {% if config.attributes %}
+                    {% for attribute, attr_value in config.attributes %}
+                        {{ attribute }}="{{ attr_value }}"
+                    {% endfor %}
+                {% endif %}
+            >
+        {% endif %}
+    </div>
+{% endfor %}
