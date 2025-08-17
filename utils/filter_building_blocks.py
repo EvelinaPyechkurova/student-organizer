@@ -1,5 +1,5 @@
 from utils.constants import VALID_TIMEFRAME_OPTIONS, DEFAULT_SORTING_OPTIONS
-from utils.filters import generate_select_options
+from utils.query_filters import generate_select_options
 
 '''
 Returns context of common filters, that must be used as value in key-value pairs in <app>/filters.py

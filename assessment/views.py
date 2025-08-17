@@ -6,7 +6,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.duration import parse_duration
-from utils.filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     GeneralStateMixin, FilterConfigMixin,
@@ -19,8 +19,8 @@ from lesson.models import Lesson
 from .forms import AssessmentCreateForm, AssessmentUpdateForm
 from .models import Assessment
 
-from .filters import build_assessment_filters
-from .sorting import build_assessment_sorting
+from .filter_config import build_assessment_filters
+from .sort_config import build_assessment_sorting
 
 CANCEL_LINK = reverse_lazy('assessment_list')
 

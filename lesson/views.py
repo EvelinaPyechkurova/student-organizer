@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
-from utils.filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     GeneralStateMixin, FilterConfigMixin,
@@ -17,8 +17,8 @@ from subject.models import Subject
 from .models import Lesson
 from .forms import LessonCreateForm, LessonUpdateForm
 
-from .filters import build_lesson_filters
-from .sorting import build_lesson_sorting
+from .filter_config import build_lesson_filters
+from .sort_config import build_lesson_sorting
 
 CANCEL_LINK = reverse_lazy('lesson_list')
 

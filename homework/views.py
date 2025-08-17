@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
-from utils.filters import apply_timeframe_filter_if_valid, apply_sorting
+from utils.query_filters import apply_timeframe_filter_if_valid, apply_sorting
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     GeneralStateMixin, FilterConfigMixin,
@@ -20,8 +20,8 @@ from lesson.models import Lesson
 from .forms import HomeworkCreateForm, HomeworkUpdateForm
 from .models import Homework
 
-from .filters import build_homework_filters
-from .sorting import build_homework_sorting
+from .filter_config import build_homework_filters
+from .sort_config import build_homework_sorting
 
 CANCEL_LINK = reverse_lazy('homework_list')
 

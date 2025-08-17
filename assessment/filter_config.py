@@ -3,7 +3,6 @@ from subject.models import Subject
 from lesson.models import Lesson
 
 from utils.filter_building_blocks import subject_filter, lesson_filter, timeframe_filter
-from utils.filters import generate_select_options
 
 def build_assessment_filters(user): 
     return {

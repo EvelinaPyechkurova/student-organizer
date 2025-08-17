@@ -6,7 +6,7 @@ from lesson.models import Lesson
 from assessment.models import Assessment
 from homework.models import Homework
 
-from utils.filters import filter_by_day
+from utils.query_filters import filter_by_day
 
 from datetime import date, timedelta
 import calendar
