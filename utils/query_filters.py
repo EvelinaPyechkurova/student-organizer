@@ -83,18 +83,50 @@ def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_fil
     return queryset
 
 
-def generate_select_options(model, queryset=None, value_field='id', label_func=str, order_by='-created_at'):
+def generate_select_options(
+        model=None,
+        queryset=None,
+        filters={},
+        q_objects=[],
+        value_field='id',
+        label_accessor=str,
+        order_by='-created_at',
+        limit=None,
+        distinct=False):
     '''
     Generates a list of (value, label) tuples for select fields.
-    label_func can be a field name (str) or a callable (function).
+    label_accessor can be a field name (str) or a callable (function).
     '''
-    if queryset == None:
-        queryset = model.objects.all().order_by(order_by)
+
+    if queryset is None:
+        if model is None:
+            raise ValueError('Provide either "queryset" or "model".')
+        queryset = model.objects.all()
+
+    if filters:
+        queryset = queryset.filter(**filters)
+    if q_objects:
+        queryset = queryset.filter(*q_objects)
+
+    label_is_field = isinstance(label_accessor, str)
+    if label_is_field:
+        fields = {value_field, label_accessor}
+        queryset = queryset.only(*fields)
+
+    if order_by:
+        queryset = queryset.order_by(*(order_by if isinstance(order_by, (list, tuple)) else [order_by]))
+
+    if distinct:
+        queryset = queryset.distinct()
+
+    if limit is not None:
+        queryset = queryset[:limit]
+
 
     options = []
     for obj in queryset:
         value = getattr(obj, value_field)
-        label = label_func(obj) if callable(label_func) else getattr(obj, label_func)
+        label = label_accessor(obj) if callable(label_accessor) else getattr(obj, label_accessor)
         options.append((value, label))
 
     return options

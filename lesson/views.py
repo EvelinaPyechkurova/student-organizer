@@ -33,7 +33,7 @@ class LessonListView(LoginRequiredMixin, SidebarStateMixin,
 
     def build_sidebar_sections(self):
         return [
-            section(heading='Filter By', configs=build_lesson_filters(user=self.request.GET.get('user'))),
+            section(heading='Filter By', configs=build_lesson_filters(user=self.request.user)),
             section(heading='Sort By', configs=build_lesson_sorting())
         ]
 
@@ -44,7 +44,7 @@ class LessonListView(LoginRequiredMixin, SidebarStateMixin,
         '''
         queryset = Lesson.objects.filter(subject__user=self.request.user)
         get_request = self.request.GET
-        filter_config = build_lesson_filters(user=self.request.GET.get('user'))
+        filter_config = build_lesson_filters(user=self.request.user)
         sort_config = build_lesson_sorting()
 
         if subject_filter := get_request.get('subject'):

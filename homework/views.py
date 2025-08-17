@@ -37,7 +37,7 @@ class HomeworkListView(LoginRequiredMixin, SidebarStateMixin,
 
     def build_sidebar_sections(self):
         return [
-            section(heading='Filter By', configs=build_homework_filters(user=self.request.GET.get('user'))),
+            section(heading='Filter By', configs=build_homework_filters(user=self.request.user)),
             section(heading='Sort By', configs=build_homework_sorting())
         ]
 
@@ -47,7 +47,7 @@ class HomeworkListView(LoginRequiredMixin, SidebarStateMixin,
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
-        filter_config = build_homework_filters(user=self.request.GET.get('user'))
+        filter_config = build_homework_filters(user=self.request.user)
         sort_config = build_homework_sorting()
 
         if subject_filter := get_request.get('subject'):

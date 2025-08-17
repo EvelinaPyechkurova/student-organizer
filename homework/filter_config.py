@@ -5,10 +5,10 @@ from utils.filter_building_blocks import subject_filter, lesson_filter, timefram
 
 def build_homework_filters(user):
     return {
-        'subject': subject_filter(subject_model=Subject),
-        'lesson_given': lesson_filter(lesson_model=Lesson, label='Lesson When Given'),
-        'lesson_due': lesson_filter(lesson_model=Lesson, label='Lesson Due For'),
-        'lesson': lesson_filter(lesson_model=Lesson, label='Lesson (Given or Due)'),
+        'subject': subject_filter(user),
+        'lesson_given': lesson_filter(user, label='Lesson When Given'),
+        'lesson_due': lesson_filter(user, label='Lesson Due For'),
+        'lesson': lesson_filter(user, label='Lesson (Given or Due)'),
         'completion': {
             'type': 'select',
             'label': 'Completion Percent',
