@@ -3,11 +3,14 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from utils.query_filters import apply_sorting
 from utils.mixins import (
-    CancelLinkMixin, ModelNameMixin,
-    GeneralStateMixin, FilterConfigMixin,
-    SortConfigMixin, OwnershipRequiredMixin,
+    CancelLinkMixin, ModelNameMixin, 
+    OwnershipRequiredMixin,
+)
+from utils.query_filters import apply_sorting
+from utils.sidebar_context import (
+    SidebarSectionsMixin, SidebarStateMixin,
+    section
 )
 
 from .models import Subject
@@ -20,22 +23,17 @@ from .sort_config import build_subject_sorting
 CANCEL_LINK = reverse_lazy('subject_list')
 
 
-class SubjectListView(LoginRequiredMixin, GeneralStateMixin,
-                    SortConfigMixin, FilterConfigMixin, ListView):
+class SubjectListView(LoginRequiredMixin, SidebarStateMixin,
+                      SidebarSectionsMixin, ListView):
     model = Subject
     context_object_name = 'user_subjects'
     paginate_by = 20
 
-    state_sources = {
-        'filter_config': 'selected_filter_values',
-        'sort_config': 'selected_sort_values',
-    }
-
-    def build_filter_config(self):
-        return build_subject_filters()
-    
-    def build_sort_config(self):
-        return build_subject_sorting()
+    def build_sidebar_sections(self):
+        return [
+            section(heading='Filter By', configs=build_subject_filters()),
+            section(heading='Sort By', configs=build_subject_sorting())
+        ]
 
     def get_queryset(self):
         '''
@@ -48,7 +46,7 @@ class SubjectListView(LoginRequiredMixin, GeneralStateMixin,
         if name_filter := get_request.get('name'):
             queryset = queryset.filter(name__icontains=name_filter)
 
-        queryset = apply_sorting(get_request, queryset, self.build_sort_config())
+        queryset = apply_sorting(get_request, queryset, build_subject_sorting())
 
         return queryset
     

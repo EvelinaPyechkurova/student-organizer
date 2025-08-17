@@ -2,9 +2,15 @@
 
 <form action="" method="get" class="filter-sidebar">
 
-    {% include "partials/_sidebar_field_group.html" with heading="Filter By" config_values=filter_config selected_values=selected_filter_values %}
-
-    {% include "partials/_sidebar_field_group.html" with heading="Sort By" config_values=sort_config selected_values=selected_sort_values %}
+    {% for s in sidebar_sections  %}
+        {% comment %} {{ s.heading }}
+        <br>
+        {{ s.configs }}
+        <br>
+        {{ s.state }}
+        <br> {% endcomment %}
+        {% include "partials/_sidebar_field_group.html" with heading=s.heading config_values=s.configs selected_values=s.state %}
+    {% endfor %}
 
     <button type="submit">Apply Filters</button>
 </form>

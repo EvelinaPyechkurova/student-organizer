@@ -6,12 +6,14 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.duration import parse_duration
-from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    GeneralStateMixin, FilterConfigMixin,
-    SortConfigMixin, OwnershipRequiredMixin,
-    DerivedFieldsMixin
+    OwnershipRequiredMixin, DerivedFieldsMixin
+)
+from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.sidebar_context import (
+    SidebarSectionsMixin, SidebarStateMixin,
+    section
 )
 
 from subject.models import Subject
@@ -25,24 +27,18 @@ from .sort_config import build_assessment_sorting
 CANCEL_LINK = reverse_lazy('assessment_list')
 
 
-class AssessmentListView(LoginRequiredMixin, GeneralStateMixin, 
-                         SortConfigMixin, FilterConfigMixin,
-                         DerivedFieldsMixin, ListView):
+class AssessmentListView(LoginRequiredMixin, SidebarStateMixin,
+                         SidebarSectionsMixin, DerivedFieldsMixin,
+                         ListView):
     model = Assessment
     context_object_name = 'user_assessments'
     paginate_by = 7
 
-    state_sources = {
-        'filter_config': 'selected_filter_values',
-        'sort_config': 'selected_sort_values',
-    }
-
-    def build_filter_config(self):
-        print(self.request.GET.get('user'))
-        return build_assessment_filters(self.request.GET.get('user'))
-    
-    def build_sort_config(self):
-        return build_assessment_sorting()
+    def build_sidebar_sections(self):
+        return [
+            section(heading='Filter By', configs=build_assessment_filters(user=self.request.GET.get('user'))),
+            section(heading='Sort By', configs=build_assessment_sorting())
+        ]
 
     def get_queryset(self):
         '''
@@ -50,8 +46,8 @@ class AssessmentListView(LoginRequiredMixin, GeneralStateMixin,
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
         get_request = self.request.GET
-        filter_config = self.build_filter_config()
-        sort_config = self.build_sort_config()
+        filter_config = build_assessment_filters(user=self.request.GET.get('user'))
+        sort_config = build_assessment_sorting()
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)

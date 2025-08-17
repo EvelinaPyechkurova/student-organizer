@@ -12,8 +12,8 @@
                 <option value="">&nbsp;</option>
                 {% for option in config.options %}
                     {% with option_value=option.0 option_label=option.1 %}
-                        <option value="{{ option_value }}">
-                            {% if selected_filter_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
+                        <option value="{{ option_value }}"
+                            {% if selected_values|get_item:field == option_value|stringformat:"s" %}selected{% endif %}>
                             {{ option_label }}
                         </option>
                     {% endwith %}

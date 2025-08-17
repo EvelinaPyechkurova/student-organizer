@@ -5,12 +5,14 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from utils.constants import MAX_TIMEFRAME, RECENT_PAST_TIMEFRAME
-from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
 from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
-    GeneralStateMixin, FilterConfigMixin,
-    SortConfigMixin, OwnershipRequiredMixin,
-    DerivedFieldsMixin
+    OwnershipRequiredMixin, DerivedFieldsMixin
+)
+from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.sidebar_context import (
+    SidebarSectionsMixin, SidebarStateMixin,
+    section
 )
 
 from subject.models import Subject
@@ -23,22 +25,17 @@ from .sort_config import build_lesson_sorting
 CANCEL_LINK = reverse_lazy('lesson_list')
 
 
-class LessonListView(LoginRequiredMixin, GeneralStateMixin, 
-                     SortConfigMixin, FilterConfigMixin, ListView):
+class LessonListView(LoginRequiredMixin, SidebarStateMixin, 
+                     SidebarSectionsMixin, ListView):
     model = Lesson
     context_object_name = 'user_lessons'
     paginate_by = 8
 
-    state_sources = {
-        'filter_config': 'selected_filter_values',
-        'sort_config': 'selected_sort_values',
-    }
-
-    def build_filter_config(self):
-        return build_lesson_filters(user=self.request.GET.get('user'))
-    
-    def build_sort_config(self):
-        return build_lesson_sorting()
+    def build_sidebar_sections(self):
+        return [
+            section(heading='Filter By', configs=build_lesson_filters(user=self.request.GET.get('user'))),
+            section(heading='Sort By', configs=build_lesson_sorting())
+        ]
 
     def get_queryset(self):
         '''
@@ -47,8 +44,8 @@ class LessonListView(LoginRequiredMixin, GeneralStateMixin,
         '''
         queryset = Lesson.objects.filter(subject__user=self.request.user)
         get_request = self.request.GET
-        filter_config = self.build_filter_config()
-        sort_config = self.build_sort_config
+        filter_config = build_lesson_filters(user=self.request.GET.get('user'))
+        sort_config = build_lesson_sorting()
 
         if subject_filter := get_request.get('subject'):
             queryset = queryset.filter(subject=subject_filter)
