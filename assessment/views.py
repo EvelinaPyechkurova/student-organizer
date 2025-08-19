@@ -10,7 +10,7 @@ from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     OwnershipRequiredMixin, DerivedFieldsMixin
 )
-from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.query_filters import apply_sorting, apply_date_range_filter_if_valid
 from utils.sidebar_context import (
     SidebarSectionsMixin, SidebarStateMixin,
     section
@@ -45,43 +45,43 @@ class AssessmentListView(LoginRequiredMixin, SidebarStateMixin,
         Return assessments of the user sending requests
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
-        get_request = self.request.GET
+        GET = self.request.GET
         filter_config = build_assessment_filters(user=self.request.user)
         sort_config = build_assessment_sorting()
 
-        if subject_filter := get_request.get('subject'):
+        if subject_filter := GET.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
         
-        if lesson_filter := get_request.get('lesson'):
+        if lesson_filter := GET.get('lesson'):
             queryset = queryset.filter(lesson=lesson_filter)
 
-        if type_filter := get_request.get('type'):
+        if type_filter := GET.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
         
-        if duration_filter := get_request.get('duration'):
+        if duration_filter := GET.get('duration'):
             valid_duration_options = [option[0] for option in filter_config['duration']['options']]
             if duration_filter in valid_duration_options:
                 if duration_filter := parse_duration(duration_filter):
                     queryset = queryset.filter(derived_duration=duration_filter)
                 
         else:
-            if min_duration_filter := parse_duration(get_request.get('min_duration')):
+            if min_duration_filter := parse_duration(GET.get('min_duration')):
                 queryset = queryset.filter(derived_duration__gte=min_duration_filter)
 
-            if max_duration_filter := parse_duration(get_request.get('max_duration')):
+            if max_duration_filter := parse_duration(GET.get('max_duration')):
                 queryset = queryset.filter(derived_duration__lte=max_duration_filter)
 
 
-        queryset = apply_timeframe_filter_if_valid(
-            get_request=get_request,
-            queryset=queryset,
+        queryset = apply_date_range_filter_if_valid(
+            GET,
+            queryset,
             param_name='start_time',
             valid_filters=filter_config,
             model_field_name='derived_start_time',
         )
 
-        queryset = apply_sorting(get_request, queryset, sort_config)
+        queryset = apply_sorting(GET, queryset, sort_config)
 
         return queryset
 

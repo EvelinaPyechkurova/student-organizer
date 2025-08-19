@@ -41,12 +41,12 @@ class SubjectListView(LoginRequiredMixin, SidebarStateMixin,
         filtered and sorted if provided in the query params.
         '''
         queryset = Subject.objects.filter(user=self.request.user)
-        get_request = self.request.GET
+        GET = self.request.GET
 
-        if name_filter := get_request.get('name'):
+        if name_filter := GET.get('name'):
             queryset = queryset.filter(name__icontains=name_filter)
 
-        queryset = apply_sorting(get_request, queryset, build_subject_sorting())
+        queryset = apply_sorting(GET, queryset, build_subject_sorting())
 
         return queryset
     

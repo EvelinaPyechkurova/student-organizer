@@ -1,13 +1,13 @@
 from datetime import timedelta
 
-# ---- Filtering and sorting ----
+# ---- Filtering and Sorting ----
 VALID_TIMEFRAME_OPTIONS = [
-    ('today', 'Today'),
-    ('tomorrow', 'Tomorrow'),
-    ('next3', 'Next 3 Days'),
-    ('this_week', 'This Week'),
+    ('day', 'Today'),
+    ('next_day', 'Tomorrow'),
+    ('next_3_days', 'Next 3 Days'),
+    ('week', 'This Week'),
     ('next_week', 'Next Week'),
-    ('this_month', 'This Month'),
+    ('month', 'This Month'),
     ('next_month', 'Next Month'),
 ]
 

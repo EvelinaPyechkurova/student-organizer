@@ -28,12 +28,12 @@ class SidebarStateMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sections = context.get(self.sidebar_context_key, [])
-        get_request = self.request.GET
+        GET = self.request.GET
 
         for section in sections:
             section_configs = section.get('configs')
             section['state'] = {
-                field_name: get_request.get(
+                field_name: GET.get(
                     field_name,
                     config.get('default', ''))
                 for field_name, config in section_configs.items()

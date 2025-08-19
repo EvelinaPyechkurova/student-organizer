@@ -9,7 +9,7 @@ from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     OwnershipRequiredMixin, DerivedFieldsMixin
 )
-from utils.query_filters import apply_sorting, apply_timeframe_filter_if_valid
+from utils.query_filters import apply_sorting, apply_date_range_filter_if_valid
 from utils.sidebar_context import (
     SidebarSectionsMixin, SidebarStateMixin,
     section
@@ -43,19 +43,19 @@ class LessonListView(LoginRequiredMixin, SidebarStateMixin,
         filtered and sorted if provided in the query params.
         '''
         queryset = Lesson.objects.filter(subject__user=self.request.user)
-        get_request = self.request.GET
+        GET = self.request.GET
         filter_config = build_lesson_filters(user=self.request.user)
         sort_config = build_lesson_sorting()
 
-        if subject_filter := get_request.get('subject'):
+        if subject_filter := GET.get('subject'):
             queryset = queryset.filter(subject=subject_filter)
 
-        if type_filter := get_request.get('type'):
+        if type_filter := GET.get('type'):
             queryset = queryset.filter(type__iexact=type_filter)
 
-        queryset = apply_timeframe_filter_if_valid(get_request, queryset, 'start_time', filter_config)
+        queryset = apply_date_range_filter_if_valid(GET, queryset, 'start_time', filter_config)
 
-        queryset = apply_sorting(get_request, queryset, sort_config)
+        queryset = apply_sorting(GET, queryset, sort_config)
 
         return queryset
 

@@ -2,14 +2,14 @@ from django.utils.timezone import now, localtime
 from datetime import timedelta
 
 
-def apply_sorting(get_request, queryset, sort_options):
+def apply_sorting(GET, queryset, sort_options):
     '''
     Sorts the provided queryset by parameters, provided in sort_config.
     Either recieves valid param from GET request, or uses a default one.
     Excepts that sort_options has the following structure:
     {type: ..., label: ..., default: some_value, options: [(value, value, <value>), ...]}
     '''
-    sort_param = get_request.get('sort_by')
+    sort_param = GET.get('sort_by')
     if sort_param:
         valid_sort_options = [option[0] for option in sort_options['sort_by']['options']]
         if sort_param in valid_sort_options:
@@ -23,29 +23,28 @@ def apply_sorting(get_request, queryset, sort_options):
     return queryset
 
 
-def filter_by_day(queryset, date, date_field='start_time'):
-    return queryset.filter(**{f"{date_field}__date": date})
-
-
-def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
+def filter_by_date_range(queryset, filter_param, date=None, date_field='start_time'):
     '''
-    Filters the provided queryset by timeframe conditions like 'today', 'this_week', etc.
+    Filters a queryset by a date range (like 'day', 'month')
+    relative to a reference date. The reference date defaults to today.
     Assumes queryset uses 'start_time' or specified 'date_field' for filtering.
     '''
 
     DAYS_IN_WEEK = 7
     DAYS_IN_MONTH = 32
 
-    today = localtime(now()).date()
-    start_of_week = today - timedelta(days=today.weekday())
-    start_of_month = today.replace(day=1)
+    if date is None:
+        date = localtime(now()).date()
+
+    start_of_week = date - timedelta(days=date.weekday())
+    start_of_month = date.replace(day=1)
     next_month = (start_of_month + timedelta(days=DAYS_IN_MONTH)).replace(day=1)
 
     time_filters = {
-        'today': lambda: (today, today),
-        'tomorrow': lambda: (today + timedelta(days=1), today + timedelta(days=1)),
-        'next3' : lambda: (today, today + timedelta(days=3)),
-        'this_week' : lambda: (
+        'day': lambda: (date, date),
+        'next_day': lambda: (date + timedelta(days=1), date + timedelta(days=1)),
+        'next_3_days' : lambda: (date, date + timedelta(days=3)),
+        'week': lambda: (
             start_of_week, 
             start_of_week + timedelta(days=6)
         ),
@@ -53,7 +52,7 @@ def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
             start_of_week + timedelta(days=DAYS_IN_WEEK), 
             start_of_week + timedelta(days=DAYS_IN_WEEK * 2 - 1)
         ),
-        'this_month' : lambda: (
+        'month' : lambda: (
             start_of_month, 
             (start_of_month + timedelta(days=DAYS_IN_MONTH)).replace(day=1) - timedelta(days=1)
         ),
@@ -67,19 +66,23 @@ def filter_by_timeframe(queryset, filter_param, date_field='start_time'):
     return queryset.filter(**{f'{date_field}__date__range': [start_date, end_date]})
 
 
-def apply_timeframe_filter_if_valid(get_request, queryset, param_name, valid_filters, model_field_name=None):
+def apply_date_range_filter_if_valid(GET, queryset, param_name, valid_filters, model_field_name=None):
     '''
     Applies timeframe filtering to the queryset
     if the given param_name is in valid_filters.
 
     Assumes that the model field name matches the param_name.
     '''
-    if filter_value := get_request.get(param_name):
+    if filter_value := GET.get(param_name):
         if model_field_name is None:
             model_field_name = param_name
         valid_timeframe_options = [option[0] for option in valid_filters[param_name]['options']]
         if filter_value in valid_timeframe_options:
-            queryset = filter_by_timeframe(queryset, filter_value, model_field_name)
+            queryset = filter_by_date_range(
+                queryset,
+                filter_param=filter_value,
+                date_field=model_field_name
+            )
     return queryset
 
 

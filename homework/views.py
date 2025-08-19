@@ -10,7 +10,7 @@ from utils.mixins import (
     CancelLinkMixin, ModelNameMixin,
     OwnershipRequiredMixin, DerivedFieldsMixin
 )
-from utils.query_filters import apply_timeframe_filter_if_valid, apply_sorting
+from utils.query_filters import apply_date_range_filter_if_valid, apply_sorting
 from utils.sidebar_context import (
     SidebarSectionsMixin, SidebarStateMixin,
     section
@@ -46,38 +46,38 @@ class HomeworkListView(LoginRequiredMixin, SidebarStateMixin,
         Return homework of the user sending requests
         '''
         queryset = super().get_queryset().filter(derived_user_id=self.request.user.id)
-        get_request = self.request.GET
+        GET = self.request.GET
         filter_config = build_homework_filters(user=self.request.user)
         sort_config = build_homework_sorting()
 
-        if subject_filter := get_request.get('subject'):
+        if subject_filter := GET.get('subject'):
             queryset = queryset.filter(derived_subject_id=subject_filter)
 
-        if lesson_given_filter := get_request.get('lesson_given'):
+        if lesson_given_filter := GET.get('lesson_given'):
             queryset = queryset.filter(lesson_given=lesson_given_filter)
 
-        if lesson_due_filter := get_request.get('lesson_due'):
+        if lesson_due_filter := GET.get('lesson_due'):
             queryset = queryset.filter(lesson_due=lesson_due_filter)
 
-        if lesson_filter := get_request.get('lesson'):
+        if lesson_filter := GET.get('lesson'):
             queryset = queryset.filter(
                 Q(lesson_given=lesson_filter) | Q(lesson_due=lesson_filter)
             )
 
-        if completion_filter := get_request.get('completion'):
+        if completion_filter := GET.get('completion'):
             valid_completion_percents = [option[0] for option in filter_config['completion']['options']]
             if completion_filter in valid_completion_percents:
                 queryset = queryset.filter(completion_percent=completion_filter)
         else:
-            if min_completion_filter := get_request.get('min_completion'):
+            if min_completion_filter := GET.get('min_completion'):
                 queryset = queryset.filter(completion_percent__gte=min_completion_filter)
-            if max_completion_filter := get_request.get('max_completion'):
+            if max_completion_filter := GET.get('max_completion'):
                 queryset = queryset.filter(completion_percent__lte=max_completion_filter)
 
         for param_name, model_field_name in [('start_time', 'derived_start_time'), ('due_at', 'derived_due_at')]:
-            queryset = apply_timeframe_filter_if_valid(get_request, queryset, param_name, filter_config, model_field_name)
+            queryset = apply_date_range_filter_if_valid(GET, queryset, param_name, filter_config, model_field_name)
 
-        queryset = apply_sorting(get_request, queryset, sort_config)
+        queryset = apply_sorting(GET, queryset, sort_config)
 
         return queryset
     

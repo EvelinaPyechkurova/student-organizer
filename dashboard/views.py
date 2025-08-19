@@ -6,9 +6,9 @@ from lesson.models import Lesson
 from assessment.models import Assessment
 from homework.models import Homework
 
-from utils.query_filters import filter_by_day
+from utils.query_filters import filter_by_date_range
 
-from datetime import date, timedelta
+from datetime import date as datetime_date, timedelta
 import calendar
 
 
@@ -17,19 +17,24 @@ class DashboardView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = self.request.user
-        today = date.today()
-        year = today.year
-        month = today.month
-        month_name = calendar.month_name[month]
-        month_calendar = calendar.monthcalendar(year, month)
 
-        calendar_events = get_calendar_events(user, get_month_days(year, month))
+        GET = self.request.GET
+        mode = GET.get('mode')
+        date = GET.get('date')
+
+        today = datetime_date.today()
+        # year = today.year
+        # month = today.month
+        # month_name = calendar.month_name[month]
+        # month_calendar = calendar.monthcalendar(year, month)
+
+        # calendar_events = get_calendar_events(user, get_month_days(year, month))
 
         context = { 
-            'year': year,
-            'month': month_name,
-            'calendar': month_calendar,
-            'calendar_events': calendar_events,
+            # 'year': year,
+            # 'month': month_name,
+            # 'calendar': month_calendar,
+            # 'calendar_events': calendar_events,
         }
 
         return render(request, self.template_name, context)
@@ -39,7 +44,7 @@ def get_month_days(year, month):
     '''
     Returns a list of all days in the specified month as date objects.
     '''
-    start_of_month = date(year, month, 1)
+    start_of_month = datetime_date(year, month, 1)
     num_days = calendar.monthrange(year, month)[-1]
     return [start_of_month + timedelta(days=n) for n in range(num_days)]
 
@@ -55,14 +60,14 @@ def get_calendar_events(user, month_days):
     
     calendar_events = {}
 
-    for day in month_days:
-        day_lessons = filter_by_day(lessons, day)
-        day_assessments = filter_by_day(assessments, day, date_field='derived_start_time')
-        day_homeworks = filter_by_day(homeworks, day, date_field='derived_due_at')
+    # for day in month_days:
+    #     day_lessons = filter_by_day(lessons, day)
+    #     day_assessments = filter_by_day(assessments, day, date_field='derived_start_time')
+    #     day_homeworks = filter_by_day(homeworks, day, date_field='derived_due_at')
 
-        events = combine_and_sort_by_time(day_lessons, day_assessments, day_homeworks)
-        if events:
-            calendar_events[day.day] = events
+    #     events = combine_and_sort_by_time(day_lessons, day_assessments, day_homeworks)
+    #     if events:
+    #         calendar_events[day.day] = events
 
     return calendar_events
 
